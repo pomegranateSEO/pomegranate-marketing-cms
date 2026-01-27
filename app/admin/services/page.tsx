@@ -5,6 +5,7 @@ import { ServiceForm } from '../../../components/forms/ServiceForm';
 import { fetchServices, deleteService, createService, updateService } from '../../../lib/db/services';
 import { fetchBusinesses } from '../../../lib/db/businesses';
 import type { Service } from '../../../lib/types';
+import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 
 export default function ServicesPage() {
   const [services, setServices] = useState<(Service & { businesses: { name: string } | null })[]>([]);
@@ -36,13 +37,15 @@ export default function ServicesPage() {
     loadData();
   }, []);
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this service? All related pages will need to be regenerated.")) {
+  const handleDelete = async (id: string, name: string) => {
+    if (window.confirm(`CAUTION: Are you sure you want to delete the service "${name}"?\n\nThis action cannot be undone. All generated pages, reviews, and case studies linked to this service may be broken or deleted.`)) {
       try {
         await deleteService(id);
         loadData();
-      } catch (e) {
-        alert("Failed to delete service");
+      } catch (e: any) {
+        // Detailed error reporting for debugging
+        alert(`Failed to delete service.\n\nDatabase Error: ${e.message || JSON.stringify(e)}`);
+        console.error("Delete Service Error:", e);
       }
     }
   };
@@ -65,6 +68,15 @@ export default function ServicesPage() {
   const handleEdit = (service: Service) => {
     setEditingService(service);
     setIsCreating(false);
+  };
+
+  // Combine content for bulk entity extraction
+  const getAllServicesContent = () => {
+    return services.map(s => `
+      Service: ${s.name}
+      Description: ${s.short_description}
+      Process: ${s.shared_content_blocks?.process_content}
+    `).join('\n---\n');
   };
 
   if (loading) {
@@ -119,9 +131,18 @@ export default function ServicesPage() {
             The "80%" of your pSEO content. These services are combined with locations to generate pages.
           </p>
         </div>
-        <Button onClick={() => setIsCreating(true)}>
-          <Plus className="h-4 w-4 mr-2" /> Add Service
-        </Button>
+        <div className="flex gap-2">
+           {rootBusinessId && services.length > 0 && (
+             <EntityGenerator 
+               getContent={getAllServicesContent} 
+               businessId={rootBusinessId} 
+               sourceName="All Services" 
+             />
+           )}
+           <Button onClick={() => setIsCreating(true)}>
+             <Plus className="h-4 w-4 mr-2" /> Add Service
+           </Button>
+        </div>
       </div>
 
       {services.length === 0 ? (
@@ -156,7 +177,7 @@ export default function ServicesPage() {
                     <Button variant="ghost" size="icon" onClick={() => handleEdit(service)} className="text-slate-500 hover:text-primary hover:bg-slate-100">
                       <Pencil className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={() => handleDelete(service.id)} className="text-slate-400 hover:text-red-600 hover:bg-red-50">
+                    <Button variant="ghost" size="icon" onClick={() => handleDelete(service.id, service.name)} className="text-slate-400 hover:text-red-600 hover:bg-red-50">
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </td>

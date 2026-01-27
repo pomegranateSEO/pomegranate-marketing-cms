@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Loader2, BookOpen, ExternalLink, Search, Plus, Trash2, Save, AlertCircle, Eye, AlertTriangle, Database, RefreshCw, Globe, LinkIcon } from 'lucide-react';
+import { Loader2, BookOpen, Search, Plus, Trash2, Eye, AlertCircle, Database, Globe, FolderOpen } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { fetchKnowledgeEntities, createKnowledgeEntity, deleteKnowledgeEntity, updateKnowledgeEntity } from '../../../lib/db/knowledge';
@@ -80,30 +80,34 @@ export default function KnowledgeEntitiesPage() {
         business_id: rootBusinessId,
         name: wikiResult.title,
         description: wikiResult.description || wikiResult.excerpt || "No description available",
-        entity_type: 'Thing', // Default fallback, user can edit later if we add edit functionality
+        entity_type: 'Thing', // Default fallback
         wikipedia_url: wikiResult.url || `https://en.wikipedia.org/wiki/${wikiResult.key}`,
-        wikidata_url: null // Wikipedia search often doesn't give Wikidata ID directly without extra calls
+        wikidata_url: null 
       };
 
-      // Basic mapping for Entity Type based on description keywords
+      // Enhanced Categorization Logic based on keywords
       const desc = (payload.description || "").toLowerCase();
-      if (desc.includes('company') || desc.includes('business') || desc.includes('organization')) {
-        payload.entity_type = 'Organization';
-      } else if (desc.includes('person') || desc.includes('biography')) {
-        payload.entity_type = 'Person';
-      } else if (desc.includes('place') || desc.includes('city') || desc.includes('region')) {
-        payload.entity_type = 'Place';
+      const title = (payload.name || "").toLowerCase();
+
+      if (desc.includes('seo') || title.includes('seo') || desc.includes('search engine')) {
+         payload.entity_type = 'SEO Concept';
+      } else if (desc.includes('design') || desc.includes('ui') || desc.includes('ux') || title.includes('design')) {
+         payload.entity_type = 'Web Design';
+      } else if (desc.includes('development') || desc.includes('code') || desc.includes('software') || title.includes('css') || title.includes('html')) {
+         payload.entity_type = 'Web Development';
+      } else if (desc.includes('business') || desc.includes('marketing') || desc.includes('strategy') || desc.includes('company')) {
+         payload.entity_type = 'Business Term';
+      } else if (desc.includes('customer') || desc.includes('audience') || desc.includes('demographic') || desc.includes('person')) {
+         payload.entity_type = 'Customer Type';
+      } else if (desc.includes('city') || desc.includes('town') || desc.includes('region') || desc.includes('village') || desc.includes('capital')) {
+         payload.entity_type = 'Location';
+      } else if (desc.includes('organization') || desc.includes('association')) {
+         payload.entity_type = 'Organization';
       } else if (desc.includes('software') || desc.includes('app')) {
-        payload.entity_type = 'SoftwareApplication';
-      } else if (desc.includes('service')) {
-        payload.entity_type = 'Service';
+         payload.entity_type = 'Software Tool';
       }
 
-      const saved = await createKnowledgeEntity(payload);
-      
-      if (!saved) {
-         throw new Error("Database insert returned null. Check RLS policies.");
-      }
+      await createKnowledgeEntity(payload);
 
       // Clear search and reload
       setSearchQuery('');
@@ -122,11 +126,12 @@ export default function KnowledgeEntitiesPage() {
     // Explicit confirm dialog
     if (window.confirm(`Are you sure you want to delete "${name}" from your knowledge graph?`)) {
       try {
+        console.log("Deleting ID:", id);
         await deleteKnowledgeEntity(id);
         await loadData(); // Reload immediately
       } catch (err: any) {
         console.error(err);
-        alert("Failed to delete entity: " + err.message);
+        alert(`Failed to delete entity.\n\nError: ${err.message || JSON.stringify(err)}`);
       }
     }
   };
@@ -137,7 +142,6 @@ export default function KnowledgeEntitiesPage() {
     let errors = 0;
 
     try {
-        // Filter entities that have Wikipedia but NO Wikidata
         const targets = entities.filter(e => e.wikipedia_url && !e.wikidata_url);
 
         if (targets.length === 0) {
@@ -146,13 +150,11 @@ export default function KnowledgeEntitiesPage() {
             return;
         }
 
-        // Process sequentially to be nice to APIs
         for (const entity of targets) {
             if (!entity.wikipedia_url) continue;
 
             try {
                 const wikidataUrl = await getWikidataIdFromWikipediaUrl(entity.wikipedia_url);
-                
                 if (wikidataUrl) {
                     await updateKnowledgeEntity(entity.id, { wikidata_url: wikidataUrl });
                     updatedCount++;
@@ -173,6 +175,19 @@ export default function KnowledgeEntitiesPage() {
         setIsSyncingWikidata(false);
     }
   };
+
+  // Group Entities by Type
+  const groupedEntities = entities.reduce((groups, entity) => {
+    const type = entity.entity_type || 'Uncategorized';
+    if (!groups[type]) {
+      groups[type] = [];
+    }
+    groups[type].push(entity);
+    return groups;
+  }, {} as Record<string, KnowledgeEntity[]>);
+
+  // Sort groups alphabetically
+  const sortedGroups = Object.keys(groupedEntities).sort();
 
   if (loading) {
     return (
@@ -280,9 +295,9 @@ export default function KnowledgeEntitiesPage() {
           </div>
         </div>
 
-        {/* RIGHT COLUMN: Saved Entities */}
-        <div className="lg:col-span-2">
-           <div className="flex justify-between items-center mb-4">
+        {/* RIGHT COLUMN: Saved Entities (Grouped) */}
+        <div className="lg:col-span-2 space-y-8">
+           <div className="flex justify-between items-center">
              <h2 className="font-bold text-lg flex items-center gap-2">
                <BookOpen className="h-5 w-5 text-slate-600" />
                Saved Entities ({entities.length})
@@ -296,74 +311,81 @@ export default function KnowledgeEntitiesPage() {
               <p className="text-xs text-slate-400 mt-2">Use the search tool on the left to add your first entity.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {entities.map((entity) => (
-                <div key={entity.id} className="bg-white p-4 rounded-lg border shadow-sm group hover:border-primary/50 transition-colors relative flex flex-col">
-                  
-                  {/* Header: Type + Actions */}
-                  <div className="flex justify-between items-start mb-3">
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-bold bg-slate-100 text-slate-600`}>
-                      {(entity.entity_type || 'Unknown')}
-                    </span>
-                    <Button 
-                        variant="ghost" 
-                        size="icon"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleDelete(entity.id, entity.name);
-                        }}
-                        className="h-6 w-6 text-slate-300 hover:text-red-500 hover:bg-red-50"
-                        title="Delete Entity"
-                    >
-                        <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  
-                  {/* Content */}
-                  <div className="flex gap-4 items-start flex-1">
-                     <div className="w-12 h-12 rounded bg-slate-100 flex items-center justify-center border flex-shrink-0 text-slate-400 font-bold text-xs uppercase">
-                        {(entity.entity_type || 'Un').substring(0,2)}
-                     </div>
-                     <div className="min-w-0">
-                        <h3 className="font-bold text-md text-slate-900 line-clamp-1" title={entity.name}>{entity.name}</h3>
-                        <p className="text-xs text-slate-500 line-clamp-3 mt-1 leading-relaxed">
-                            {entity.description || "No description available."}
-                        </p>
-                     </div>
-                  </div>
+            <div className="space-y-8">
+              {sortedGroups.map((group) => (
+                <div key={group}>
+                  <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-2 border-b pb-2">
+                    <FolderOpen className="h-4 w-4" />
+                    {group} ({groupedEntities[group].length})
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {groupedEntities[group].map((entity) => (
+                      <div key={entity.id} className="bg-white p-4 rounded-lg border shadow-sm group hover:border-primary/50 transition-colors relative flex flex-col">
+                        
+                        {/* Header: Actions */}
+                        <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button 
+                              variant="ghost" 
+                              size="icon"
+                              onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  handleDelete(entity.id, entity.name);
+                              }}
+                              className="h-7 w-7 text-slate-400 hover:text-red-500 hover:bg-red-50"
+                              title="Delete Entity"
+                          >
+                              <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        
+                        {/* Content */}
+                        <div className="flex gap-4 items-start flex-1 mb-3">
+                           <div className="w-10 h-10 rounded bg-slate-100 flex items-center justify-center border flex-shrink-0 text-slate-400 font-bold text-xs uppercase">
+                              {group.substring(0,2)}
+                           </div>
+                           <div className="min-w-0 pr-6">
+                              <h3 className="font-bold text-md text-slate-900 line-clamp-1" title={entity.name}>{entity.name}</h3>
+                              <p className="text-xs text-slate-500 line-clamp-2 mt-1 leading-relaxed">
+                                  {entity.description || "No description available."}
+                              </p>
+                           </div>
+                        </div>
 
-                  {/* Footer: Links */}
-                  <div className="mt-4 pt-3 border-t flex flex-wrap gap-3">
-                        {entity.wikipedia_url ? (
-                             <a 
-                                href={entity.wikipedia_url} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-1 text-xs text-blue-600 hover:underline"
-                             >
-                                <Globe className="h-3 w-3" /> Wikipedia
-                             </a>
-                        ) : (
-                            <span className="flex items-center gap-1 text-xs text-slate-300 cursor-not-allowed">
-                                <Globe className="h-3 w-3" /> No Wiki URL
-                            </span>
-                        )}
+                        {/* Footer: Links */}
+                        <div className="mt-auto pt-3 border-t flex flex-wrap gap-3">
+                              {entity.wikipedia_url ? (
+                                   <a 
+                                      href={entity.wikipedia_url} 
+                                      target="_blank" 
+                                      rel="noopener noreferrer"
+                                      className="flex items-center gap-1 text-xs text-blue-600 hover:underline"
+                                   >
+                                      <Globe className="h-3 w-3" /> Wikipedia
+                                   </a>
+                              ) : (
+                                  <span className="flex items-center gap-1 text-xs text-slate-300 cursor-not-allowed">
+                                      <Globe className="h-3 w-3" /> No Wiki
+                                  </span>
+                              )}
 
-                        {entity.wikidata_url ? (
-                             <a 
-                                href={entity.wikidata_url} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-1 text-xs text-purple-600 hover:underline"
-                             >
-                                <Database className="h-3 w-3" /> Wikidata
-                             </a>
-                        ) : (
-                             <span className="flex items-center gap-1 text-xs text-slate-300 cursor-not-allowed" title="Use 'Sync Wikidata IDs' button to fetch">
-                                <Database className="h-3 w-3" /> No Wikidata ID
-                             </span>
-                        )}
+                              {entity.wikidata_url ? (
+                                   <a 
+                                      href={entity.wikidata_url} 
+                                      target="_blank" 
+                                      rel="noopener noreferrer"
+                                      className="flex items-center gap-1 text-xs text-purple-600 hover:underline"
+                                   >
+                                      <Database className="h-3 w-3" /> Wikidata
+                                   </a>
+                              ) : (
+                                   <span className="flex items-center gap-1 text-xs text-slate-300 cursor-not-allowed" title="Use 'Sync Wikidata IDs' button">
+                                      <Database className="h-3 w-3" /> No ID
+                                   </span>
+                              )}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               ))}

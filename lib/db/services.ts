@@ -35,10 +35,14 @@ export const updateService = async (id: string, service: Partial<Service>) => {
 };
 
 export const deleteService = async (id: string) => {
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('services')
     .delete()
-    .eq('id', id);
+    .eq('id', id)
+    .select();
 
   if (error) throw error;
+  if (!data || data.length === 0) {
+    throw new Error(`Delete failed: Record not found (ID: ${id}) or permissions denied.`);
+  }
 };

@@ -220,3 +220,66 @@ export const extractEntities = async (text: string): Promise<ExtractedEntity[]> 
     return [];
   }
 };
+
+export const suggestSubLocations = async (locationName: string, region?: string): Promise<string[]> => {
+  const prompt = `
+    Identify the immediate sub-locations (boroughs, districts, or major neighbourhoods) within the location: "${locationName}" ${region ? `(${region})` : ''}.
+    
+    Return ONLY a raw JSON array of strings. No markdown formatting.
+    Example: ["Manhattan", "Brooklyn", "Queens", "Bronx", "Staten Island"]
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: { parts: [{ text: prompt }] },
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.ARRAY,
+          items: { type: Type.STRING }
+        }
+      }
+    });
+    
+    if (response.text) {
+      return JSON.parse(response.text);
+    }
+    return [];
+  } catch (error) {
+    console.error("Sub-location suggestion failed:", error);
+    return [];
+  }
+};
+
+export const generateLandmarks = async (locationName: string, region?: string): Promise<string[]> => {
+  const prompt = `
+    List 10 distinct, popular landmarks, points of interest, or significant locations in: "${locationName}" ${region ? `(${region})` : ''}.
+    Focus on places that show local knowledge (parks, statues, historic buildings, major intersections, markets).
+    
+    Return ONLY a raw JSON array of strings. No descriptions.
+    Example: ["Big Ben", "Hyde Park", "The Shard"]
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview", // Flash model for speed/landmarks
+      contents: { parts: [{ text: prompt }] },
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.ARRAY,
+          items: { type: Type.STRING }
+        }
+      }
+    });
+    
+    if (response.text) {
+      return JSON.parse(response.text);
+    }
+    return [];
+  } catch (error) {
+    console.error("Landmark generation failed:", error);
+    return [];
+  }
+};

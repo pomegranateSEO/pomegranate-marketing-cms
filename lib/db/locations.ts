@@ -35,10 +35,14 @@ export const updateLocation = async (id: string, location: Partial<TargetLocatio
 };
 
 export const deleteLocation = async (id: string) => {
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('target_locations')
     .delete()
-    .eq('id', id);
+    .eq('id', id)
+    .select();
 
   if (error) throw error;
+  if (!data || data.length === 0) {
+    throw new Error(`Delete failed: Record not found (ID: ${id}) or permissions denied.`);
+  }
 };

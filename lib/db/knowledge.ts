@@ -35,10 +35,17 @@ export const updateKnowledgeEntity = async (id: string, updates: Partial<Knowled
 };
 
 export const deleteKnowledgeEntity = async (id: string) => {
-  const { error } = await supabase
+  // .select() returns the rows that were actually deleted
+  const { data, error } = await supabase
     .from('knowledge_entities')
     .delete()
-    .eq('id', id);
+    .eq('id', id)
+    .select();
 
   if (error) throw error;
+  
+  // If no data returned, it means 0 rows were deleted (RLS or ID mismatch)
+  if (!data || data.length === 0) {
+    throw new Error(`Delete failed: The database found no record with ID ${id} to delete, or permissions (RLS) blocked the action.`);
+  }
 };

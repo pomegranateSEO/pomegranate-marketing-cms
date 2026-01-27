@@ -1,45 +1,46 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Input } from '../../ui/input';
 import { Textarea } from '../../ui/textarea';
 import { Label } from '../../ui/label';
-import { Sparkles, Upload, Save, Check } from 'lucide-react';
+import { Sparkles, Upload, Check, Loader2, AlertTriangle } from 'lucide-react';
 import { SEO_LIMITS, getCharacterCountColor } from '../../../lib/seo/metadata-validator';
+import { uploadFile } from '../../../lib/supabaseClient';
 
 export const IdentitySection: React.FC = () => {
   const { register, watch, setValue, formState: { errors } } = useFormContext();
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
   const nameLength = watch('name')?.length || 0;
   const descriptionLength = watch('description')?.length || 0;
   const logoUrl = watch('logo_url');
 
-  // Load logo from local storage on mount if available and field is empty
-  useEffect(() => {
-    const localLogo = localStorage.getItem('pomegranate_logo');
-    if (localLogo && !logoUrl) {
-      setValue('logo_url', localLogo);
-    }
-  }, [setValue, logoUrl]);
-
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 500 * 1024) { // 500KB limit
-        alert("Logo file is too large. Please upload an image under 500KB.");
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const result = event.target?.result as string;
-        // 1. Update Form State
-        setValue('logo_url', result);
-        // 2. Persist Locally immediately
-        try {
-            localStorage.setItem('pomegranate_logo', result);
-        } catch (err) {
-            console.warn("Logo too large for local storage", err);
-        }
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) { // 2MB limit
+      alert("Logo file is too large. Please upload an image under 2MB.");
+      return;
+    }
+
+    setUploading(true);
+    setUploadError(null);
+
+    try {
+      // Upload to 'images' bucket in Supabase
+      const timestamp = Date.now();
+      const cleanFileName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+      const path = `logos/${timestamp}_${cleanFileName}`;
+      
+      const publicUrl = await uploadFile('images', path, file);
+      setValue('logo_url', publicUrl);
+    } catch (err: any) {
+      console.error("Logo upload failed:", err);
+      setUploadError("Failed to upload image. Please check your storage bucket permissions.");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -58,10 +59,10 @@ export const IdentitySection: React.FC = () => {
               <div className="flex-1 space-y-2">
                   <div className="flex gap-2">
                     <Input id="logo_url" {...register('logo_url')} placeholder="https://example.com/logo.png" />
-                     <Label htmlFor="logo-upload-btn" className="cursor-pointer">
+                     <Label htmlFor="logo-upload-btn" className={`cursor-pointer ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
                         <div className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 px-4 py-2 rounded-md text-sm font-medium transition-colors h-10 whitespace-nowrap">
-                        <Upload className="h-4 w-4" />
-                        Upload Image
+                          {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                          {uploading ? 'Uploading...' : 'Upload Image'}
                         </div>
                     </Label>
                     <Input 
@@ -70,10 +71,16 @@ export const IdentitySection: React.FC = () => {
                         accept="image/*" 
                         className="hidden" 
                         onChange={handleLogoUpload}
+                        disabled={uploading}
                     />
                   </div>
+                  {uploadError && (
+                    <p className="text-xs text-red-500 flex items-center gap-1">
+                      <AlertTriangle className="h-3 w-3" /> {uploadError}
+                    </p>
+                  )}
                   <p className="text-xs text-slate-400">
-                    * Saved locally to browser for immediate use. Will be synced to database on save.
+                    * Uploaded to Supabase Storage. URL is automatically set.
                   </p>
               </div>
            </div>
@@ -85,7 +92,7 @@ export const IdentitySection: React.FC = () => {
                </div>
                <div>
                   <p className="text-sm font-medium text-green-700 flex items-center gap-1">
-                      <Check className="h-4 w-4" /> Image Loaded
+                      <Check className="h-4 w-4" /> Image Linked
                   </p>
                   <p className="text-xs text-slate-500 max-w-xs truncate">{String(logoUrl).substring(0, 50)}...</p>
                </div>

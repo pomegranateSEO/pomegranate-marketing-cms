@@ -1,14 +1,15 @@
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { Label } from '../ui/label';
-import { Loader2, FileText, Info } from 'lucide-react';
+import { Loader2, FileText, Info, Globe, MapPin } from 'lucide-react';
 import type { Service } from '../../lib/types';
 import { EntityGenerator } from '../shared/EntityGenerator';
+import { AudienceSelector, AudienceEntity } from '../shared/AudienceSelector';
 
 // Pre-defined categories
 const SERVICE_CATEGORIES = [
@@ -27,11 +28,22 @@ const serviceFormSchema = z.object({
   name: z.string().min(1, "Service name is required").max(100),
   base_slug: z.string().min(1, "Slug is required").regex(/^[a-z0-9-]+$/, "Slug must be URL-safe (lowercase, numbers, hyphens only)"),
   category: z.string().min(1, "Please select a category"),
+  // We keep audience_type string for backward compat, but use audience JSON for rich data
+  audience_type: z.string().optional(), 
+  service_type: z.string().optional(),
+  provider_mobility: z.string().optional(),
   short_description: z.string().max(300, "Max 300 characters").optional(),
   shared_content_blocks: z.object({
     process_content: z.string().optional(),
     pricing_content: z.string().optional(),
   }).optional(),
+  // New JSON field for rich audiences
+  audience: z.array(z.object({
+    name: z.string(),
+    type: z.string(),
+    wikipedia_url: z.string().optional(),
+    id: z.string().optional(),
+  })).optional(),
 });
 
 type ServiceFormValues = z.infer<typeof serviceFormSchema>;
@@ -45,32 +57,47 @@ interface Props {
 }
 
 export const ServiceForm: React.FC<Props> = ({ initialData, businessId, onSubmit, isLoading, onCancel }) => {
-  const { register, handleSubmit, watch, setValue, formState: { errors }, getValues } = useForm<ServiceFormValues>({
+  // Safe cast for initial audience JSON
+  const initialAudiences = Array.isArray(initialData?.audience) 
+    ? initialData?.audience as any as AudienceEntity[] 
+    : [];
+
+  const { register, handleSubmit, watch, setValue, control, formState: { errors }, getValues } = useForm<ServiceFormValues>({
     resolver: zodResolver(serviceFormSchema),
     defaultValues: {
       name: initialData?.name || '',
       base_slug: initialData?.base_slug || '',
       category: initialData?.category || 'Residential Service',
+      audience_type: initialData?.audience_type || '',
+      service_type: initialData?.service_type || 'Service',
+      provider_mobility: initialData?.provider_mobility || 'dynamicLocation',
       short_description: initialData?.short_description || '',
       shared_content_blocks: {
         process_content: initialData?.shared_content_blocks?.process_content || '',
         pricing_content: initialData?.shared_content_blocks?.pricing_content || '',
-      }
+      },
+      audience: initialAudiences,
     },
   });
+
+  const slug = watch('base_slug');
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     const currentSlug = watch('base_slug');
     if (!currentSlug || currentSlug.length === 0) {
-      const slug = val.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-      setValue('base_slug', slug);
+      const generatedSlug = val.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      setValue('base_slug', generatedSlug);
     }
   };
 
   const onFormSubmit = (values: ServiceFormValues) => {
+    // Sync the string representation for simple queries
+    const audienceString = values.audience?.map(a => a.name).join(', ') || values.audience_type;
+
     onSubmit({
       ...values,
+      audience_type: audienceString, // Flattened for backward compat
       business_id: businessId,
     });
   };
@@ -81,6 +108,7 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, onSubmit
     return `
       Service: ${vals.name}
       Category: ${vals.category}
+      Audience: ${vals.audience?.map(a => a.name).join(', ')}
       Summary: ${vals.short_description}
       Process: ${vals.shared_content_blocks?.process_content}
       Pricing: ${vals.shared_content_blocks?.pricing_content}
@@ -118,6 +146,34 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, onSubmit
           </div>
           
           <div className="space-y-2">
+            <Label htmlFor="base_slug">URL Slug Pattern</Label>
+            <div className="flex items-center">
+              <span className="bg-slate-100 border border-r-0 rounded-l px-3 py-2 text-sm text-slate-500">/</span>
+              <Input id="base_slug" {...register('base_slug')} className="rounded-l-none" placeholder="emergency-boiler-repair" />
+            </div>
+            <p className="text-xs text-red-500">{errors.base_slug?.message}</p>
+          </div>
+
+          <div className="md:col-span-2 bg-slate-50 p-4 rounded border border-slate-200">
+             <h4 className="text-xs font-bold uppercase text-slate-500 mb-2">URL Structure Preview</h4>
+             <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm">
+                   <Globe className="h-4 w-4 text-blue-500" />
+                   <span className="font-semibold text-slate-700">National/Main Service Page:</span>
+                   <code className="bg-white px-2 py-0.5 rounded border text-slate-600">website.com/{slug || 'service-slug'}</code>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                   <MapPin className="h-4 w-4 text-green-600" />
+                   <span className="font-semibold text-slate-700">Local Service Page (pSEO):</span>
+                   <code className="bg-white px-2 py-0.5 rounded border text-slate-600">website.com/locations/london/{slug || 'service-slug'}</code>
+                </div>
+             </div>
+             <p className="text-xs text-slate-400 mt-2">
+               * Following hierarchy: Core services reside at root level or under specific parents. Local services reside under /locations/[city]/.
+             </p>
+          </div>
+          
+          <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
             <select 
               id="category" 
@@ -128,19 +184,26 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, onSubmit
                 <option key={cat} value={cat}>{cat}</option>
               ))}
             </select>
-            <p className="text-xs text-red-500">{errors.category?.message}</p>
+          </div>
+
+          <div className="md:col-span-2 space-y-2">
+            <Controller
+              control={control}
+              name="audience"
+              render={({ field }) => (
+                <AudienceSelector 
+                  value={field.value as AudienceEntity[] || []} 
+                  onChange={field.onChange} 
+                />
+              )}
+            />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="base_slug">URL Slug Pattern</Label>
-            <div className="flex items-center">
-              <span className="bg-slate-100 border border-r-0 rounded-l px-3 py-2 text-sm text-slate-500">/service/</span>
-              <Input id="base_slug" {...register('base_slug')} className="rounded-l-none" placeholder="emergency-boiler-repair" />
-            </div>
-            <p className="text-xs text-slate-400">This will form the URL structure: website.com/service/<strong>slug</strong>/location</p>
-            <p className="text-xs text-red-500">{errors.base_slug?.message}</p>
+            <Label htmlFor="service_type">Schema Service Type</Label>
+            <Input {...register('service_type')} placeholder="Service (Default)" />
           </div>
-          
+
           <div className="space-y-2">
              <Label htmlFor="short_description">Short Summary</Label>
              <Textarea 

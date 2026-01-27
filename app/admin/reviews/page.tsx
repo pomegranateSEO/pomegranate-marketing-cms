@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Star, Plus, Trash2, Loader2, Quote } from 'lucide-react';
+import { Star, Plus, Trash2, Loader2, Quote, Link as LinkIcon } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Textarea } from '../../../components/ui/textarea';
@@ -7,6 +7,7 @@ import { Label } from '../../../components/ui/label';
 import { fetchReviews, createReview, deleteReview } from '../../../lib/db/reviews';
 import { fetchBusinesses } from '../../../lib/db/businesses';
 import type { Review } from '../../../lib/types';
+import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -19,7 +20,8 @@ export default function ReviewsPage() {
     author_name: '',
     rating_value: 5,
     review_body: '',
-    source_url: ''
+    publisher_url: '',
+    publisher_name: ''
   });
 
   const loadData = async () => {
@@ -46,16 +48,15 @@ export default function ReviewsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!rootBusinessId) return alert("No Business Entity found.");
+    // business_id is NO LONGER required for reviews table based on schema provided
 
     try {
       await createReview({
         ...formData,
-        business_id: rootBusinessId,
         date_published: new Date().toISOString()
       });
       setIsCreating(false);
-      setFormData({ author_name: '', rating_value: 5, review_body: '', source_url: '' });
+      setFormData({ author_name: '', rating_value: 5, review_body: '', publisher_url: '', publisher_name: '' });
       loadData();
     } catch (err: any) {
       alert("Failed to save review. " + err.message);
@@ -64,9 +65,21 @@ export default function ReviewsPage() {
 
   const handleDelete = async (id: string) => {
     if (confirm("Delete this review?")) {
-      await deleteReview(id);
-      loadData();
+      try {
+        await deleteReview(id);
+        loadData();
+      } catch (err: any) {
+        alert("Failed to delete review: " + err.message);
+      }
     }
+  };
+
+  const getAllReviewsContent = () => {
+    if (reviews.length === 0) return "";
+    return reviews.map(r => `
+      Review by ${r.author_name} (${r.rating_value}/5):
+      "${r.review_body}"
+    `).join('\n---\n');
   };
 
   if (loading) return <div className="flex justify-center p-12"><Loader2 className="animate-spin text-slate-400" /></div>;
@@ -78,9 +91,18 @@ export default function ReviewsPage() {
           <h1 className="text-3xl font-bold tracking-tight">Reviews</h1>
           <p className="text-slate-500 mt-2">Manage customer testimonials for social proof and Schema.org.</p>
         </div>
-        <Button onClick={() => setIsCreating(!isCreating)}>
-          {isCreating ? 'Cancel' : <><Plus className="h-4 w-4 mr-2" /> Add Review</>}
-        </Button>
+        <div className="flex gap-2">
+           {rootBusinessId && reviews.length > 0 && (
+              <EntityGenerator 
+                 getContent={getAllReviewsContent} 
+                 businessId={rootBusinessId} 
+                 sourceName="Customer Reviews" 
+              />
+           )}
+           <Button onClick={() => setIsCreating(!isCreating)}>
+            {isCreating ? 'Cancel' : <><Plus className="h-4 w-4 mr-2" /> Add Review</>}
+           </Button>
+        </div>
       </div>
 
       {isCreating && (
@@ -118,14 +140,26 @@ export default function ReviewsPage() {
                 placeholder="Great service..."
               />
             </div>
-            <div className="space-y-2">
-              <Label>Source URL (Optional)</Label>
-              <Input 
-                value={formData.source_url} 
-                onChange={e => setFormData({...formData, source_url: e.target.value})} 
-                placeholder="https://google.com/maps/..."
-              />
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Publisher / Source Name</Label>
+                <Input 
+                  value={formData.publisher_name || ''} 
+                  onChange={e => setFormData({...formData, publisher_name: e.target.value})} 
+                  placeholder="e.g. Google Maps, Trustpilot"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Publisher URL</Label>
+                <Input 
+                  value={formData.publisher_url || ''} 
+                  onChange={e => setFormData({...formData, publisher_url: e.target.value})} 
+                  placeholder="https://..."
+                />
+              </div>
             </div>
+
             <div className="flex justify-end">
               <Button type="submit">Save Review</Button>
             </div>
@@ -154,11 +188,14 @@ export default function ReviewsPage() {
                  </Button>
               </div>
               <p className="text-sm text-slate-700 italic mb-3 line-clamp-3">"{review.review_body}"</p>
-              <div className="text-xs text-slate-500 font-medium flex items-center gap-2">
-                 <span>— {review.author_name}</span>
-                 {review.source_url && (
-                   <a href={review.source_url} target="_blank" className="text-blue-400 hover:underline truncate max-w-[150px]">
-                     Source Link
+              <div className="flex justify-between items-end">
+                  <div className="text-xs text-slate-500 font-medium">
+                     <span>— {review.author_name}</span>
+                     {review.publisher_name && <span className="text-slate-400"> on {review.publisher_name}</span>}
+                  </div>
+                  {review.publisher_url && (
+                   <a href={review.publisher_url} target="_blank" className="text-blue-400 hover:text-blue-600">
+                     <LinkIcon className="h-3 w-3" />
                    </a>
                  )}
               </div>

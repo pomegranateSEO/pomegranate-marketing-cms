@@ -4,6 +4,8 @@ import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { supabase, uploadFile } from '../../../lib/supabaseClient';
+import { EntityGenerator } from '../../../components/shared/EntityGenerator';
+import { fetchBusinesses } from '../../../lib/db/businesses';
 
 // Simple interface for file objects from Storage
 interface FileObject {
@@ -27,6 +29,7 @@ export default function DownloadsPage() {
   const [files, setFiles] = useState<FileObject[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [rootBusinessId, setRootBusinessId] = useState<string | null>(null);
 
   const loadFiles = async () => {
     setLoading(true);
@@ -34,6 +37,9 @@ export default function DownloadsPage() {
       const { data, error } = await supabase.storage.from('downloads').list();
       if (error) throw error;
       setFiles(data || []);
+      
+      const businesses = await fetchBusinesses();
+      if (businesses.length > 0) setRootBusinessId(businesses[0].id);
     } catch (err) {
       console.error("Failed to load downloads:", err);
     } finally {
@@ -77,6 +83,10 @@ export default function DownloadsPage() {
     const { data } = supabase.storage.from('downloads').getPublicUrl(fileName);
     return data.publicUrl;
   };
+  
+  const getAllDownloadsContent = () => {
+    return files.map(f => `File: ${f.name} (${f.metadata.mimetype})`).join('\n');
+  };
 
   if (loading) return <div className="flex justify-center p-12"><Loader2 className="animate-spin text-slate-400" /></div>;
 
@@ -89,7 +99,14 @@ export default function DownloadsPage() {
             Manage downloadable resources (PDFs, Whitepapers) stored in the <code>downloads</code> bucket.
           </p>
         </div>
-        <div>
+        <div className="flex gap-2 items-center">
+           {rootBusinessId && files.length > 0 && (
+             <EntityGenerator 
+               getContent={getAllDownloadsContent} 
+               businessId={rootBusinessId} 
+               sourceName="Downloads" 
+             />
+           )}
            <Label htmlFor="file-upload" className={`cursor-pointer inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 ${uploading ? 'opacity-50' : ''}`}>
               {uploading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Plus className="h-4 w-4 mr-2" />}
               {uploading ? 'Uploading...' : 'Upload Resource'}

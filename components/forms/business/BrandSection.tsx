@@ -3,7 +3,7 @@ import { useFormContext } from 'react-hook-form';
 import { Input } from '../../ui/input';
 import { Textarea } from '../../ui/textarea';
 import { Label } from '../../ui/label';
-import { Upload, Sparkles, FileText, CheckCircle2, Loader2 } from 'lucide-react';
+import { Upload, Sparkles, FileText, CheckCircle2, Loader2, AlertTriangle } from 'lucide-react';
 import { analyzeBrandGuidelines } from '../../../lib/ai/gemini';
 import { uploadFile } from '../../../lib/supabaseClient';
 
@@ -11,6 +11,7 @@ export const BrandSection: React.FC = () => {
   const { register, setValue, watch } = useFormContext();
   const [analyzingBrand, setAnalyzingBrand] = useState(false);
   const [analyzedFileName, setAnalyzedFileName] = useState<string | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   
   const globalTheme = watch('global_theme');
   const visualIdentity = watch('global_theme.visual_identity') || {};
@@ -27,32 +28,38 @@ export const BrandSection: React.FC = () => {
 
     setAnalyzingBrand(true);
     setAnalyzedFileName(file.name);
+    setUploadError(null);
 
+    // 1. Attempt Upload (Non-blocking / Fire & Forget)
+    // We catch errors here so they don't stop the AI analysis
+    uploadFile('brand_guidelines', `guidelines_${Date.now()}_${file.name}`, file)
+      .then((url) => console.log("Uploaded Guidelines to:", url))
+      .catch((err) => {
+        console.warn("Storage upload failed (likely RLS), continuing with AI analysis...", err);
+        setUploadError("File could not be saved to cloud storage (Permissions), but AI analysis will proceed.");
+      });
+
+    // 2. Read for AI Analysis
     try {
-      // 1. Upload to Storage
-      const publicUrl = await uploadFile('brand_guidelines', `guidelines_${Date.now()}_${file.name}`, file);
-      console.log("Uploaded Guidelines to:", publicUrl);
-
-      // 2. Read for AI Analysis
       const reader = new FileReader();
       reader.onload = async () => {
         const base64String = (reader.result as string).split(',')[1];
         try {
             const theme = await analyzeBrandGuidelines(base64String, file.type);
             setValue('global_theme', theme);
-            alert(`Analysis Complete! Guidelines uploaded & brand identity extracted.`);
+            // Don't alert success if there's a visible UI state, it disrupts flow.
         } catch (apiError: any) {
             console.error(apiError);
             alert(`AI Analysis Failed: ${apiError.message}`);
+            setAnalyzedFileName(null);
         } finally {
             setAnalyzingBrand(false);
         }
       };
       reader.readAsDataURL(file);
-
     } catch (err: any) {
       console.error(err);
-      alert("Failed to upload or analyze file: " + err.message);
+      alert("Failed to read file: " + err.message);
       setAnalyzingBrand(false);
     }
   };
@@ -65,11 +72,17 @@ export const BrandSection: React.FC = () => {
             <Upload className="h-5 w-5 text-purple-600" />
             Brand DNA
           </h3>
-          <p className="text-xs text-slate-500 mt-1">Upload brand guidelines (PDF/Image) to 'brand_guidelines' bucket & auto-populate fields.</p>
+          <p className="text-xs text-slate-500 mt-1">Upload brand guidelines (PDF/Image) to auto-populate fields.</p>
          </div>
         
         <div className="flex items-center gap-3">
-           {analyzedFileName && !analyzingBrand && (
+           {uploadError && !analyzingBrand && (
+             <div className="flex items-center gap-2 text-xs font-medium text-amber-700 bg-amber-50 px-3 py-1.5 rounded-full border border-amber-200" title={uploadError}>
+               <AlertTriangle className="h-3 w-3" />
+               Storage Failed (See Console)
+             </div>
+           )}
+           {analyzedFileName && !analyzingBrand && !uploadError && (
              <div className="flex items-center gap-2 text-xs font-medium text-green-700 bg-green-50 px-3 py-1.5 rounded-full border border-green-200">
                <CheckCircle2 className="h-3 w-3" />
                Processed: {analyzedFileName}

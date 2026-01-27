@@ -1,12 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
   LayoutDashboard, Building2, MapPin, Briefcase, BookOpen, Settings,
-  FileText, PenTool, Star, Download, Wrench, Layers
+  FileText, PenTool, Star, Download, Wrench, Layers, LogOut,
+  Factory, Users, Award, Megaphone, Image as ImageIcon
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { supabase } from '../../lib/supabaseClient';
 
 export const Sidebar = () => {
+  const [email, setEmail] = useState('User');
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user?.email) setEmail(data.user.email);
+    });
+  }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+  };
+
   const coreNavItems = [
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
     { href: "/admin/businesses", label: "Identity & Brand", icon: Building2 },
@@ -16,9 +30,14 @@ export const Sidebar = () => {
   ];
 
   const contentNavItems = [
+    { href: "/admin/media", label: "Media Library", icon: ImageIcon },
     { href: "/admin/pages", label: "Pages", icon: Layers },
     { href: "/admin/posts", label: "Blog Posts", icon: PenTool },
+    { href: "/admin/industries", label: "Industries", icon: Factory },
+    { href: "/admin/case-studies", label: "Case Studies", icon: Award },
     { href: "/admin/reviews", label: "Reviews", icon: Star },
+    { href: "/admin/associates", label: "Associates / Team", icon: Users },
+    { href: "/admin/cta-blocks", label: "CTA Blocks", icon: Megaphone },
     { href: "/admin/downloads", label: "Downloads", icon: Download },
     { href: "/admin/tools", label: "Free Tools", icon: Wrench },
   ];
@@ -69,9 +88,14 @@ export const Sidebar = () => {
         <NavGroup title="System" items={generationNavItems} />
       </div>
 
-      <div className="p-4 border-t border-slate-800 mt-auto">
-        <div className="text-xs text-slate-500">
-          User: admin@pomegranate.ai
+      <div className="p-4 border-t border-slate-800 mt-auto bg-slate-950">
+        <div className="flex items-center justify-between">
+            <div className="text-xs text-slate-400 truncate max-w-[140px]" title={email}>
+              {email}
+            </div>
+            <button onClick={handleSignOut} className="text-slate-500 hover:text-white transition-colors" title="Sign Out">
+                <LogOut className="h-4 w-4" />
+            </button>
         </div>
       </div>
     </div>

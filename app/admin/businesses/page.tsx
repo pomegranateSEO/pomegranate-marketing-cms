@@ -5,6 +5,7 @@ import { BusinessForm } from '../../../components/forms/BusinessForm';
 import { fetchBusinesses, createBusiness, deleteBusiness, updateBusiness } from '../../../lib/db/businesses';
 import { checkConnection } from '../../../lib/supabaseClient';
 import type { Business } from '../../../lib/types';
+import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 
 export default function BusinessPage() {
   const [businesses, setBusinesses] = useState<Business[]>([]);
@@ -91,6 +92,22 @@ export default function BusinessPage() {
     }
   };
 
+  const getBusinessContent = () => {
+    if (businesses.length === 0) return "";
+    const b = businesses[0];
+    const theme = b.global_theme as any;
+    return `
+      Business Name: ${b.name}
+      Description: ${b.description}
+      Legal Name: ${b.legal_name}
+      Slogan: ${b.slogan}
+      Industry: ${theme?.strategic_positioning || ''}
+      Core Values: ${theme?.core_values?.join(', ') || ''}
+      Founders: ${b.founder_names?.join(', ') || ''}
+      Services: ${b.makes_offer ? JSON.stringify(b.makes_offer) : ''}
+    `;
+  };
+
   // RENDER LOADING
   if (loading) {
      return (
@@ -170,6 +187,13 @@ export default function BusinessPage() {
            </p>
         </div>
         <div className="flex items-center gap-2">
+          {rootBusiness && (
+            <EntityGenerator 
+              getContent={getBusinessContent} 
+              businessId={rootBusiness.id} 
+              sourceName="Business Profile" 
+            />
+          )}
           {saving && (
              <div className="flex items-center gap-2 text-primary font-medium mr-4">
                <Loader2 className="h-4 w-4 animate-spin" /> Saving...

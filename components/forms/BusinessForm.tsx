@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -82,45 +82,78 @@ interface BusinessFormProps {
 const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 export const BusinessForm: React.FC<BusinessFormProps> = ({ initialData, onSubmit, isLoading }) => {
-  // STATE: Social Links (Managed locally, pushed to form on submit)
-  const [socialLinks, setSocialLinks] = useState<string[]>(
-    Array.isArray(initialData?.social_links) ? initialData.social_links as string[] : []
-  );
+  // STATE: Social Links (Managed locally)
+  const [socialLinks, setSocialLinks] = useState<string[]>([]);
 
   // STATE: Opening Hours (Managed locally)
   const [openingHours, setOpeningHours] = useState<OpeningHours[]>(
-    Array.isArray(initialData?.opening_hours) 
-      ? initialData.opening_hours as OpeningHours[]
-      : DAYS_OF_WEEK.map(day => ({ day: day as any, opens: '09:00', closes: '17:00', closed: false }))
+    DAYS_OF_WEEK.map(day => ({ day: day as any, opens: '09:00', closes: '17:00', closed: false }))
   );
 
   const methods = useForm<BusinessFormValues>({
     resolver: zodResolver(businessFormSchema) as any,
     defaultValues: {
-      name: initialData?.name || '',
-      legal_name: initialData?.legal_name || '',
-      slogan: initialData?.slogan || '',
-      description: initialData?.description || '',
-      website_url: initialData?.website_url || '',
-      email: initialData?.email || '',
-      telephone: initialData?.telephone || '',
-      street_address: initialData?.street_address || '',
-      address_locality: initialData?.address_locality || '',
-      address_region: initialData?.address_region || '',
-      postal_code: initialData?.postal_code || '',
-      address_country: initialData?.address_country || 'UK',
-      in_language: initialData?.in_language || 'en-GB',
-      latitude: initialData?.latitude || undefined,
-      longitude: initialData?.longitude || undefined,
-      price_range: initialData?.price_range || '',
-      founding_date: initialData?.founding_date || '',
-      employee_count: initialData?.employee_count || undefined,
-      founder_names: initialData?.founder_names?.join(', ') || '',
-      global_theme: initialData?.global_theme as GlobalTheme || {},
+      name: '',
+      legal_name: '',
+      slogan: '',
+      description: '',
+      website_url: '',
+      email: '',
+      telephone: '',
+      street_address: '',
+      address_locality: '',
+      address_region: '',
+      postal_code: '',
+      address_country: 'UK',
+      in_language: 'en-GB',
+      price_range: '',
+      founding_date: '',
+      founder_names: '',
+      global_theme: {},
     },
   });
 
-  const { handleSubmit } = methods;
+  const { handleSubmit, reset } = methods;
+
+  // Synchronize state and form values when initialData updates (e.g. after load or save)
+  useEffect(() => {
+    if (initialData) {
+      reset({
+        name: initialData.name || '',
+        legal_name: initialData.legal_name || '',
+        slogan: initialData.slogan || '',
+        description: initialData.description || '',
+        website_url: initialData.website_url || '',
+        email: initialData.email || '',
+        telephone: initialData.telephone || '',
+        street_address: initialData.street_address || '',
+        address_locality: initialData.address_locality || '',
+        address_region: initialData.address_region || '',
+        postal_code: initialData.postal_code || '',
+        address_country: initialData.address_country || 'UK',
+        in_language: initialData.in_language || 'en-GB',
+        latitude: initialData.latitude || undefined,
+        longitude: initialData.longitude || undefined,
+        price_range: initialData.price_range || '',
+        founding_date: initialData.founding_date || '',
+        employee_count: initialData.employee_count || undefined,
+        founder_names: initialData.founder_names?.join(', ') || '',
+        global_theme: initialData.global_theme as GlobalTheme || {},
+      });
+
+      if (initialData.social_links && Array.isArray(initialData.social_links)) {
+        setSocialLinks(initialData.social_links as string[]);
+      } else {
+        setSocialLinks([]);
+      }
+
+      if (initialData.opening_hours && Array.isArray(initialData.opening_hours)) {
+        setOpeningHours(initialData.opening_hours as OpeningHours[]);
+      } else {
+        setOpeningHours(DAYS_OF_WEEK.map(day => ({ day: day as any, opens: '09:00', closes: '17:00', closed: false })));
+      }
+    }
+  }, [initialData, reset]);
 
   // HANDLER: Submit
   const onFormSubmit = (values: BusinessFormValues) => {

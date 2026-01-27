@@ -1,0 +1,310 @@
+import React, { useEffect, useState } from 'react';
+import { Users, Plus, Loader2, Edit2, Trash2, Save, ArrowLeft, Upload, Check } from 'lucide-react';
+import { Button } from '../../../components/ui/button';
+import { Input } from '../../../components/ui/input';
+import { Textarea } from '../../../components/ui/textarea';
+import { Label } from '../../../components/ui/label';
+import { fetchAssociates, createAssociate, updateAssociate, deleteAssociate } from '../../../lib/db/associates';
+import { fetchBusinesses } from '../../../lib/db/businesses';
+import type { Associate } from '../../../lib/types';
+import { EntityGenerator } from '../../../components/shared/EntityGenerator';
+import { uploadFile } from '../../../lib/supabaseClient';
+
+export default function AssociatesPage() {
+  const [associates, setAssociates] = useState<Associate[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [rootBusinessId, setRootBusinessId] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+
+  const [formState, setFormState] = useState<Partial<Associate>>({
+    name: '',
+    type: 'person',
+    role: '',
+    bio: '',
+    published: true,
+    profile_image_url: ''
+  });
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      const [assData, busData] = await Promise.all([
+        fetchAssociates(),
+        fetchBusinesses()
+      ]);
+      setAssociates(assData);
+      if (busData.length > 0) setRootBusinessId(busData[0].id);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!rootBusinessId) return alert("No Root Business found.");
+
+    setSaving(true);
+    try {
+      const payload = { ...formState, business_id: rootBusinessId };
+      if (formState.id) {
+        await updateAssociate(formState.id, payload);
+      } else {
+        await createAssociate(payload);
+      }
+      setIsEditing(false);
+      resetForm();
+      loadData();
+    } catch (err: any) {
+      alert("Failed to save associate: " + err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async (id: string, name: string) => {
+    if (confirm(`CAUTION: Are you sure you want to delete "${name}"? \n\nThis action cannot be undone and will remove them from all linked pages.`)) {
+      try {
+        await deleteAssociate(id);
+        loadData();
+      } catch (e: any) {
+        alert("Failed to delete: " + e.message);
+      }
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) { // 2MB
+        alert("File too large. Please use an image under 2MB.");
+        return;
+    }
+
+    setUploading(true);
+    try {
+        const timestamp = Date.now();
+        const cleanFileName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+        const path = `associates/${timestamp}_${cleanFileName}`;
+        
+        const publicUrl = await uploadFile('images', path, file);
+        setFormState(prev => ({ ...prev, profile_image_url: publicUrl }));
+    } catch (err: any) {
+        alert("Upload failed: " + err.message);
+    } finally {
+        setUploading(false);
+    }
+  };
+
+  const startEdit = (ass?: Associate) => {
+    setFormState(ass || { name: '', type: 'person', role: '', bio: '', published: true, profile_image_url: '' });
+    setIsEditing(true);
+  };
+
+  const resetForm = () => {
+    setFormState({ name: '', type: 'person', role: '', bio: '', published: true, profile_image_url: '' });
+  };
+
+  const getContent = () => associates.map(a => `Associate: ${a.name} (${a.role})\n${a.bio}`).join('\n---\n');
+
+  if (loading) return <div className="p-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-slate-400"/></div>;
+
+  if (isEditing) {
+    return (
+      <div className="p-6 max-w-3xl mx-auto">
+        <div className="flex items-center gap-4 mb-6">
+           <Button variant="ghost" onClick={() => setIsEditing(false)}>
+              <ArrowLeft className="h-4 w-4 mr-2" /> Back
+           </Button>
+           <h2 className="text-2xl font-bold">{formState.id ? 'Edit Associate' : 'Add New Associate'}</h2>
+           {rootBusinessId && (
+              <EntityGenerator getContent={() => `Associate: ${formState.name}\n${formState.bio}`} businessId={rootBusinessId} sourceName="Associate" />
+           )}
+        </div>
+
+        <form onSubmit={handleSave} className="space-y-6 bg-white p-6 rounded-lg border shadow-sm">
+           <div className="grid grid-cols-2 gap-4">
+             <div className="space-y-2">
+               <Label>Name</Label>
+               <Input 
+                 value={formState.name} 
+                 onChange={e => setFormState({...formState, name: e.target.value})}
+                 placeholder="e.g. Jane Doe or ACME Corp"
+                 required
+               />
+             </div>
+             <div className="space-y-2">
+               <Label>Type</Label>
+               <select 
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  value={formState.type}
+                  onChange={e => setFormState({...formState, type: e.target.value as any})}
+               >
+                 <option value="person">Person</option>
+                 <option value="organization">Organization</option>
+               </select>
+             </div>
+           </div>
+
+           <div className="space-y-2">
+               <Label>Role / Relationship</Label>
+               <Input 
+                 value={formState.role || ''} 
+                 onChange={e => setFormState({...formState, role: e.target.value})}
+                 placeholder="e.g. Senior Consultant, Partner, Subsidiary"
+               />
+           </div>
+
+           <div className="space-y-2">
+              <Label>Profile Image / Logo</Label>
+              <div className="flex gap-4 items-start">
+                  <div className="flex-1 flex gap-2">
+                      <Input 
+                          value={formState.profile_image_url || ''} 
+                          onChange={e => setFormState({...formState, profile_image_url: e.target.value})}
+                          placeholder="https://..." 
+                      />
+                      <div className="relative">
+                          <Button 
+                              type="button" 
+                              variant="secondary" 
+                              className="whitespace-nowrap w-32"
+                              disabled={uploading}
+                          >
+                             {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4 mr-2" />}
+                             Upload
+                          </Button>
+                          <Input 
+                              type="file" 
+                              accept="image/*" 
+                              className="absolute inset-0 opacity-0 cursor-pointer" 
+                              onChange={handleImageUpload}
+                              disabled={uploading}
+                          />
+                      </div>
+                  </div>
+              </div>
+              {formState.profile_image_url && (
+                  <div className="mt-2 flex items-center gap-2 p-2 border rounded bg-slate-50 w-fit">
+                      <img src={formState.profile_image_url} alt="Preview" className="h-12 w-12 object-cover rounded" />
+                      <span className="text-xs text-green-600 font-medium flex items-center"><Check className="h-3 w-3 mr-1"/> Valid Image</span>
+                  </div>
+              )}
+           </div>
+
+           <div className="space-y-2">
+             <Label>Bio / Description</Label>
+             <Textarea 
+               value={formState.bio || ''} 
+               onChange={e => setFormState({...formState, bio: e.target.value})} 
+               placeholder="Brief biography..."
+               className="h-32"
+             />
+           </div>
+
+           <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                 <Label>Email</Label>
+                 <Input 
+                   value={formState.contact_email || ''} 
+                   onChange={e => setFormState({...formState, contact_email: e.target.value})}
+                 />
+              </div>
+              <div className="space-y-2">
+                 <Label>Website</Label>
+                 <Input 
+                   value={formState.website_url || ''} 
+                   onChange={e => setFormState({...formState, website_url: e.target.value})}
+                 />
+              </div>
+           </div>
+
+           <div className="flex justify-end pt-4 border-t">
+             <Button type="submit" disabled={saving}>
+               {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+               Save Associate
+             </Button>
+           </div>
+        </form>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-6">
+       <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Associates & Team</h1>
+          <p className="text-slate-500 mt-2">Manage team members, partners, and associated organizations.</p>
+        </div>
+        <div className="flex gap-2">
+           {rootBusinessId && associates.length > 0 && (
+              <EntityGenerator 
+                 getContent={getContent} 
+                 businessId={rootBusinessId} 
+                 sourceName="Associates" 
+              />
+           )}
+           <Button onClick={() => startEdit()}>
+             <Plus className="h-4 w-4 mr-2" /> Add Associate
+           </Button>
+        </div>
+      </div>
+
+      {associates.length === 0 ? (
+        <div className="text-center py-12 border-2 border-dashed rounded-lg bg-slate-50">
+          <Users className="h-12 w-12 text-slate-300 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-slate-900">No associates yet</h3>
+          <Button onClick={() => startEdit()}>Add Associate</Button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {associates.map((ass) => (
+             <div key={ass.id} className="bg-white p-5 rounded-lg border shadow-sm flex flex-col justify-between">
+                <div>
+                   <div className="flex justify-between items-start mb-2">
+                      <div className="flex items-center gap-3">
+                         {ass.profile_image_url ? (
+                             <img src={ass.profile_image_url} alt={ass.name} className="w-10 h-10 rounded-full object-cover border" />
+                         ) : (
+                             <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-bold border">
+                                {ass.name.substring(0,2).toUpperCase()}
+                             </div>
+                         )}
+                         <div>
+                            <h3 className="font-bold text-lg text-slate-900 leading-tight">{ass.name}</h3>
+                            <span className="text-[10px] uppercase text-slate-500 font-bold">{ass.type}</span>
+                         </div>
+                      </div>
+                   </div>
+                   <p className="text-sm font-medium text-purple-600 mb-2">{ass.role}</p>
+                   <p className="text-sm text-slate-500 mb-4 line-clamp-3">{ass.bio}</p>
+                </div>
+                <div className="flex justify-end gap-2 pt-4 border-t mt-4">
+                   <Button variant="ghost" size="sm" onClick={() => startEdit(ass)}>
+                      <Edit2 className="h-4 w-4 mr-2" /> Edit
+                   </Button>
+                   <Button 
+                     variant="ghost" 
+                     size="icon" 
+                     onClick={() => handleDelete(ass.id, ass.name)} 
+                     className="text-red-500 hover:bg-red-50"
+                   >
+                      <Trash2 className="h-4 w-4" />
+                   </Button>
+                </div>
+             </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

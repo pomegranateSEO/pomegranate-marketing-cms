@@ -6,8 +6,9 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { Label } from '../ui/label';
-import { Loader2, MapPin } from 'lucide-react';
+import { Loader2, MapPin, Sparkles } from 'lucide-react';
 import type { TargetLocation } from '../../lib/types';
+import { generateLandmarks } from '../../lib/ai/gemini';
 
 // Schema Validation
 const locationFormSchema = z.object({
@@ -35,6 +36,7 @@ interface Props {
 
 export const LocationForm: React.FC<Props> = ({ initialData, businessId, onSubmit, onCancel, isLoading }) => {
   const [geocoding, setGeocoding] = useState(false);
+  const [generatingLandmarks, setGeneratingLandmarks] = useState(false);
 
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<LocationFormValues>({
     resolver: zodResolver(locationFormSchema) as any,
@@ -84,6 +86,30 @@ export const LocationForm: React.FC<Props> = ({ initialData, businessId, onSubmi
       alert("Geocoding failed.");
     } finally {
       setGeocoding(false);
+    }
+  };
+
+  const handleGenerateLandmarks = async () => {
+    const name = watch('name');
+    const region = watch('address_region');
+    
+    if (!name) return alert("Please enter a location name first.");
+
+    setGeneratingLandmarks(true);
+    try {
+      const landmarks = await generateLandmarks(name, region);
+      if (landmarks.length > 0) {
+        const currentText = watch('landmarks_text') || '';
+        const newText = landmarks.join('\n');
+        // If there's already text, append. Otherwise set.
+        setValue('landmarks_text', currentText ? `${currentText}\n${newText}` : newText);
+      } else {
+        alert("No landmarks found.");
+      }
+    } catch (e) {
+      alert("AI Generation failed.");
+    } finally {
+      setGeneratingLandmarks(false);
     }
   };
 
@@ -175,7 +201,20 @@ export const LocationForm: React.FC<Props> = ({ initialData, businessId, onSubmi
 
         {/* Landmarks */}
         <div className="md:col-span-2 space-y-2">
-           <Label htmlFor="landmarks">Key Landmarks (One per line)</Label>
+           <div className="flex justify-between items-center">
+              <Label htmlFor="landmarks">Key Landmarks (One per line)</Label>
+              <Button 
+                type="button" 
+                size="sm" 
+                variant="ghost" 
+                onClick={handleGenerateLandmarks} 
+                disabled={generatingLandmarks}
+                className="text-purple-600 hover:bg-purple-50 h-8"
+              >
+                 {generatingLandmarks ? <Loader2 className="h-3 w-3 animate-spin mr-2" /> : <Sparkles className="h-3 w-3 mr-2" />}
+                 AI Generate Landmarks
+              </Button>
+           </div>
            <Textarea 
              id="landmarks" 
              {...register('landmarks_text')} 

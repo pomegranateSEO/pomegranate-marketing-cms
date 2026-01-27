@@ -151,24 +151,130 @@ export interface KnowledgeEntity {
 
 export interface Review {
   id: string;
-  business_id: string;
+  service_id?: string | null;
+  location_id?: string | null;
   author_name: string;
   rating_value: number; // 1-5
   review_body: string;
   date_published?: string;
-  source_url?: string;
+  publisher_name?: string;
+  publisher_url?: string;
   created_at?: string;
 }
 
 export interface BlogPost {
   id: string;
   business_id: string;
-  title: string;
+  headline: string; // Mapped from UI 'title'
   slug: string;
-  excerpt?: string;
-  content?: string; // Changed from content_html to content
+  seo_meta_desc?: string; // Mapped from UI 'excerpt'
+  content_body?: string; // Mapped from UI 'content'
+  article_body_raw?: string; // Mapped from UI 'content'
   featured_image_url?: string;
   status: 'draft' | 'published' | 'archived';
   created_at?: string;
-  updated_at?: string;
+  last_updated?: string;
+  keywords?: string[];
+  about_external_ids?: string[];
+  mentions_external_ids?: string[];
+}
+
+export interface StaticPage {
+  id: string;
+  business_id: string;
+  page_type: string; // e.g., 'static'
+  title: string;
+  slug: string;
+  content_html?: string; // Mapped from UI 'content'
+  status: 'draft' | 'published';
+  seo_title?: string;
+  seo_meta_desc?: string;
+  created_at?: string;
+  last_updated?: string;
+}
+
+export interface FreeTool {
+  id: string;
+  business_id: string;
+  name: string;
+  slug: string;
+  short_description?: string;
+  long_description?: string;
+  embed_url?: string;
+  download_url?: string;
+  tags?: string[];
+  screenshot_urls?: Json;
+  metadata?: Json;
+  published: boolean;
+  featured: boolean;
+  created_at?: string;
+  last_updated?: string;
+}
+
+export interface Industry {
+  id: string;
+  business_id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  overview_html?: string;
+  icon_url?: string;
+  image_urls?: Json;
+  keywords?: string[];
+  seo_title?: string;
+  seo_meta_desc?: string;
+  created_at?: string;
+  last_updated?: string;
+}
+
+export interface CaseStudy {
+  id: string;
+  business_id: string;
+  title: string;
+  slug: string;
+  summary?: string;
+  body_html?: string;
+  outcome?: Json; // e.g. {"revenue_increase":"20%"}
+  client_name?: string;
+  client_id?: string;
+  related_service_id?: string;
+  related_industry_id?: string;
+  featured_image_url?: string;
+  gallery_urls?: Json;
+  published: boolean;
+  published_at?: string;
+  created_at?: string;
+  last_updated?: string;
+}
+
+export interface Associate {
+  id: string;
+  business_id: string;
+  name: string;
+  type: 'person' | 'organization';
+  role?: string;
+  bio?: string;
+  profile_image_url?: string;
+  contact_email?: string;
+  website_url?: string;
+  social_links?: Json;
+  related_service_ids?: string[];
+  related_case_study_ids?: string[];
+  published: boolean;
+  created_at?: string;
+  last_updated?: string;
+}
+
+export interface CTABlock {
+  id: string;
+  business_id: string;
+  name: string;
+  headline?: string;
+  subheadline?: string;
+  button_text?: string;
+  button_url?: string;
+  bg_image_url?: string;
+  theme_style?: 'primary' | 'dark' | 'light' | 'outline' | 'image';
+  created_at?: string;
+  last_updated?: string;
 }
