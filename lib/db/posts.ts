@@ -16,7 +16,6 @@ export const fetchPosts = async () => {
 
 export const createPost = async (post: any) => {
   // Map UI fields to DB schema
-  // We accept 'any' here to handle the UI state object which might have 'title' and 'content' properties
   const payload = {
     business_id: post.business_id,
     headline: post.title || post.headline, // Map title to headline
@@ -28,6 +27,8 @@ export const createPost = async (post: any) => {
     // Map excerpt to seo_meta_desc
     seo_meta_desc: post.excerpt || post.seo_meta_desc,
     featured_image_url: post.featured_image_url,
+    // Map faqs (JSONB), ensure defaults
+    faqs: post.faqs || []
   };
 
   const { data, error } = await supabase
@@ -54,6 +55,7 @@ export const updatePost = async (id: string, post: any) => {
   }
   if (post.excerpt || post.seo_meta_desc) payload.seo_meta_desc = post.excerpt || post.seo_meta_desc;
   if (post.featured_image_url) payload.featured_image_url = post.featured_image_url;
+  if (post.faqs !== undefined) payload.faqs = post.faqs;
 
   const { data, error } = await supabase
     .from('blog_posts')

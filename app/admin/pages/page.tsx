@@ -8,6 +8,7 @@ import { fetchPages, createPage, updatePage, deletePage } from '../../../lib/db/
 import type { StaticPage } from '../../../lib/types';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 import { VisualContentEditor } from '../../../components/shared/VisualContentEditor';
+import { FAQEditor } from '../../../components/shared/FAQEditor';
 
 const SCHEMA_PAGE_TYPES = [
   "WebPage",
@@ -38,7 +39,8 @@ export default function PagesPage() {
     slug: '',
     content: '',
     status: 'draft',
-    page_type: 'WebPage'
+    page_type: 'WebPage',
+    faqs: [] as { question: string; answer: string }[]
   });
 
   const loadData = async () => {
@@ -76,6 +78,7 @@ export default function PagesPage() {
         page_type: formState.page_type || 'WebPage',
         content_html: formState.content, // Map content to content_html column
         seo_title: formState.title, // Default SEO title to page title
+        faqs: formState.faqs // Maps to 'faqs' jsonb column
       };
 
       if (formState.id) {
@@ -106,13 +109,18 @@ export default function PagesPage() {
 
   const startEdit = (page?: StaticPage) => {
     if (page) {
+      const pageFaqs = Array.isArray(page.faqs) 
+        ? page.faqs as { question: string; answer: string }[] 
+        : [];
+
       setFormState({
         id: page.id,
         title: page.title,
         slug: page.slug,
         content: page.content_html || '', // Load content_html into content field
         status: page.status,
-        page_type: page.page_type || 'WebPage'
+        page_type: page.page_type || 'WebPage',
+        faqs: pageFaqs
       });
     } else {
       resetForm();
@@ -121,11 +129,13 @@ export default function PagesPage() {
   };
 
   const resetForm = () => {
-    setFormState({ id: '', title: '', slug: '', content: '', status: 'draft', page_type: 'WebPage' });
+    setFormState({ 
+      id: '', title: '', slug: '', content: '', status: 'draft', page_type: 'WebPage', faqs: [] 
+    });
   };
 
   // Content for Entity Generator
-  const getPageContent = () => `Page: ${formState.title}\n${formState.content}`;
+  const getPageContent = () => `Page Title: ${formState.title}\n\nContent:\n${formState.content}`;
   const getAllPagesContent = () => pages.map(p => `Page: ${p.title}\n${p.content_html}`).join('\n---\n');
 
   if (loading) return <div className="p-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-slate-400"/></div>;
@@ -142,7 +152,7 @@ export default function PagesPage() {
               <h2 className="text-2xl font-bold">{formState.id ? 'Edit Page' : 'New Page'}</h2>
            </div>
            {rootBusinessId && (
-              <EntityGenerator getContent={getPageContent} businessId={rootBusinessId} sourceName="This Page" />
+              <EntityGenerator getContent={getPageContent} businessId={rootBusinessId} sourceName="Page Content" />
            )}
         </div>
 
@@ -199,6 +209,15 @@ export default function PagesPage() {
                 value={formState.content}
                 onChange={(val) => setFormState({...formState, content: val})}
                 minHeight="min-h-[500px]"
+             />
+           </div>
+
+           {/* FAQ Editor Section */}
+           <div className="pt-2">
+             <FAQEditor 
+               value={formState.faqs}
+               onChange={(faqs) => setFormState({...formState, faqs: faqs})}
+               sourceText={formState.content}
              />
            </div>
 

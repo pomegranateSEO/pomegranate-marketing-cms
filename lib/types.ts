@@ -1,7 +1,11 @@
 
-export interface Json {
-  [key: string]: string | number | boolean | null | Json | Json[];
-}
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[];
 
 export interface OpeningHours {
   day: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
@@ -115,7 +119,7 @@ export interface Service {
   logo_url?: string;
   slogan?: string;
   aggregate_rating?: Json;
-  faq_list?: Json;
+  faqs?: Json;
 }
 
 export interface TargetLocation {
@@ -177,6 +181,7 @@ export interface BlogPost {
   keywords?: string[];
   about_external_ids?: string[];
   mentions_external_ids?: string[];
+  faqs?: Json; // Renamed from faq_list, maps to 'faqs' column
 }
 
 export interface StaticPage {
@@ -191,6 +196,7 @@ export interface StaticPage {
   seo_meta_desc?: string;
   created_at?: string;
   last_updated?: string;
+  faqs?: Json; // Renamed from faq_list, maps to 'faqs' column
 }
 
 export interface FreeTool {

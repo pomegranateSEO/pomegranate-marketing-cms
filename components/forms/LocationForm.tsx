@@ -103,8 +103,9 @@ export const LocationForm: React.FC<Props> = ({ initialData, businessId, onSubmi
         const newText = landmarks.join('\n');
         // If there's already text, append. Otherwise set.
         setValue('landmarks_text', currentText ? `${currentText}\n${newText}` : newText);
+        alert(`Successfully generated ${landmarks.length} landmarks!`);
       } else {
-        alert("No landmarks found.");
+        alert("No landmarks found for this location.");
       }
     } catch (e) {
       alert("AI Generation failed.");
@@ -201,15 +202,15 @@ export const LocationForm: React.FC<Props> = ({ initialData, businessId, onSubmi
 
         {/* Landmarks */}
         <div className="md:col-span-2 space-y-2">
-           <div className="flex justify-between items-center">
-              <Label htmlFor="landmarks">Key Landmarks (One per line)</Label>
+           <div className="flex justify-between items-center bg-purple-50 p-2 rounded-t-md border-b-0 border border-purple-100">
+              <Label htmlFor="landmarks" className="text-purple-900 font-semibold">Key Landmarks (One per line)</Label>
               <Button 
                 type="button" 
                 size="sm" 
-                variant="ghost" 
+                variant="default"
                 onClick={handleGenerateLandmarks} 
                 disabled={generatingLandmarks}
-                className="text-purple-600 hover:bg-purple-50 h-8"
+                className="h-8 bg-purple-600 hover:bg-purple-700 text-white"
               >
                  {generatingLandmarks ? <Loader2 className="h-3 w-3 animate-spin mr-2" /> : <Sparkles className="h-3 w-3 mr-2" />}
                  AI Generate Landmarks
@@ -219,9 +220,9 @@ export const LocationForm: React.FC<Props> = ({ initialData, businessId, onSubmi
              id="landmarks" 
              {...register('landmarks_text')} 
              placeholder="Brixton Market&#10;O2 Academy Brixton&#10;Brockwell Park" 
-             className="min-h-[120px]"
+             className="min-h-[150px] rounded-t-none"
            />
-           <p className="text-xs text-slate-500">These will be rotated into content to prove local relevance.</p>
+           <p className="text-xs text-slate-500">These will be rotated into content to prove local relevance. Use Gemini 3 Flash to generate suggestions.</p>
         </div>
 
       </div>

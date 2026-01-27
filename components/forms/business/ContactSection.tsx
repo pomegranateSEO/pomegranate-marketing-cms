@@ -3,7 +3,7 @@ import { useFormContext } from 'react-hook-form';
 import { Input } from '../../ui/input';
 import { Label } from '../../ui/label';
 import { Button } from '../../ui/button';
-import { LinkIcon, Loader2, Search, Plus, Trash2 } from 'lucide-react';
+import { LinkIcon, Loader2, Search, Plus, Trash2, Globe } from 'lucide-react';
 import { findSocialLinks } from '../../../lib/ai/gemini';
 
 interface Props {
@@ -27,8 +27,8 @@ export const ContactSection: React.FC<Props> = ({ socialLinks, setSocialLinks })
       // Merge new links without duplicates
       const uniqueLinks = [...new Set([...socialLinks, ...links])];
       setSocialLinks(uniqueLinks);
-      if (links.length > 0) alert(`Found ${links.length} new links!`);
-      else alert("No social links found.");
+      if (links.length > 0) alert(`Success! Found ${links.length} social profiles.`);
+      else alert("No social links found using Google Search.");
     } catch (e) {
       alert("AI Search failed to find links.");
     } finally {
@@ -64,22 +64,25 @@ export const ContactSection: React.FC<Props> = ({ socialLinks, setSocialLinks })
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
          <div className="space-y-2">
           <Label htmlFor="website_url">Website URL</Label>
-          <Input id="website_url" {...register('website_url')} />
+          <Input id="website_url" {...register('website_url')} placeholder="https://..." />
         </div>
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" {...register('email')} />
+          <Input id="email" {...register('email')} placeholder="hello@company.com" />
         </div>
         <div className="space-y-2">
           <Label htmlFor="telephone">Telephone</Label>
-          <Input id="telephone" {...register('telephone')} />
+          <Input id="telephone" {...register('telephone')} placeholder="+44 20 ..." />
         </div>
       </div>
       
       {/* Social Links (SameAs) */}
       <div className="space-y-3 pt-4 border-t">
         <div className="flex justify-between items-center">
-          <Label>SameAs / Social Links</Label>
+          <Label className="flex items-center gap-2">
+             <Globe className="h-4 w-4 text-slate-500" />
+             SameAs / Social Links
+          </Label>
           <Button 
             type="button" 
             variant="outline" 
@@ -92,6 +95,9 @@ export const ContactSection: React.FC<Props> = ({ socialLinks, setSocialLinks })
             Auto-Discover Socials
           </Button>
         </div>
+        <p className="text-xs text-slate-500">
+          These URLs populate the <code>sameAs</code> schema field, helping Google understand your digital footprint.
+        </p>
         
         {/* Add New Link */}
         <div className="flex gap-2">
@@ -113,18 +119,18 @@ export const ContactSection: React.FC<Props> = ({ socialLinks, setSocialLinks })
         <div className="space-y-2 mt-3">
           {socialLinks.length === 0 && <p className="text-sm text-slate-400 italic">No social links added.</p>}
           {socialLinks.map((link, idx) => (
-            <div key={idx} className="flex gap-2 items-center">
+            <div key={idx} className="flex gap-2 items-center group">
               <Input 
                 value={link} 
                 onChange={(e) => updateLink(idx, e.target.value)}
-                className="text-sm font-mono text-slate-700 bg-slate-50"
+                className="text-sm font-mono text-slate-700 bg-slate-50 border-transparent focus:bg-white focus:border-input transition-colors"
               />
               <Button 
                 type="button" 
                 variant="ghost" 
                 size="icon" 
                 onClick={() => removeSocial(idx)} 
-                className="text-slate-400 hover:text-red-500 hover:bg-red-50"
+                className="text-slate-400 hover:text-red-500 hover:bg-red-50 opacity-50 group-hover:opacity-100 transition-opacity"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>

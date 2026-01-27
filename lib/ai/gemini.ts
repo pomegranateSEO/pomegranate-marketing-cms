@@ -283,3 +283,46 @@ export const generateLandmarks = async (locationName: string, region?: string): 
     return [];
   }
 };
+
+export const generateFAQs = async (text: string): Promise<{ question: string; answer: string }[]> => {
+  if (!text || text.length < 50) return [];
+
+  const prompt = `
+    You are an expert technical SEO copywriter. Analyze the provided content and generate 3-5 relevant Frequently Asked Questions (FAQs).
+    
+    CRITICAL INSTRUCTIONS:
+    1. **Strict Separation**: The 'question' field must ONLY contain the question. The 'answer' field must ONLY contain the answer. Do NOT mix them.
+    2. **Word Count Rule**: Every 'answer' MUST be strictly between 55 and 90 words long. This is optimized for Google Featured Snippets. Count the words before outputting.
+    3. **Relevance**: Questions must directly relate to the text provided.
+    4. **Tone**: Use a professional, helpful, and authoritative tone.
+    
+    CONTENT TO ANALYZE:
+    "${text.substring(0, 8000)}"
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: { parts: [{ text: prompt }] },
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              question: { type: Type.STRING },
+              answer: { type: Type.STRING },
+            }
+          }
+        }
+      }
+    });
+
+    if (!response.text) return [];
+    return JSON.parse(response.text);
+  } catch (error) {
+    console.error("FAQ Generation Error:", error);
+    return [];
+  }
+};

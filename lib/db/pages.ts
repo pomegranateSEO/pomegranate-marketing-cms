@@ -22,6 +22,8 @@ export const createPage = async (page: Partial<StaticPage>) => {
     page_type: page.page_type || 'static',
     // Map content to content_html if provided
     content_html: page.content_html || '',
+    // Use 'faqs' column, ensure it is a JSON array
+    faqs: page.faqs || []
   };
 
   const { data, error } = await supabase
@@ -35,12 +37,19 @@ export const createPage = async (page: Partial<StaticPage>) => {
 };
 
 export const updatePage = async (id: string, page: Partial<StaticPage>) => {
+  const payload = { 
+    ...page, 
+    last_updated: new Date().toISOString()
+  };
+  
+  // Ensure faqs is valid JSON if present
+  if (payload.faqs === undefined || payload.faqs === null) {
+     delete payload.faqs;
+  }
+
   const { data, error } = await supabase
     .from('pages')
-    .update({ 
-      ...page, 
-      last_updated: new Date().toISOString() 
-    })
+    .update(payload)
     .eq('id', id)
     .select()
     .single();

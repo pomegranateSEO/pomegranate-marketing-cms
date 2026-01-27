@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase, uploadFile } from '../../lib/supabaseClient';
 import { Button } from '../ui/button';
-import { Loader2, Upload, Image as ImageIcon, Check, X, Copy } from 'lucide-react';
+import { Loader2, Upload, Image as ImageIcon, Copy, X } from 'lucide-react';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 
@@ -29,22 +29,56 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
 
   const loadImages = async () => {
     setLoading(true);
+    // Clear current state to avoid confusion
+    setFiles([]); 
+    
     try {
-      // List all files in the 'images' bucket
-      // Note: This lists the root. If you use folders (like logos/), you might need recursive logic later.
-      // For now, we list the root and the common folders we've used.
-      const { data, error } = await supabase.storage.from('images').list('', {
+      // 1. Fetch Root (for direct uploads)
+      const { data: rootFiles } = await supabase.storage.from('images').list('', {
         limit: 100,
-        offset: 0,
         sortBy: { column: 'created_at', order: 'desc' },
       });
 
-      if (error) throw error;
+      // 2. Fetch 'uploads' folder
+      const { data: uploads } = await supabase.storage.from('images').list('uploads', { 
+        limit: 100, sortBy: { column: 'created_at', order: 'desc' } 
+      });
       
-      // Filter for actual images based on mimetype or extension if needed
-      // Supabase .list() returns folders too, filter them out if they don't have metadata
-      const imageFiles = (data || []).filter(f => f.metadata && f.metadata.mimetype?.startsWith('image/'));
-      setFiles(imageFiles as FileObject[]);
+      // 3. Fetch 'logos' folder
+      const { data: logos } = await supabase.storage.from('images').list('logos', { 
+        limit: 100, sortBy: { column: 'created_at', order: 'desc' } 
+      });
+
+      // 4. Fetch 'associates' folder
+      const { data: associates } = await supabase.storage.from('images').list('associates', { 
+        limit: 100, sortBy: { column: 'created_at', order: 'desc' } 
+      });
+
+      // Helper to check if item is a file (has ID and metadata)
+      const isFile = (f: any) => f.id && f.metadata;
+
+      // Map to full paths
+      // Root files have name 'filename.jpg'
+      const mappedRoot = (rootFiles || []).filter(isFile).map(f => ({ ...f, name: f.name }));
+      const mappedUploads = (uploads || []).filter(isFile).map(f => ({ ...f, name: `uploads/${f.name}` }));
+      const mappedLogos = (logos || []).filter(isFile).map(f => ({ ...f, name: `logos/${f.name}` }));
+      const mappedAssociates = (associates || []).filter(isFile).map(f => ({ ...f, name: `associates/${f.name}` }));
+
+      // Combine all
+      const allFiles = [
+        ...mappedRoot,
+        ...mappedUploads,
+        ...mappedLogos,
+        ...mappedAssociates
+      ];
+
+      // Sort combined list by created_at (newest first)
+      allFiles.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+      // Deduplicate by ID (in case a file appears in multiple lists, though unlikely with this structure)
+      const uniqueFiles = Array.from(new Map(allFiles.map(item => [item.id, item])).values());
+
+      setFiles(uniqueFiles as FileObject[]);
 
     } catch (err) {
       console.error("Failed to load images:", err);
@@ -75,6 +109,10 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
       const path = `uploads/${timestamp}_${cleanName}`;
       
       await uploadFile('images', path, file);
+      
+      // Clear file input so the same file can be selected again if needed
+      e.target.value = '';
+      
       await loadImages(); // Refresh list
     } catch (err: any) {
       alert("Upload failed: " + err.message);
@@ -89,24 +127,6 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
   };
 
   const handleImageClick = (file: FileObject) => {
-    // If files are in a subfolder like 'uploads/', .list() at root might return name as 'uploads' (folder)
-    // But our filter above ensures we only have files.
-    // However, .list('') returns items relative to root. 
-    // If we uploaded to 'uploads/xyz', .list('') might just show the folder 'uploads' depending on Supabase version options.
-    // To keep it simple for this phase: We will assume we are listing/uploading to a flat structure or specific known folders.
-    // FIX: The uploadFile function puts things in `uploads/` or `logos/`.
-    // We need to list recursively or list specific folders. 
-    // For this implementation, let's list the `uploads` folder specifically since that's where we put new general media.
-    
-    // Actually, let's adjust the load logic to fetch from 'uploads' folder for the general media library
-    // The previous load logic listed root. Let's fix that in next iteration if needed.
-    // For now, we assume the name returned by list() is the path relative to the search folder.
-    
-    // Let's assume we are viewing the root for simplicity, or we update the load function to look at 'uploads'.
-    // See updated loadImages below in a real app. 
-    // For now, we will construct URL assuming the file.name is the path if listed from root, 
-    // OR if we listed from a folder, we prepend the folder.
-    
     const url = getPublicUrl(file.name); 
     
     if (mode === 'picker' && onSelect) {
@@ -115,48 +135,6 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
       setSelectedFile(url);
     }
   };
-
-  // Improved Load Logic to fetch from multiple common folders
-  const loadAllImages = async () => {
-    setLoading(true);
-    try {
-      // 1. Fetch 'uploads' folder
-      const { data: uploads } = await supabase.storage.from('images').list('uploads', { 
-        limit: 50, sortBy: { column: 'created_at', order: 'desc' } 
-      });
-      
-      // 2. Fetch 'logos' folder
-      const { data: logos } = await supabase.storage.from('images').list('logos', { 
-        limit: 20, sortBy: { column: 'created_at', order: 'desc' } 
-      });
-
-      // 3. Fetch 'associates' folder
-      const { data: associates } = await supabase.storage.from('images').list('associates', { 
-        limit: 20, sortBy: { column: 'created_at', order: 'desc' } 
-      });
-
-      // Map to full paths
-      const allFiles = [
-        ...(uploads || []).map(f => ({ ...f, name: `uploads/${f.name}` })),
-        ...(logos || []).map(f => ({ ...f, name: `logos/${f.name}` })),
-        ...(associates || []).map(f => ({ ...f, name: `associates/${f.name}` })),
-      ].filter(f => f.metadata); // Ensure it's a file
-
-      // Sort combined
-      allFiles.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-
-      setFiles(allFiles as FileObject[]);
-
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadAllImages();
-  }, []);
 
   return (
     <div className="bg-white rounded-lg border shadow-sm flex flex-col h-[600px]">
@@ -201,7 +179,7 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
           ) : files.length === 0 ? (
             <div className="text-center py-20 text-slate-400 border-2 border-dashed rounded-lg">
               <ImageIcon className="h-12 w-12 mx-auto mb-2 opacity-20" />
-              <p>No images found.</p>
+              <p>No images found in storage.</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">

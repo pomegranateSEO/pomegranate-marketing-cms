@@ -10,6 +10,7 @@ import type { BlogPost } from '../../../lib/types';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 import { VisualContentEditor } from '../../../components/shared/VisualContentEditor';
 import { MediaManager } from '../../../components/shared/MediaManager';
+import { FAQEditor } from '../../../components/shared/FAQEditor';
 
 export default function PostsPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -29,7 +30,8 @@ export default function PostsPage() {
     content: '', // maps to content_body
     excerpt: '', // maps to seo_meta_desc
     featured_image_url: '',
-    status: 'draft'
+    status: 'draft',
+    faqs: [] as { question: string; answer: string }[]
   });
 
   const loadData = async () => {
@@ -60,8 +62,6 @@ export default function PostsPage() {
 
     setSaving(true);
     try {
-      // The updatePost/createPost functions in lib/db/posts.ts handle the mapping from this UI object
-      // to the DB columns (title->headline, content->content_body, excerpt->seo_meta_desc)
       const payload = {
         id: formState.id,
         business_id: rootBusinessId,
@@ -70,7 +70,8 @@ export default function PostsPage() {
         content: formState.content,
         excerpt: formState.excerpt,
         featured_image_url: formState.featured_image_url,
-        status: formState.status
+        status: formState.status,
+        faqs: formState.faqs
       };
 
       if (formState.id) {
@@ -101,6 +102,10 @@ export default function PostsPage() {
 
   const startEdit = (post?: BlogPost) => {
     if (post) {
+      const postFaqs = Array.isArray(post.faqs) 
+        ? post.faqs as { question: string; answer: string }[] 
+        : [];
+
       setFormState({
         id: post.id,
         title: post.headline, // map DB headline to UI title
@@ -108,7 +113,8 @@ export default function PostsPage() {
         content: post.content_body || post.article_body_raw || '', // map DB content_body to UI content
         excerpt: post.seo_meta_desc || '', // map DB seo_meta_desc to UI excerpt
         featured_image_url: post.featured_image_url || '',
-        status: post.status
+        status: post.status,
+        faqs: postFaqs
       });
     } else {
       resetForm();
@@ -117,7 +123,7 @@ export default function PostsPage() {
   };
 
   const resetForm = () => {
-    setFormState({ id: '', title: '', slug: '', content: '', excerpt: '', featured_image_url: '', status: 'draft' });
+    setFormState({ id: '', title: '', slug: '', content: '', excerpt: '', featured_image_url: '', status: 'draft', faqs: [] });
   };
 
   const handleImageSelect = (url: string) => {
@@ -127,7 +133,7 @@ export default function PostsPage() {
 
   // Content for SINGLE post entity generation
   const getPostContent = () => {
-    return `Title: ${formState.title}\nExcerpt: ${formState.excerpt}\nContent: ${formState.content}`;
+    return `Title: ${formState.title}\nExcerpt: ${formState.excerpt}\nBody Content:\n${formState.content}`;
   };
 
   // Content for BULK entity generation
@@ -169,7 +175,7 @@ export default function PostsPage() {
               <h2 className="text-2xl font-bold">{formState.id ? 'Edit Post' : 'New Blog Post'}</h2>
            </div>
            {rootBusinessId && (
-              <EntityGenerator getContent={getPostContent} businessId={rootBusinessId} sourceName="This Post" />
+              <EntityGenerator getContent={getPostContent} businessId={rootBusinessId} sourceName="Body Content" />
            )}
         </div>
 
@@ -266,6 +272,15 @@ export default function PostsPage() {
               minHeight="min-h-[600px]"
             />
           </div>
+
+          {/* FAQ Editor Section */}
+           <div className="pt-2">
+             <FAQEditor 
+               value={formState.faqs}
+               onChange={(faqs) => setFormState({...formState, faqs: faqs})}
+               sourceText={formState.content}
+             />
+           </div>
           
           <div className="flex justify-end gap-3 pt-4 border-t">
              <Button type="button" variant="ghost" onClick={() => setIsEditing(false)}>Cancel</Button>
