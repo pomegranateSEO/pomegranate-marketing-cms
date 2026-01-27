@@ -1,0 +1,7 @@
+{
+  "name": "Pomegranate pSEO v2",
+  "description": "Production-grade, knowledge-graph-first CMS for Programmatic SEO built with React, Supabase, and Gemini.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
