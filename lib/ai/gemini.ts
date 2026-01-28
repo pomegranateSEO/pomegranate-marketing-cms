@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { GlobalTheme } from "../types";
 
@@ -8,8 +9,7 @@ export const analyzeBrandGuidelines = async (
   fileBase64: string, 
   mimeType: string
 ): Promise<GlobalTheme> => {
-  
-  // Validate MIME type
+  // ... (Existing implementation)
   const supportedMimeTypes = [
     'application/pdf',
     'image/png', 'image/jpeg', 'image/webp', 'image/heic', 'image/heif'
@@ -27,12 +27,9 @@ export const analyzeBrandGuidelines = async (
     You are a Brand Strategy Expert. Analyze the attached Brand Guidelines document.
     Extract the core brand identity elements into the following strict JSON structure.
     
-    If specific fields are not explicitly found, infer them based on the tone and visual style of the document.
-    
     IMPORTANT RULES:
-    1. Extract exactly 5 key colors for the palette.
-    2. USE BRITISH ENGLISH SPELLING AND GRAMMAR for all generated content (e.g. 'colour', 'emphasise', 'centre', 'programme', 'realise'). 
-       Do not use American spellings.
+    1. Extract exactly 5 key colors.
+    2. USE BRITISH ENGLISH.
     
     Fields to extract:
     1. Brand Essence (Mission/Vision)
@@ -107,15 +104,13 @@ export const analyzeBrandGuidelines = async (
     if (error.status === 429) {
       throw new Error("Gemini API Quota Exceeded. Please try again in a minute.");
     }
-    // Handle 400 Invalid Argument (often file size or structure issues)
     if (error.message && error.message.includes("400")) {
-         throw new Error("AI Request Failed (400): The file might be too large or the format is incompatible. Try converting to a standard Image/PDF or reducing size.");
+         throw new Error("AI Request Failed (400): The file might be too large or the format is incompatible.");
     }
     throw new Error(`Failed to analyze brand guidelines: ${error.message}`);
   }
 };
 
-// Find Social Links using Google Search Grounding
 export const findSocialLinks = async (businessName: string, location?: string): Promise<string[]> => {
   const query = `Find the official social media profiles for "${businessName}" located in "${location || ''}". Look for Twitter, LinkedIn, Facebook, Instagram, and YouTube.`;
   
@@ -129,8 +124,6 @@ export const findSocialLinks = async (businessName: string, location?: string): 
     });
 
     const links = new Set<string>();
-
-    // 1. Extract from Grounding Chunks (Source of Truth)
     const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
     if (chunks) {
       chunks.forEach((chunk: any) => {
@@ -140,8 +133,6 @@ export const findSocialLinks = async (businessName: string, location?: string): 
         }
       });
     }
-
-    // 2. Fallback: Extract from text (if the model mentions them in the answer)
     if (response.text) {
       const urlRegex = /(https?:\/\/[^\s]+)/g;
       const matches = response.text.match(urlRegex);
@@ -151,9 +142,7 @@ export const findSocialLinks = async (businessName: string, location?: string): 
         });
       }
     }
-
     return Array.from(links);
-
   } catch (error) {
     console.error("Gemini Social Search Error:", error);
     return [];
@@ -176,13 +165,13 @@ export const extractEntities = async (text: string): Promise<ExtractedEntity[]> 
   if (!text || text.length < 20) return [];
 
   const prompt = `
-    Analyze the following text and extract key knowledge entities (People, Organizations, Places, Concepts) that would be valuable for a Semantic Knowledge Graph.
+    Analyze the following text and extract key knowledge entities (People, Organizations, Places, Concepts).
     
     For each entity:
-    1. Provide a canonical Name.
-    2. Provide a brief description (max 1 sentence).
-    3. Categorize it (e.g. Person, Organization, Place, Service, Concept).
-    4. If you are >90% confident of the Wikipedia URL, include it. Otherwise leave it null.
+    1. Canonical Name.
+    2. Brief description (max 1 sentence).
+    3. Categorize (e.g. Person, Organization, Place, Service, Concept).
+    4. If >90% confident of the Wikipedia URL, include it. Otherwise null.
     
     TEXT TO ANALYZE:
     "${text.substring(0, 8000)}"
@@ -224,9 +213,7 @@ export const extractEntities = async (text: string): Promise<ExtractedEntity[]> 
 export const suggestSubLocations = async (locationName: string, region?: string): Promise<string[]> => {
   const prompt = `
     Identify the immediate sub-locations (boroughs, districts, or major neighbourhoods) within the location: "${locationName}" ${region ? `(${region})` : ''}.
-    
-    Return ONLY a raw JSON array of strings. No markdown formatting.
-    Example: ["Manhattan", "Brooklyn", "Queens", "Bronx", "Staten Island"]
+    Return ONLY a raw JSON array of strings.
   `;
 
   try {
@@ -255,15 +242,12 @@ export const suggestSubLocations = async (locationName: string, region?: string)
 export const generateLandmarks = async (locationName: string, region?: string): Promise<string[]> => {
   const prompt = `
     List 10 distinct, popular landmarks, points of interest, or significant locations in: "${locationName}" ${region ? `(${region})` : ''}.
-    Focus on places that show local knowledge (parks, statues, historic buildings, major intersections, markets).
-    
-    Return ONLY a raw JSON array of strings. No descriptions.
-    Example: ["Big Ben", "Hyde Park", "The Shard"]
+    Return ONLY a raw JSON array of strings.
   `;
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview", // Flash model for speed/landmarks
+      model: "gemini-3-flash-preview",
       contents: { parts: [{ text: prompt }] },
       config: {
         responseMimeType: "application/json",
@@ -288,13 +272,8 @@ export const generateFAQs = async (text: string): Promise<{ question: string; an
   if (!text || text.length < 50) return [];
 
   const prompt = `
-    You are an expert technical SEO copywriter. Analyze the provided content and generate 3-5 relevant Frequently Asked Questions (FAQs).
-    
-    CRITICAL INSTRUCTIONS:
-    1. **Strict Separation**: The 'question' field must ONLY contain the question. The 'answer' field must ONLY contain the answer. Do NOT mix them.
-    2. **Word Count Rule**: Every 'answer' MUST be strictly between 55 and 90 words long. This is optimized for Google Featured Snippets. Count the words before outputting.
-    3. **Relevance**: Questions must directly relate to the text provided.
-    4. **Tone**: Use a professional, helpful, and authoritative tone.
+    Analyze the provided content and generate 3-5 relevant FAQs.
+    'answer' MUST be between 55 and 90 words.
     
     CONTENT TO ANALYZE:
     "${text.substring(0, 8000)}"
@@ -323,6 +302,138 @@ export const generateFAQs = async (text: string): Promise<{ question: string; an
     return JSON.parse(response.text);
   } catch (error) {
     console.error("FAQ Generation Error:", error);
+    return [];
+  }
+};
+
+// --- WRITING ASSISTANT FUNCTIONS ---
+
+interface WritingContext {
+  keyword?: string;
+  fieldName: string;
+  brandTheme?: GlobalTheme | null;
+  existingText?: string;
+}
+
+export const generateDraftContent = async (ctx: WritingContext): Promise<string> => {
+  const brandVoice = ctx.brandTheme ? `
+    Brand Personality: ${ctx.brandTheme.personality}
+    Tone: ${ctx.brandTheme.voice_and_tone.description}
+    Do Not Say: ${ctx.brandTheme.voice_and_tone.dont_say?.join(', ')}
+  ` : "Tone: Professional and Authoritative";
+
+  const isRichText = ctx.fieldName.toLowerCase().includes('content') || ctx.fieldName.toLowerCase().includes('body');
+
+  const prompt = `
+    You are a professional copywriter for a business.
+    Write content for the field: "${ctx.fieldName}".
+    Target Keyword: "${ctx.keyword || 'General'}"
+    
+    ${brandVoice}
+    
+    Instructions:
+    - Write specifically for the "${ctx.fieldName}" context.
+    - If it's a 'Headline' or 'Title', keep it punchy and under 10 words. NO Markdown. Plain text only.
+    - If it's a 'Description', keep it under 160 characters. NO Markdown. Plain text only.
+    - If it's 'Body Content', use markdown headers and short paragraphs.
+    - Integrate the keyword naturally.
+    - Use British English.
+    - **CRITICAL**: Return ONLY the text content. No conversational filler like "Here is the text". No quotes around the text.
+    - **CRITICAL**: Do NOT include any meta-commentary or explanations. Just the final copy.
+    ${!isRichText ? "- **STRICTLY PLAIN TEXT**: Do not use bold (**), italics (*), or headers (#). Plain text only." : ""}
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: { parts: [{ text: prompt }] }
+    });
+    return response.text?.trim() || "";
+  } catch (error) {
+    console.error("Draft Gen Error:", error);
+    throw new Error("Failed to generate draft.");
+  }
+};
+
+export const improveContent = async (ctx: WritingContext): Promise<string> => {
+  const brandVoice = ctx.brandTheme ? `
+    Brand Personality: ${ctx.brandTheme.personality}
+    Tone: ${ctx.brandTheme.voice_and_tone.description}
+  ` : "";
+
+  const isRichText = ctx.fieldName.toLowerCase().includes('content') || ctx.fieldName.toLowerCase().includes('body');
+
+  const prompt = `
+    Rewrite and improve the following text.
+    
+    ${brandVoice}
+    
+    Goal:
+    - Improve clarity, flow, and impact.
+    - Correct any grammar issues (Use British English).
+    - Ensure the tone matches the brand personality.
+    - If a keyword "${ctx.keyword}" is provided, ensure it is naturally included.
+    - **CRITICAL**: Return ONLY the improved text. No conversational filler.
+    - **CRITICAL**: Do NOT include commentary.
+    ${!isRichText ? "- **STRICTLY PLAIN TEXT**: Remove any markdown formatting." : ""}
+    
+    TEXT TO IMPROVE:
+    "${ctx.existingText}"
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: { parts: [{ text: prompt }] }
+    });
+    return response.text?.trim() || "";
+  } catch (error) {
+    console.error("Improvement Error:", error);
+    throw new Error("Failed to improve content.");
+  }
+};
+
+// --- ENTITY MATCHING ---
+
+export const matchEntities = async (content: string, allEntities: {id: string, name: string, description?: string}[]): Promise<string[]> => {
+  if (!content || content.length < 50 || allEntities.length === 0) return [];
+
+  // Simplify entities to save tokens
+  const simplifiedEntities = allEntities.map(e => ({ id: e.id, name: e.name, desc: e.description?.substring(0, 50) }));
+
+  const prompt = `
+    I have a piece of content and a list of Knowledge Graph entities.
+    Identify which entities are explicitly mentioned or strongly relevant to the content.
+    
+    Content:
+    "${content.substring(0, 5000)}..."
+    
+    Entities List (JSON):
+    ${JSON.stringify(simplifiedEntities)}
+    
+    Return ONLY a raw JSON array of the matching Entity IDs strings.
+    Example: ["uuid-1", "uuid-2"]
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: { parts: [{ text: prompt }] },
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.ARRAY,
+          items: { type: Type.STRING }
+        }
+      }
+    });
+    
+    if (response.text) {
+      return JSON.parse(response.text);
+    }
+    return [];
+  } catch (error) {
+    console.error("Entity matching failed:", error);
     return [];
   }
 };

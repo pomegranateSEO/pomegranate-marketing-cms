@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '../ui/button';
 import { Loader2 } from 'lucide-react';
-import type { Business, GlobalTheme, OpeningHours } from '../../lib/types';
+import type { Business, GlobalTheme } from '../../lib/types';
 import { businessFormSchema, BusinessFormValues } from '../../lib/schemas/business-schema';
 
 // Import Sub-Components
@@ -21,17 +22,14 @@ interface BusinessFormProps {
 
 const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
+const DEFAULT_HOURS = DAYS_OF_WEEK.map(day => ({ 
+  day: day as any, 
+  opens: '09:00', 
+  closes: '17:00', 
+  closed: false 
+}));
+
 export const BusinessForm: React.FC<BusinessFormProps> = ({ initialData, onSubmit, isLoading }) => {
-  // STATE: Social Links (Managed locally)
-  const [socialLinks, setSocialLinks] = useState<string[]>([]);
-
-  // STATE: Opening Hours (Managed locally)
-  const [openingHours, setOpeningHours] = useState<OpeningHours[]>(
-    DAYS_OF_WEEK.map(day => ({ day: day as any, opens: '09:00', closes: '17:00', closed: false }))
-  );
-
-  // We cast resolver to any to avoid strict type mismatch between Zod's input/output types and RHF's expectation.
-  // Zod default values make fields optional in input but required in output, which can confuse RHF typing.
   const methods = useForm<BusinessFormValues>({
     resolver: zodResolver(businessFormSchema) as any,
     defaultValues: {
@@ -53,12 +51,14 @@ export const BusinessForm: React.FC<BusinessFormProps> = ({ initialData, onSubmi
       founding_date: '',
       founder_names: '',
       global_theme: {},
+      // Complex objects initialized here
+      social_links: [],
+      opening_hours: DEFAULT_HOURS
     },
   });
 
   const { handleSubmit, reset } = methods;
 
-  // Synchronize state and form values when initialData updates
   useEffect(() => {
     if (initialData) {
       reset({
@@ -83,23 +83,14 @@ export const BusinessForm: React.FC<BusinessFormProps> = ({ initialData, onSubmi
         employee_count: initialData.employee_count || undefined,
         founder_names: initialData.founder_names?.join(', ') || '',
         global_theme: initialData.global_theme as GlobalTheme || {},
+        social_links: (initialData.social_links as string[]) || [],
+        opening_hours: (initialData.opening_hours as any[]) || DEFAULT_HOURS,
+        rating_value: initialData.rating_value || undefined,
+        review_count: initialData.review_count || undefined,
       });
-
-      if (initialData.social_links && Array.isArray(initialData.social_links)) {
-        setSocialLinks(initialData.social_links as string[]);
-      } else {
-        setSocialLinks([]);
-      }
-
-      if (initialData.opening_hours && Array.isArray(initialData.opening_hours)) {
-        setOpeningHours(initialData.opening_hours as OpeningHours[]);
-      } else {
-        setOpeningHours(DAYS_OF_WEEK.map(day => ({ day: day as any, opens: '09:00', closes: '17:00', closed: false })));
-      }
     }
   }, [initialData, reset]);
 
-  // HANDLER: Submit
   const onFormSubmit = (values: BusinessFormValues) => {
     const founders = values.founder_names 
       ? values.founder_names.split(',').map(s => s.trim()).filter(s => s.length > 0)
@@ -107,12 +98,12 @@ export const BusinessForm: React.FC<BusinessFormProps> = ({ initialData, onSubmi
 
     const submissionData = {
       ...values,
-      social_links: socialLinks,
-      opening_hours: openingHours,
       founder_names: founders.length > 0 ? founders : null,
       employee_count: values.employee_count ?? null,
       latitude: values.latitude ?? null,
       longitude: values.longitude ?? null,
+      rating_value: values.rating_value ?? null,
+      review_count: values.review_count ?? null,
     };
     
     onSubmit(submissionData);
@@ -124,8 +115,8 @@ export const BusinessForm: React.FC<BusinessFormProps> = ({ initialData, onSubmi
         <IdentitySection />
         <BrandSection />
         <LocationSection />
-        <OpeningHoursSection hours={openingHours} onChange={setOpeningHours} />
-        <ContactSection socialLinks={socialLinks} setSocialLinks={setSocialLinks} />
+        <OpeningHoursSection />
+        <ContactSection />
 
         <div className="flex justify-end pt-6">
           <Button type="submit" disabled={isLoading} className="w-full md:w-auto h-12 text-lg">

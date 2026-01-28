@@ -1,3 +1,4 @@
+
 import { supabase } from '../supabaseClient';
 import type { Business } from '../types';
 
@@ -56,7 +57,6 @@ export const deleteBusiness = async (id: string) => {
 
     if (serviceIds.length > 0) {
       // Attempt to delete generated pages associated with these services
-      // We use try/catch here because pseo_page_instances might not exist in early schema versions
       try {
         await supabase.from('pseo_page_instances').delete().in('service_id', serviceIds);
       } catch (e) {
@@ -64,12 +64,14 @@ export const deleteBusiness = async (id: string) => {
       }
     }
 
-    // 2. Delete Knowledge Entities (Wiki/Data links)
+    // 2. Delete Knowledge Entities (Wiki/Data links) - NEW TABLE NAME
     const { error: keError } = await supabase
-      .from('knowledge_entities')
+      .from('knowledge_graph_entities')
       .delete()
       .eq('business_id', id);
-    if (keError && keError.code !== '42P01') { // Ignore "undefined table" error
+    
+    // Ignore undefined table if migration hasn't run yet, but log others
+    if (keError && keError.code !== '42P01') { 
        console.error("Error deleting knowledge entities:", keError);
     }
 

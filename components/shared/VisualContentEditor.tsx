@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Textarea } from '../ui/textarea';
 import { Button } from '../ui/button';
@@ -11,17 +12,24 @@ import { fetchCTABlocks } from '../../lib/db/cta-blocks';
 import { fetchCaseStudies } from '../../lib/db/case-studies';
 import { fetchAssociates } from '../../lib/db/associates';
 import { supabase } from '../../lib/supabaseClient';
+import { AITextGenerator } from './AITextGenerator';
+import { GlobalTheme } from '../../lib/types';
 
 interface Props {
   value: string;
   onChange: (val: string) => void;
   placeholder?: string;
   minHeight?: string;
+  brandTheme?: GlobalTheme | null;
+  keyword?: string;
 }
 
 type CompartmentType = 'reviews' | 'tool' | 'download' | 'cta' | 'case_study' | 'associates' | 'blog_posts' | null;
 
-export const VisualContentEditor: React.FC<Props> = ({ value, onChange, placeholder, minHeight = "min-h-[400px]" }) => {
+export const VisualContentEditor: React.FC<Props> = ({ 
+  value, onChange, placeholder, minHeight = "min-h-[400px]",
+  brandTheme, keyword 
+}) => {
   const [activeCompartment, setActiveCompartment] = useState<CompartmentType>(null);
   
   // Data for selectors
@@ -100,9 +108,9 @@ export const VisualContentEditor: React.FC<Props> = ({ value, onChange, placehol
   };
 
   return (
-    <div className="border rounded-md bg-white shadow-sm overflow-hidden">
+    <div className="border rounded-md bg-white shadow-sm overflow-hidden relative">
       {/* Toolbar */}
-      <div className="flex items-center gap-2 p-2 border-b bg-slate-50 overflow-x-auto whitespace-nowrap">
+      <div className="flex items-center gap-2 p-2 border-b bg-slate-50 overflow-x-auto whitespace-nowrap pr-12">
         <span className="text-xs font-bold text-slate-400 uppercase tracking-wider px-2">Insert:</span>
         
         <Button type="button" variant="ghost" size="sm" onClick={() => setActiveCompartment('cta')} className="text-slate-600 hover:text-purple-600 hover:bg-purple-50">
@@ -132,6 +140,17 @@ export const VisualContentEditor: React.FC<Props> = ({ value, onChange, placehol
         <Button type="button" variant="ghost" size="sm" onClick={() => setActiveCompartment('blog_posts')} className="text-slate-600 hover:text-orange-600 hover:bg-orange-50">
           <PenTool className="h-4 w-4 mr-2" /> Latest Posts
         </Button>
+      </div>
+
+      {/* AI Button floating or integrated */}
+      <div className="absolute top-2 right-2">
+         <AITextGenerator 
+            onGenerate={(txt) => onChange(txt)} 
+            fieldName="Body Content" 
+            currentValue={value} 
+            keyword={keyword}
+            brandTheme={brandTheme}
+         />
       </div>
 
       {/* Configuration Panel */}

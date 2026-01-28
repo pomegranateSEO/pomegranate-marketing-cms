@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Factory, Plus, Loader2, Edit2, Trash2, Save, ArrowLeft } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
@@ -6,15 +7,16 @@ import { Textarea } from '../../../components/ui/textarea';
 import { Label } from '../../../components/ui/label';
 import { fetchIndustries, createIndustry, updateIndustry, deleteIndustry } from '../../../lib/db/industries';
 import { fetchBusinesses } from '../../../lib/db/businesses';
-import type { Industry } from '../../../lib/types';
+import type { Industry, Business, GlobalTheme } from '../../../lib/types';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 import { VisualContentEditor } from '../../../components/shared/VisualContentEditor';
+import { AITextGenerator } from '../../../components/shared/AITextGenerator';
 
 export default function IndustriesPage() {
   const [industries, setIndustries] = useState<Industry[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const [rootBusinessId, setRootBusinessId] = useState<string | null>(null);
+  const [rootBusiness, setRootBusiness] = useState<Business | null>(null);
   const [saving, setSaving] = useState(false);
 
   const [formState, setFormState] = useState<Partial<Industry>>({
@@ -36,7 +38,7 @@ export default function IndustriesPage() {
         fetchBusinesses()
       ]);
       setIndustries(indData);
-      if (busData.length > 0) setRootBusinessId(busData[0].id);
+      if (busData.length > 0) setRootBusiness(busData[0]);
     } catch (err) {
       console.error(err);
     } finally {
@@ -58,11 +60,11 @@ export default function IndustriesPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!rootBusinessId) return alert("No Root Business found.");
+    if (!rootBusiness) return alert("No Root Business found.");
 
     setSaving(true);
     try {
-      const payload = { ...formState, business_id: rootBusinessId };
+      const payload = { ...formState, business_id: rootBusiness.id };
       if (formState.id) {
         await updateIndustry(formState.id, payload);
       } else {
@@ -100,6 +102,8 @@ export default function IndustriesPage() {
   if (loading) return <div className="p-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-slate-400"/></div>;
 
   if (isEditing) {
+    const brandTheme = rootBusiness?.global_theme as GlobalTheme;
+
     return (
       <div className="p-6 max-w-3xl mx-auto">
         <div className="flex items-center gap-4 mb-6">
@@ -107,8 +111,8 @@ export default function IndustriesPage() {
               <ArrowLeft className="h-4 w-4 mr-2" /> Back
            </Button>
            <h2 className="text-2xl font-bold">{formState.id ? 'Edit Industry' : 'Add New Industry'}</h2>
-           {rootBusinessId && (
-              <EntityGenerator getContent={() => `Industry: ${formState.name}\n${formState.overview_html}`} businessId={rootBusinessId} sourceName="Industry" />
+           {rootBusiness && (
+              <EntityGenerator getContent={() => `Industry: ${formState.name}\n${formState.overview_html}`} businessId={rootBusiness.id} sourceName="Industry" />
            )}
         </div>
 
@@ -135,7 +139,16 @@ export default function IndustriesPage() {
            </div>
 
            <div className="space-y-2">
-             <Label>Short Description</Label>
+             <div className="flex justify-between">
+                <Label>Short Description</Label>
+                <AITextGenerator 
+                  onGenerate={t => setFormState({...formState, description: t})}
+                  fieldName="Industry Description"
+                  keyword={formState.name}
+                  currentValue={formState.description}
+                  brandTheme={brandTheme}
+                />
+             </div>
              <Textarea 
                value={formState.description || ''} 
                onChange={e => setFormState({...formState, description: e.target.value})} 
@@ -150,6 +163,8 @@ export default function IndustriesPage() {
                onChange={val => setFormState({...formState, overview_html: val})}
                minHeight="min-h-[300px]"
                placeholder="# Industry Overview..."
+               brandTheme={brandTheme}
+               keyword={formState.name}
              />
            </div>
 
@@ -172,10 +187,10 @@ export default function IndustriesPage() {
           <p className="text-slate-500 mt-2">Define target verticals for service pages and case studies.</p>
         </div>
         <div className="flex gap-2">
-           {rootBusinessId && industries.length > 0 && (
+           {rootBusiness && industries.length > 0 && (
               <EntityGenerator 
                  getContent={getIndustriesContent} 
-                 businessId={rootBusinessId} 
+                 businessId={rootBusiness.id} 
                  sourceName="Industries" 
               />
            )}

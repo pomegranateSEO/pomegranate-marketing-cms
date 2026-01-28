@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
@@ -43,7 +44,7 @@ export const Sidebar = () => {
   ];
 
   const generationNavItems = [
-    { href: "/admin/generation", label: "Generation", icon: Settings },
+    { href: "/admin/generation", label: "Batch Generation", icon: Settings },
   ];
 
   const NavGroup = ({ title, items }: { title: string, items: typeof coreNavItems }) => (
@@ -85,7 +86,7 @@ export const Sidebar = () => {
       <div className="flex-1 px-3 overflow-y-auto">
         <NavGroup title="Core Data" items={coreNavItems} />
         <NavGroup title="Content Management" items={contentNavItems} />
-        <NavGroup title="System" items={generationNavItems} />
+        <NavGroup title="Content Building" items={generationNavItems} />
       </div>
 
       <div className="p-4 border-t border-slate-800 mt-auto bg-slate-950">

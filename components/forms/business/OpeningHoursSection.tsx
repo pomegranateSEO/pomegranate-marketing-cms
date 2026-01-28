@@ -1,19 +1,17 @@
+
 import React from 'react';
+import { useFormContext, useFieldArray } from 'react-hook-form';
 import { Input } from '../../ui/input';
 import { Clock } from 'lucide-react';
-import { OpeningHours } from '../../../lib/types';
 
-interface Props {
-  hours: OpeningHours[];
-  onChange: (hours: OpeningHours[]) => void;
-}
-
-export const OpeningHoursSection: React.FC<Props> = ({ hours, onChange }) => {
-  const updateOpeningHour = (index: number, field: keyof OpeningHours, value: any) => {
-    const newHours = [...hours];
-    newHours[index] = { ...newHours[index], [field]: value };
-    onChange(newHours);
-  };
+export const OpeningHoursSection: React.FC = () => {
+  const { control, register } = useFormContext();
+  
+  // Use field array to manage the list of hours efficiently
+  const { fields } = useFieldArray({
+    control,
+    name: "opening_hours"
+  });
 
   return (
     <section className="space-y-4">
@@ -22,36 +20,33 @@ export const OpeningHoursSection: React.FC<Props> = ({ hours, onChange }) => {
         Opening Hours
       </h3>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {hours.map((oh, index) => (
-          <div key={oh.day} className={`p-3 rounded border ${oh.closed ? 'bg-slate-100 opacity-70' : 'bg-white'}`}>
+        {fields.map((field, index) => (
+          <div key={field.id} className="p-3 rounded border bg-white">
             <div className="flex justify-between items-center mb-2">
-              <span className="font-medium text-sm">{oh.day}</span>
+              {/* @ts-ignore - field.day exists on the object but RHF types can be strict */}
+              <span className="font-medium text-sm">{field.day}</span>
               <label className="text-xs flex items-center gap-1 cursor-pointer">
                 <input 
                   type="checkbox" 
-                  checked={oh.closed} 
-                  onChange={(e) => updateOpeningHour(index, 'closed', e.target.checked)} 
+                  {...register(`opening_hours.${index}.closed`)}
                 /> 
                 Closed
               </label>
             </div>
-            {!oh.closed && (
-              <div className="flex gap-2">
+            
+            <div className="flex gap-2">
                 <Input 
                   type="time" 
-                  value={oh.opens} 
-                  onChange={(e) => updateOpeningHour(index, 'opens', e.target.value)}
+                  {...register(`opening_hours.${index}.opens`)}
                   className="h-8 text-xs"
                 />
                 <span className="text-slate-400">-</span>
                 <Input 
                   type="time" 
-                  value={oh.closes} 
-                  onChange={(e) => updateOpeningHour(index, 'closes', e.target.value)}
+                  {...register(`opening_hours.${index}.closes`)}
                   className="h-8 text-xs"
                 />
-              </div>
-            )}
+            </div>
           </div>
         ))}
       </div>

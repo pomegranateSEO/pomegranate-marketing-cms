@@ -1,3 +1,4 @@
+
 import * as z from 'zod';
 
 // Helper for optional numbers from HTML inputs
@@ -5,6 +6,14 @@ export const optionalNumber = z.number()
   .or(z.nan())
   .transform((val) => (Number.isNaN(val) ? undefined : val))
   .optional();
+
+// Opening Hours Schema
+const openingHoursSchema = z.object({
+  day: z.string(),
+  opens: z.string(),
+  closes: z.string(),
+  closed: z.boolean().optional().default(false),
+});
 
 // Schema for Global Theme
 export const globalThemeSchema = z.object({
@@ -58,6 +67,10 @@ export const businessFormSchema = z.object({
   employee_count: optionalNumber,
   founder_names: z.string().optional(),
   global_theme: globalThemeSchema,
+  social_links: z.array(z.string()).optional(),
+  opening_hours: z.array(openingHoursSchema).optional(),
+  rating_value: optionalNumber,
+  review_count: optionalNumber,
 });
 
 export type BusinessFormValues = z.infer<typeof businessFormSchema>;

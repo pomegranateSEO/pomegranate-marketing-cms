@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Wrench, Plus, Loader2, Edit2, Trash2, Save, ArrowLeft, ExternalLink } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
@@ -6,11 +7,12 @@ import { Label } from '../../../components/ui/label';
 import { Textarea } from '../../../components/ui/textarea';
 import { fetchBusinesses } from '../../../lib/db/businesses';
 import { fetchTools, createTool, updateTool, deleteTool } from '../../../lib/db/tools';
-import type { FreeTool } from '../../../lib/types';
+import type { FreeTool, Business, GlobalTheme } from '../../../lib/types';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
+import { AITextGenerator } from '../../../components/shared/AITextGenerator';
 
 export default function ToolsPage() {
-  const [rootBusinessId, setRootBusinessId] = useState<string | null>(null);
+  const [rootBusiness, setRootBusiness] = useState<Business | null>(null);
   const [tools, setTools] = useState<FreeTool[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -39,7 +41,7 @@ export default function ToolsPage() {
         fetchBusinesses()
       ]);
       setTools(toolsData);
-      if (businessesData.length > 0) setRootBusinessId(businessesData[0].id);
+      if (businessesData.length > 0) setRootBusiness(businessesData[0]);
     } catch (err) {
       console.error(err);
     } finally {
@@ -53,13 +55,13 @@ export default function ToolsPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!rootBusinessId) return alert("No Root Business found.");
+    if (!rootBusiness) return alert("No Root Business found.");
 
     setSaving(true);
     try {
       const payload = {
         ...currentTool,
-        business_id: rootBusinessId
+        business_id: rootBusiness.id
       };
 
       if (currentTool.id) {
@@ -135,6 +137,8 @@ export default function ToolsPage() {
   if (loading) return <div className="p-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-slate-400"/></div>;
 
   if (isEditing) {
+    const brandTheme = rootBusiness?.global_theme as GlobalTheme;
+
     return (
       <div className="p-6 max-w-4xl mx-auto">
         <div className="flex items-center gap-4 mb-6">
@@ -167,7 +171,16 @@ export default function ToolsPage() {
            </div>
 
            <div className="space-y-2">
-             <Label>Short Description</Label>
+             <div className="flex justify-between">
+                <Label>Short Description</Label>
+                <AITextGenerator 
+                  onGenerate={t => setCurrentTool({...currentTool, short_description: t})}
+                  fieldName="Short Description"
+                  keyword={currentTool.name}
+                  currentValue={currentTool.short_description}
+                  brandTheme={brandTheme}
+                />
+             </div>
              <Textarea 
                value={currentTool.short_description || ''} 
                onChange={e => setCurrentTool({...currentTool, short_description: e.target.value})} 
@@ -177,7 +190,16 @@ export default function ToolsPage() {
            </div>
 
            <div className="space-y-2">
-             <Label>Full Description / Instructions</Label>
+             <div className="flex justify-between">
+                <Label>Full Description / Instructions</Label>
+                <AITextGenerator 
+                  onGenerate={t => setCurrentTool({...currentTool, long_description: t})}
+                  fieldName="Tool Instructions"
+                  keyword={currentTool.name}
+                  currentValue={currentTool.long_description}
+                  brandTheme={brandTheme}
+                />
+             </div>
              <Textarea 
                value={currentTool.long_description || ''} 
                onChange={e => setCurrentTool({...currentTool, long_description: e.target.value})} 
@@ -263,10 +285,10 @@ export default function ToolsPage() {
           </p>
         </div>
         <div className="flex gap-2">
-           {rootBusinessId && tools.length > 0 && (
+           {rootBusiness && tools.length > 0 && (
               <EntityGenerator 
                  getContent={getToolsContent} 
-                 businessId={rootBusinessId} 
+                 businessId={rootBusiness.id} 
                  sourceName="Tools" 
               />
            )}

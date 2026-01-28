@@ -1,4 +1,5 @@
 
+
 export type Json =
   | string
   | number
@@ -179,9 +180,9 @@ export interface BlogPost {
   created_at?: string;
   last_updated?: string;
   keywords?: string[];
-  about_external_ids?: string[];
-  mentions_external_ids?: string[];
-  faqs?: Json; // Renamed from faq_list, maps to 'faqs' column
+  about_entities?: string[]; // uuid array
+  mentions_entities?: string[]; // uuid array
+  faqs?: Json;
 }
 
 export interface StaticPage {
@@ -196,7 +197,34 @@ export interface StaticPage {
   seo_meta_desc?: string;
   created_at?: string;
   last_updated?: string;
-  faqs?: Json; // Renamed from faq_list, maps to 'faqs' column
+  faqs?: Json;
+  about_entities?: string[]; // uuid array
+  mentions_entities?: string[]; // uuid array
+}
+
+export interface PseoPageInstance {
+  id: string;
+  service_id: string | null;
+  location_id: string | null;
+  url_slug: string;
+  unique_hero?: Json;
+  unique_local_context?: Json;
+  seo_title?: string;
+  seo_meta_desc?: string;
+  schema_json_ld?: Json;
+  published?: boolean;
+  status?: string;
+  created_at?: string;
+  last_updated?: string;
+  unique_process_content?: Json;
+  unique_faqs?: Json;
+  
+  // Standardized Entity References
+  about_external_ids?: string[]; // uuid array
+  mentions_external_ids?: string[]; // uuid array
+  
+  keywords?: string[];
+  image_urls?: string[];
 }
 
 export interface FreeTool {

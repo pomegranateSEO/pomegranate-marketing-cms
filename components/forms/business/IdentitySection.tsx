@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Input } from '../../ui/input';
@@ -149,6 +150,15 @@ export const IdentitySection: React.FC = () => {
          <div className="space-y-2">
            <Label htmlFor="founder_names">Founders (comma separated)</Label>
            <Input id="founder_names" {...register('founder_names')} placeholder="Jane Doe, John Smith" />
+        </div>
+        
+        <div className="space-y-2">
+           <Label htmlFor="rating_value">Aggregate Rating (1-5)</Label>
+           <Input id="rating_value" type="number" step="0.1" min="1" max="5" {...register('rating_value', { valueAsNumber: true })} />
+        </div>
+        <div className="space-y-2">
+           <Label htmlFor="review_count">Total Review Count</Label>
+           <Input id="review_count" type="number" {...register('review_count', { valueAsNumber: true })} />
         </div>
       </div>
     </section>

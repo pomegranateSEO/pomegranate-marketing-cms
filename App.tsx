@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { supabase } from './lib/supabaseClient';
@@ -18,6 +19,7 @@ import AssociatesPage from './app/admin/associates/page';
 import CTABlocksPage from './app/admin/cta-blocks/page';
 import MediaPage from './app/admin/media/page';
 import LoginPage from './app/auth/page';
+import GenerationPage from './app/admin/generation/page';
 import { Loader2 } from 'lucide-react';
 
 // Placeholder components for routes not yet implemented in Phase 1
@@ -91,7 +93,7 @@ function App() {
             <Route path="/admin/downloads" element={<DownloadsPage />} />
             <Route path="/admin/tools" element={<ToolsPage />} />
             
-            <Route path="/admin/generation" element={<Placeholder title="Batch Generation" />} />
+            <Route path="/admin/generation" element={<GenerationPage />} />
           </Routes>
         </main>
       </div>

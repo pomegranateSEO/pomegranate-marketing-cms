@@ -1,23 +1,29 @@
+
 import React, { useEffect, useState } from 'react';
-import { PenTool, Plus, Edit2, Trash2, Loader2, FileText, Save, ArrowLeft, Image as ImageIcon, X } from 'lucide-react';
+import { PenTool, Plus, Edit2, Trash2, Loader2, FileText, Save, ArrowLeft, Image as ImageIcon, X, AlertTriangle, Code } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Textarea } from '../../../components/ui/textarea';
 import { Label } from '../../../components/ui/label';
 import { fetchPosts, createPost, updatePost, deletePost } from '../../../lib/db/posts';
 import { fetchBusinesses } from '../../../lib/db/businesses';
-import type { BlogPost } from '../../../lib/types';
+import { fetchKnowledgeEntities } from '../../../lib/db/knowledge';
+import type { BlogPost, Business, GlobalTheme, KnowledgeEntity } from '../../../lib/types';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 import { VisualContentEditor } from '../../../components/shared/VisualContentEditor';
 import { MediaManager } from '../../../components/shared/MediaManager';
 import { FAQEditor } from '../../../components/shared/FAQEditor';
+import { AITextGenerator } from '../../../components/shared/AITextGenerator';
+import { KnowledgeEntitySelector } from '../../../components/shared/KnowledgeEntitySelector';
 
 export default function PostsPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [knowledgeEntities, setKnowledgeEntities] = useState<KnowledgeEntity[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const [rootBusinessId, setRootBusinessId] = useState<string | null>(null);
+  const [rootBusiness, setRootBusiness] = useState<Business | null>(null);
   const [saving, setSaving] = useState(false);
+  const [activeTab, setActiveTab] = useState<'content' | 'semantic' | 'settings'>('content');
   
   // Media Picker State
   const [showMediaPicker, setShowMediaPicker] = useState(false);
@@ -31,19 +37,26 @@ export default function PostsPage() {
     excerpt: '', // maps to seo_meta_desc
     featured_image_url: '',
     status: 'draft',
-    faqs: [] as { question: string; answer: string }[]
+    faqs: [] as { question: string; answer: string }[],
+    keywords: [] as string[],
+    target_keyword_input: '', // For UI/AI only
+    custom_head: '', // Not persisted in standard schema
+    about_entities: [] as string[],
+    mentions_entities: [] as string[]
   });
 
   const loadData = async () => {
     try {
       setLoading(true);
-      const [postsData, businessesData] = await Promise.all([
+      const [postsData, businessesData, keData] = await Promise.all([
         fetchPosts(),
-        fetchBusinesses()
+        fetchBusinesses(),
+        fetchKnowledgeEntities()
       ]);
       setPosts(postsData);
+      setKnowledgeEntities(keData);
       if (businessesData.length > 0) {
-        setRootBusinessId(businessesData[0].id);
+        setRootBusiness(businessesData[0]);
       }
     } catch (err) {
       console.error(err);
@@ -58,20 +71,23 @@ export default function PostsPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!rootBusinessId) return alert("No Root Business found. Please create one first.");
+    if (!rootBusiness) return alert("No Root Business found. Please create one first.");
 
     setSaving(true);
     try {
       const payload = {
         id: formState.id,
-        business_id: rootBusinessId,
+        business_id: rootBusiness.id,
         title: formState.title,
         slug: formState.slug || formState.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
         content: formState.content,
         excerpt: formState.excerpt,
         featured_image_url: formState.featured_image_url,
         status: formState.status,
-        faqs: formState.faqs
+        faqs: formState.faqs,
+        keywords: formState.target_keyword_input ? [formState.target_keyword_input] : [], // Simplistic mapping
+        about_entities: formState.about_entities,
+        mentions_entities: formState.mentions_entities
       };
 
       if (formState.id) {
@@ -101,6 +117,7 @@ export default function PostsPage() {
   };
 
   const startEdit = (post?: BlogPost) => {
+    setActiveTab('content');
     if (post) {
       const postFaqs = Array.isArray(post.faqs) 
         ? post.faqs as { question: string; answer: string }[] 
@@ -114,7 +131,12 @@ export default function PostsPage() {
         excerpt: post.seo_meta_desc || '', // map DB seo_meta_desc to UI excerpt
         featured_image_url: post.featured_image_url || '',
         status: post.status,
-        faqs: postFaqs
+        faqs: postFaqs,
+        keywords: post.keywords || [],
+        target_keyword_input: post.keywords?.[0] || '',
+        custom_head: '',
+        about_entities: post.about_entities || [],
+        mentions_entities: post.mentions_entities || []
       });
     } else {
       resetForm();
@@ -123,7 +145,7 @@ export default function PostsPage() {
   };
 
   const resetForm = () => {
-    setFormState({ id: '', title: '', slug: '', content: '', excerpt: '', featured_image_url: '', status: 'draft', faqs: [] });
+    setFormState({ id: '', title: '', slug: '', content: '', excerpt: '', featured_image_url: '', status: 'draft', faqs: [], keywords: [], target_keyword_input: '', custom_head: '', about_entities: [], mentions_entities: [] });
   };
 
   const handleImageSelect = (url: string) => {
@@ -144,6 +166,8 @@ export default function PostsPage() {
   if (loading) return <div className="flex justify-center p-12"><Loader2 className="animate-spin text-slate-400" /></div>;
 
   if (isEditing) {
+    const brandTheme = rootBusiness?.global_theme as GlobalTheme;
+
     return (
       <div className="p-6 max-w-5xl mx-auto">
         {/* Media Picker Modal Overlay */}
@@ -174,113 +198,197 @@ export default function PostsPage() {
               </Button>
               <h2 className="text-2xl font-bold">{formState.id ? 'Edit Post' : 'New Blog Post'}</h2>
            </div>
-           {rootBusinessId && (
-              <EntityGenerator getContent={getPostContent} businessId={rootBusinessId} sourceName="Body Content" />
+           {rootBusiness && (
+              <EntityGenerator getContent={getPostContent} businessId={rootBusiness.id} sourceName="Body Content" />
            )}
         </div>
 
-        <form onSubmit={handleSave} className="space-y-6 bg-white p-6 rounded-lg border shadow-sm">
-          <div className="grid grid-cols-2 gap-4">
-             <div className="space-y-2 col-span-2 md:col-span-1">
-                <Label>Post Headline</Label>
-                <Input 
-                  value={formState.title || ''} 
-                  onChange={e => setFormState({...formState, title: e.target.value})} 
-                  required 
-                  placeholder="e.g. 10 Tips for..."
-                />
-             </div>
-             <div className="space-y-2 col-span-2 md:col-span-1">
-                <Label>Status</Label>
-                <select 
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                  value={formState.status || 'draft'}
-                  onChange={e => setFormState({...formState, status: e.target.value as any})}
-                >
-                  <option value="draft">Draft</option>
-                  <option value="published">Published</option>
-                  <option value="archived">Archived</option>
-                </select>
-             </div>
-          </div>
+        <div className="flex border-b bg-slate-50 mb-4 rounded-t-lg">
+           <button onClick={() => setActiveTab('content')} className={`px-6 py-3 text-sm font-medium border-b-2 ${activeTab === 'content' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}>Content</button>
+           <button onClick={() => setActiveTab('semantic')} className={`px-6 py-3 text-sm font-medium border-b-2 ${activeTab === 'semantic' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}>Semantic Markup</button>
+           <button onClick={() => setActiveTab('settings')} className={`px-6 py-3 text-sm font-medium border-b-2 ${activeTab === 'settings' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}>Settings & Head</button>
+        </div>
+
+        <form onSubmit={handleSave} className="space-y-6 bg-white p-6 rounded-lg border shadow-sm rounded-tr-none">
           
-          <div className="space-y-2">
-            <Label>Slug (URL)</Label>
-            <Input 
-              value={formState.slug || ''} 
-              onChange={e => setFormState({...formState, slug: e.target.value})} 
-              placeholder="auto-generated-from-title"
-            />
+          {/* CONTENT TAB */}
+          <div className={activeTab === 'content' ? 'block' : 'hidden'}>
+              {/* KEYWORD FIRST */}
+              <div className="bg-blue-50/50 p-4 rounded border border-blue-100 mb-6">
+                  <Label className="text-blue-800 font-semibold mb-1 block">Target Keyword (Primary)</Label>
+                  <Input 
+                    value={formState.target_keyword_input}
+                    onChange={(e) => setFormState({...formState, target_keyword_input: e.target.value})}
+                    placeholder="Target Keyword (e.g. 'Digital Marketing Strategies')"
+                    className="bg-white"
+                  />
+                  {!formState.target_keyword_input && (
+                     <p className="text-xs text-amber-600 mt-2 flex items-center gap-1 font-medium">
+                        <AlertTriangle className="h-3 w-3" />
+                        No target keyword set. Content may not rank well.
+                     </p>
+                  )}
+              </div>
+
+              <div className="space-y-6">
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <Label>Post Headline</Label>
+                      <AITextGenerator 
+                        onGenerate={t => setFormState({...formState, title: t})}
+                        fieldName="Headline"
+                        keyword={formState.target_keyword_input}
+                        currentValue={formState.title}
+                        brandTheme={brandTheme}
+                      />
+                    </div>
+                    <Input 
+                      value={formState.title || ''} 
+                      onChange={e => setFormState({...formState, title: e.target.value})} 
+                      required 
+                      placeholder="e.g. 10 Tips for..."
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                     <Label>Featured Image</Label>
+                     <div className="flex gap-4 items-start">
+                        <div className="flex-1 flex gap-2">
+                           <Input 
+                              value={formState.featured_image_url || ''}
+                              onChange={e => setFormState({...formState, featured_image_url: e.target.value})}
+                              placeholder="https://... (or select from library)"
+                           />
+                           <Button 
+                             type="button" 
+                             variant="secondary" 
+                             onClick={() => setShowMediaPicker(true)}
+                             className="whitespace-nowrap"
+                           >
+                              <ImageIcon className="h-4 w-4 mr-2" />
+                              Select Image
+                           </Button>
+                        </div>
+                     </div>
+                     {formState.featured_image_url && (
+                        <div className="mt-2 relative w-fit group">
+                           <img 
+                              src={formState.featured_image_url} 
+                              alt="Preview" 
+                              className="h-32 w-auto object-cover rounded border bg-slate-50" 
+                           />
+                           <button 
+                             type="button"
+                             onClick={() => setFormState(prev => ({ ...prev, featured_image_url: '' }))}
+                             className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                           >
+                              <X className="h-3 w-3" />
+                           </button>
+                        </div>
+                     )}
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <Label>Excerpt (SEO Meta Description)</Label>
+                      <AITextGenerator 
+                        onGenerate={t => setFormState({...formState, excerpt: t})}
+                        fieldName="Meta Description"
+                        keyword={formState.target_keyword_input}
+                        currentValue={formState.excerpt}
+                        brandTheme={brandTheme}
+                      />
+                    </div>
+                    <Textarea 
+                      value={formState.excerpt || ''} 
+                      onChange={e => setFormState({...formState, excerpt: e.target.value})} 
+                      className="h-20"
+                      placeholder="A brief summary for search engines..."
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2">
+                       Body Content (Visual Builder)
+                       <span className="text-xs text-slate-400 font-normal">(Compartments supported)</span>
+                    </Label>
+                    <VisualContentEditor 
+                      value={formState.content || ''} 
+                      onChange={val => setFormState({...formState, content: val})}
+                      minHeight="min-h-[600px]"
+                      brandTheme={brandTheme}
+                      keyword={formState.target_keyword_input}
+                    />
+                  </div>
+              </div>
           </div>
 
-          <div className="space-y-2">
-             <Label>Featured Image</Label>
-             <div className="flex gap-4 items-start">
-                <div className="flex-1 flex gap-2">
-                   <Input 
-                      value={formState.featured_image_url || ''}
-                      onChange={e => setFormState({...formState, featured_image_url: e.target.value})}
-                      placeholder="https://... (or select from library)"
-                   />
-                   <Button 
-                     type="button" 
-                     variant="secondary" 
-                     onClick={() => setShowMediaPicker(true)}
-                     className="whitespace-nowrap"
-                   >
-                      <ImageIcon className="h-4 w-4 mr-2" />
-                      Select Image
-                   </Button>
-                </div>
-             </div>
-             {formState.featured_image_url && (
-                <div className="mt-2 relative w-fit group">
-                   <img 
-                      src={formState.featured_image_url} 
-                      alt="Preview" 
-                      className="h-32 w-auto object-cover rounded border bg-slate-50" 
-                   />
-                   <button 
-                     type="button"
-                     onClick={() => setFormState(prev => ({ ...prev, featured_image_url: '' }))}
-                     className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                   >
-                      <X className="h-3 w-3" />
-                   </button>
-                </div>
-             )}
-          </div>
-          
-          <div className="space-y-2">
-            <Label>Excerpt (SEO Meta Description)</Label>
-            <Textarea 
-              value={formState.excerpt || ''} 
-              onChange={e => setFormState({...formState, excerpt: e.target.value})} 
-              className="h-20"
-              placeholder="A brief summary for search engines..."
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label className="flex items-center gap-2">
-               Body Content (Visual Builder)
-               <span className="text-xs text-slate-400 font-normal">(Compartments supported)</span>
-            </Label>
-            <VisualContentEditor 
-              value={formState.content || ''} 
-              onChange={val => setFormState({...formState, content: val})}
-              minHeight="min-h-[600px]"
-            />
+          {/* SEMANTIC TAB */}
+          <div className={activeTab === 'semantic' ? 'block' : 'hidden'}>
+               {/* FAQ Editor Section */}
+               <FAQEditor 
+                 value={formState.faqs}
+                 onChange={(faqs) => setFormState({...formState, faqs: faqs})}
+                 sourceText={formState.content}
+               />
+               
+               <div className="grid grid-cols-2 gap-6">
+                  <KnowledgeEntitySelector 
+                     label="About Entities"
+                     allEntities={knowledgeEntities}
+                     selectedIds={formState.about_entities}
+                     onChange={(ids) => setFormState({...formState, about_entities: ids})}
+                     contentToScan={getPostContent()}
+                  />
+                  <KnowledgeEntitySelector 
+                     label="Mentioned Entities"
+                     allEntities={knowledgeEntities}
+                     selectedIds={formState.mentions_entities}
+                     onChange={(ids) => setFormState({...formState, mentions_entities: ids})}
+                     contentToScan={getPostContent()}
+                  />
+               </div>
           </div>
 
-          {/* FAQ Editor Section */}
-           <div className="pt-2">
-             <FAQEditor 
-               value={formState.faqs}
-               onChange={(faqs) => setFormState({...formState, faqs: faqs})}
-               sourceText={formState.content}
-             />
-           </div>
+          {/* SETTINGS TAB */}
+          <div className={activeTab === 'settings' ? 'block' : 'hidden'}>
+              <div className="grid grid-cols-2 gap-6 mb-6">
+                  <div className="space-y-2">
+                    <Label>Slug (URL)</Label>
+                    <Input 
+                      value={formState.slug || ''} 
+                      onChange={e => setFormState({...formState, slug: e.target.value})} 
+                      placeholder="auto-generated-from-title"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Status</Label>
+                    <select 
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                      value={formState.status || 'draft'}
+                      onChange={e => setFormState({...formState, status: e.target.value as any})}
+                    >
+                      <option value="draft">Draft</option>
+                      <option value="published">Published</option>
+                      <option value="archived">Archived</option>
+                    </select>
+                 </div>
+              </div>
+
+              <div className="space-y-2">
+                 <Label className="flex items-center gap-2">
+                    <Code className="h-4 w-4 text-slate-500" />
+                    Custom &lt;head&gt; Code
+                 </Label>
+                 <Textarea 
+                    value={formState.custom_head}
+                    onChange={e => setFormState({...formState, custom_head: e.target.value})}
+                    placeholder="<script>...</script> or <meta name='...'>" 
+                    className="font-mono text-xs h-32 bg-slate-50"
+                 />
+                 <p className="text-xs text-amber-600">Note: This code is currently UI-only and may not persist without database schema updates.</p>
+              </div>
+          </div>
           
           <div className="flex justify-end gap-3 pt-4 border-t">
              <Button type="button" variant="ghost" onClick={() => setIsEditing(false)}>Cancel</Button>
@@ -302,10 +410,10 @@ export default function PostsPage() {
           <p className="text-slate-500 mt-2">Create articles to build topical authority.</p>
         </div>
         <div className="flex gap-2">
-            {rootBusinessId && posts.length > 0 && (
+            {rootBusiness && posts.length > 0 && (
               <EntityGenerator 
                  getContent={getAllPostsContent} 
-                 businessId={rootBusinessId} 
+                 businessId={rootBusiness.id} 
                  sourceName="All Blog Posts" 
               />
             )}

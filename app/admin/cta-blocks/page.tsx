@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Megaphone, Plus, Loader2, Edit2, Trash2, Save, ArrowLeft } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
@@ -5,14 +6,15 @@ import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { fetchCTABlocks, createCTABlock, updateCTABlock, deleteCTABlock } from '../../../lib/db/cta-blocks';
 import { fetchBusinesses } from '../../../lib/db/businesses';
-import type { CTABlock } from '../../../lib/types';
+import type { CTABlock, Business, GlobalTheme } from '../../../lib/types';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
+import { AITextGenerator } from '../../../components/shared/AITextGenerator';
 
 export default function CTABlocksPage() {
   const [ctas, setCtas] = useState<CTABlock[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const [rootBusinessId, setRootBusinessId] = useState<string | null>(null);
+  const [rootBusiness, setRootBusiness] = useState<Business | null>(null);
   const [saving, setSaving] = useState(false);
 
   const [formState, setFormState] = useState<Partial<CTABlock>>({
@@ -37,7 +39,7 @@ export default function CTABlocksPage() {
         fetchBusinesses()
       ]);
       setCtas(ctaData);
-      if (busData.length > 0) setRootBusinessId(busData[0].id);
+      if (busData.length > 0) setRootBusiness(busData[0]);
     } catch (err) {
       console.error(err);
     } finally {
@@ -47,11 +49,11 @@ export default function CTABlocksPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!rootBusinessId) return alert("No Root Business found.");
+    if (!rootBusiness) return alert("No Root Business found.");
 
     setSaving(true);
     try {
-      const payload = { ...formState, business_id: rootBusinessId };
+      const payload = { ...formState, business_id: rootBusiness.id };
       if (formState.id) {
         await updateCTABlock(formState.id, payload);
       } else {
@@ -92,6 +94,8 @@ export default function CTABlocksPage() {
   if (loading) return <div className="p-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-slate-400"/></div>;
 
   if (isEditing) {
+    const brandTheme = rootBusiness?.global_theme as GlobalTheme;
+
     return (
       <div className="p-6 max-w-3xl mx-auto">
         <div className="flex items-center gap-4 mb-6">
@@ -99,8 +103,8 @@ export default function CTABlocksPage() {
               <ArrowLeft className="h-4 w-4 mr-2" /> Back
            </Button>
            <h2 className="text-2xl font-bold">{formState.id ? 'Edit CTA Block' : 'Add New CTA Block'}</h2>
-           {rootBusinessId && (
-              <EntityGenerator getContent={() => `CTA: ${formState.headline}\n${formState.subheadline}`} businessId={rootBusinessId} sourceName="CTA Block" />
+           {rootBusiness && (
+              <EntityGenerator getContent={() => `CTA: ${formState.headline}\n${formState.subheadline}`} businessId={rootBusiness.id} sourceName="CTA Block" />
            )}
         </div>
 
@@ -117,7 +121,16 @@ export default function CTABlocksPage() {
            </div>
            
            <div className="space-y-2">
-               <Label>Headline</Label>
+               <div className="flex justify-between">
+                  <Label>Headline</Label>
+                  <AITextGenerator 
+                    onGenerate={t => setFormState({...formState, headline: t})}
+                    fieldName="CTA Headline"
+                    keyword={formState.name}
+                    currentValue={formState.headline}
+                    brandTheme={brandTheme}
+                  />
+               </div>
                <Input 
                  value={formState.headline || ''} 
                  onChange={e => setFormState({...formState, headline: e.target.value})}
@@ -126,7 +139,16 @@ export default function CTABlocksPage() {
            </div>
 
            <div className="space-y-2">
-               <Label>Subheadline</Label>
+               <div className="flex justify-between">
+                  <Label>Subheadline</Label>
+                  <AITextGenerator 
+                    onGenerate={t => setFormState({...formState, subheadline: t})}
+                    fieldName="CTA Subheadline"
+                    keyword={formState.name}
+                    currentValue={formState.subheadline}
+                    brandTheme={brandTheme}
+                  />
+               </div>
                <Input 
                  value={formState.subheadline || ''} 
                  onChange={e => setFormState({...formState, subheadline: e.target.value})}
@@ -196,10 +218,10 @@ export default function CTABlocksPage() {
           <p className="text-slate-500 mt-2">Create reusable Call-to-Action blocks to insert into pages and posts.</p>
         </div>
         <div className="flex gap-2">
-           {rootBusinessId && ctas.length > 0 && (
+           {rootBusiness && ctas.length > 0 && (
               <EntityGenerator 
                  getContent={getContent} 
-                 businessId={rootBusinessId} 
+                 businessId={rootBusiness.id} 
                  sourceName="CTA Blocks" 
               />
            )}

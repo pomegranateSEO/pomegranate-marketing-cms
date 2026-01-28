@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Input } from '../../ui/input';
@@ -6,15 +7,12 @@ import { Button } from '../../ui/button';
 import { LinkIcon, Loader2, Search, Plus, Trash2, Globe } from 'lucide-react';
 import { findSocialLinks } from '../../../lib/ai/gemini';
 
-interface Props {
-  socialLinks: string[];
-  setSocialLinks: (links: string[]) => void;
-}
-
-export const ContactSection: React.FC<Props> = ({ socialLinks, setSocialLinks }) => {
-  const { register, getValues } = useFormContext();
+export const ContactSection: React.FC = () => {
+  const { register, getValues, setValue, watch } = useFormContext();
   const [newSocialLink, setNewSocialLink] = useState('');
   const [isSearchingSocials, setIsSearchingSocials] = useState(false);
+
+  const socialLinks = watch('social_links') || [];
 
   const handleFindSocials = async () => {
     const name = getValues('name');
@@ -26,7 +24,7 @@ export const ContactSection: React.FC<Props> = ({ socialLinks, setSocialLinks })
       const links = await findSocialLinks(name, location);
       // Merge new links without duplicates
       const uniqueLinks = [...new Set([...socialLinks, ...links])];
-      setSocialLinks(uniqueLinks);
+      setValue('social_links', uniqueLinks);
       if (links.length > 0) alert(`Success! Found ${links.length} social profiles.`);
       else alert("No social links found using Google Search.");
     } catch (e) {
@@ -38,7 +36,7 @@ export const ContactSection: React.FC<Props> = ({ socialLinks, setSocialLinks })
 
   const handleAddSocial = () => {
     if (newSocialLink && !socialLinks.includes(newSocialLink)) {
-      setSocialLinks([...socialLinks, newSocialLink]);
+      setValue('social_links', [...socialLinks, newSocialLink]);
       setNewSocialLink('');
     }
   };
@@ -46,13 +44,13 @@ export const ContactSection: React.FC<Props> = ({ socialLinks, setSocialLinks })
   const updateLink = (index: number, value: string) => {
     const updated = [...socialLinks];
     updated[index] = value;
-    setSocialLinks(updated);
+    setValue('social_links', updated);
   };
 
   const removeSocial = (index: number) => {
     const updated = [...socialLinks];
     updated.splice(index, 1);
-    setSocialLinks(updated);
+    setValue('social_links', updated);
   };
 
   return (
@@ -76,7 +74,7 @@ export const ContactSection: React.FC<Props> = ({ socialLinks, setSocialLinks })
         </div>
       </div>
       
-      {/* Social Links (SameAs) */}
+      {/* Social Links */}
       <div className="space-y-3 pt-4 border-t">
         <div className="flex justify-between items-center">
           <Label className="flex items-center gap-2">
@@ -118,7 +116,7 @@ export const ContactSection: React.FC<Props> = ({ socialLinks, setSocialLinks })
         {/* List of Editable Links */}
         <div className="space-y-2 mt-3">
           {socialLinks.length === 0 && <p className="text-sm text-slate-400 italic">No social links added.</p>}
-          {socialLinks.map((link, idx) => (
+          {socialLinks.map((link: string, idx: number) => (
             <div key={idx} className="flex gap-2 items-center group">
               <Input 
                 value={link} 
