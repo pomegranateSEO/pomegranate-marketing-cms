@@ -20,6 +20,8 @@ import CTABlocksPage from './app/admin/cta-blocks/page';
 import MediaPage from './app/admin/media/page';
 import LoginPage from './app/auth/page';
 import GenerationPage from './app/admin/generation/page';
+import BlogTopicsPage from './app/admin/blog-topics/page';
+import RoadmapPage from './app/admin/roadmap/page';
 import { Loader2 } from 'lucide-react';
 
 // Placeholder components for routes not yet implemented in Phase 1
@@ -83,6 +85,7 @@ function App() {
             <Route path="/admin/knowledge-entities" element={<KnowledgeEntitiesPage />} />
             
             {/* Content Management */}
+            <Route path="/admin/blog-topics" element={<BlogTopicsPage />} />
             <Route path="/admin/media" element={<MediaPage />} />
             <Route path="/admin/pages" element={<PagesPage />} />
             <Route path="/admin/posts" element={<PostsPage />} />
@@ -94,6 +97,7 @@ function App() {
             <Route path="/admin/tools" element={<ToolsPage />} />
             
             <Route path="/admin/generation" element={<GenerationPage />} />
+            <Route path="/admin/roadmap" element={<RoadmapPage />} />
           </Routes>
         </main>
       </div>

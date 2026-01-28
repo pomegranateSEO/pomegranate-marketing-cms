@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { Layers, Plus, Loader2, Edit2, Trash2, Save, ArrowLeft, AlertTriangle, Code } from 'lucide-react';
+import { Layers, Plus, Loader2, Edit2, Trash2, Save, ArrowLeft, AlertTriangle, Code, Sparkles, CheckCircle2 } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
@@ -14,6 +14,7 @@ import { VisualContentEditor } from '../../../components/shared/VisualContentEdi
 import { FAQEditor } from '../../../components/shared/FAQEditor';
 import { AITextGenerator } from '../../../components/shared/AITextGenerator';
 import { KnowledgeEntitySelector } from '../../../components/shared/KnowledgeEntitySelector';
+import { generateCorePages } from '../../../lib/ai/page-generator';
 
 const SCHEMA_PAGE_TYPES = [
   "WebPage",
@@ -37,6 +38,7 @@ export default function PagesPage() {
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [generatingCore, setGeneratingCore] = useState(false);
   const [activeTab, setActiveTab] = useState<'content' | 'semantic' | 'settings'>('content');
   
   // Form State
@@ -118,6 +120,52 @@ export default function PagesPage() {
       } catch (err: any) {
         alert("Failed to delete page: " + err.message);
       }
+    }
+  };
+
+  const handleGenerateCorePages = async () => {
+    if (!rootBusiness) return alert("No Root Business found.");
+    
+    const confirmMsg = "This will generate the following pages if they don't exist:\n\n- About Us\n- Contact Us\n- Privacy Policy\n- Terms of Service\n- Downloads Hub\n- Tools Hub\n- Case Studies Hub\n- Industries Hub\n- Locations Hub\n- Blog Root\n\nContent will be based on your Brand Identity settings. Proceed?";
+    
+    if (!confirm(confirmMsg)) return;
+
+    setGeneratingCore(true);
+    try {
+      const generatedPages = await generateCorePages(rootBusiness);
+      const existingSlugs = new Set(pages.map(p => p.slug));
+      
+      let createdCount = 0;
+
+      for (const p of generatedPages) {
+        if (!existingSlugs.has(p.slug)) {
+          // Determine schema type based on key
+          let type = 'WebPage';
+          if (p.page_key === 'about') type = 'AboutPage';
+          if (p.page_key === 'contact') type = 'ContactPage';
+          if (['blog_root', 'downloads', 'tools', 'case_studies', 'industries', 'locations'].includes(p.page_key)) type = 'CollectionPage';
+
+          await createPage({
+            business_id: rootBusiness.id,
+            title: p.title,
+            slug: p.slug,
+            content_html: p.content_html,
+            seo_title: p.title,
+            seo_meta_desc: p.seo_meta_desc,
+            status: 'draft',
+            page_type: type
+          });
+          createdCount++;
+        }
+      }
+
+      await loadData();
+      alert(`Success! Generated ${createdCount} new core pages.`);
+
+    } catch (e: any) {
+      alert("Generation failed: " + e.message);
+    } finally {
+      setGeneratingCore(false);
     }
   };
 
@@ -345,6 +393,15 @@ export default function PagesPage() {
                  sourceName="All Static Pages" 
               />
            )}
+           <Button 
+             onClick={handleGenerateCorePages} 
+             variant="secondary" 
+             disabled={generatingCore}
+             className="bg-purple-100 text-purple-700 hover:bg-purple-200 border border-purple-300"
+           >
+             {generatingCore ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Sparkles className="h-4 w-4 mr-2" />}
+             Auto-Generate Core Pages
+           </Button>
            <Button onClick={() => startEdit()}>
              <Plus className="h-4 w-4 mr-2" /> Add Page
            </Button>
@@ -356,7 +413,10 @@ export default function PagesPage() {
           <Layers className="h-12 w-12 text-slate-300 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-slate-900">No pages yet</h3>
           <p className="text-slate-500 mb-6">Create your first static page (e.g., ContactPage).</p>
-          <Button onClick={() => startEdit()}>Create Page</Button>
+          <div className="flex justify-center gap-4">
+             <Button onClick={() => startEdit()}>Create Page</Button>
+             <Button variant="outline" onClick={handleGenerateCorePages}>Auto-Generate Defaults</Button>
+          </div>
         </div>
       ) : (
         <div className="bg-white border rounded-lg shadow-sm overflow-hidden">

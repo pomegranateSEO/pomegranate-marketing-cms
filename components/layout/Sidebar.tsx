@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 import { 
   LayoutDashboard, Building2, MapPin, Briefcase, BookOpen, Settings,
   FileText, PenTool, Star, Download, Wrench, Layers, LogOut,
-  Factory, Users, Award, Megaphone, Image as ImageIcon
+  Factory, Users, Award, Megaphone, Image as ImageIcon, Lightbulb, FileCode
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { supabase } from '../../lib/supabaseClient';
@@ -31,6 +31,7 @@ export const Sidebar = () => {
   ];
 
   const contentNavItems = [
+    { href: "/admin/blog-topics", label: "Blog Topic Hub", icon: Lightbulb },
     { href: "/admin/media", label: "Media Library", icon: ImageIcon },
     { href: "/admin/pages", label: "Pages", icon: Layers },
     { href: "/admin/posts", label: "Blog Posts", icon: PenTool },
@@ -47,7 +48,11 @@ export const Sidebar = () => {
     { href: "/admin/generation", label: "Batch Generation", icon: Settings },
   ];
 
-  const NavGroup = ({ title, items }: { title: string, items: typeof coreNavItems }) => (
+  const integrationNavItems = [
+    { href: "/admin/roadmap", label: "Frontend Roadmap", icon: FileCode },
+  ];
+
+  const NavGroup = ({ title, items }: { title: string, items: any[] }) => (
     <div className="mb-6">
       <h3 className="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">{title}</h3>
       <nav className="space-y-1">
@@ -87,6 +92,7 @@ export const Sidebar = () => {
         <NavGroup title="Core Data" items={coreNavItems} />
         <NavGroup title="Content Management" items={contentNavItems} />
         <NavGroup title="Content Building" items={generationNavItems} />
+        <NavGroup title="Integration" items={integrationNavItems} />
       </div>
 
       <div className="p-4 border-t border-slate-800 mt-auto bg-slate-950">

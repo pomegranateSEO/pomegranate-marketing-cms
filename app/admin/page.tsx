@@ -1,8 +1,9 @@
+
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
     Building2, Briefcase, MapPin, BookOpen, 
-    FileText, Search, Rocket, CheckCircle2, ArrowRight 
+    FileText, Search, Rocket, CheckCircle2, ArrowRight, Lightbulb 
 } from 'lucide-react';
 import { getDashboardStats } from '../../lib/db/stats';
 import { Button } from '../../components/ui/button';
@@ -13,7 +14,8 @@ export default function DashboardPage() {
         services: 0,
         locations: 0,
         knowledge: 0,
-        pages: 0
+        pages: 0,
+        topics: 0
     });
     const [loading, setLoading] = useState(true);
 
@@ -74,11 +76,11 @@ export default function DashboardPage() {
         },
         {
             id: 6,
-            title: "Keyword Research",
-            description: "Assign target keywords to page clusters.",
-            icon: Search,
-            link: "/admin/generation", // Assuming part of generation workflow
-            completed: false // Placeholder logic
+            title: "Generate Blog Topics",
+            description: "Build a hierarchical topical authority roadmap (at least 7 topics).",
+            icon: Lightbulb,
+            link: "/admin/blog-topics", 
+            completed: stats.topics >= 7
         },
         {
             id: 7,
@@ -120,7 +122,7 @@ export default function DashboardPage() {
 
                 <div className="bg-white p-6 rounded-lg border shadow-sm col-span-2">
                     <h3 className="text-sm font-medium text-slate-500 uppercase tracking-wider mb-4">Site Architecture</h3>
-                    <div className="grid grid-cols-4 gap-4 text-center">
+                    <div className="grid grid-cols-5 gap-4 text-center">
                         <div className="p-4 bg-slate-50 rounded border">
                             <div className="text-2xl font-bold text-slate-800">{stats.businesses}</div>
                             <div className="text-xs text-slate-500 mt-1">Root Entity</div>
@@ -132,6 +134,10 @@ export default function DashboardPage() {
                         <div className="p-4 bg-slate-50 rounded border">
                             <div className="text-2xl font-bold text-slate-800">{stats.locations}</div>
                             <div className="text-xs text-slate-500 mt-1">Locations</div>
+                        </div>
+                        <div className="p-4 bg-yellow-50 rounded border border-yellow-100">
+                            <div className="text-2xl font-bold text-yellow-700">{stats.topics}</div>
+                            <div className="text-xs text-yellow-600 mt-1">Blog Topics</div>
                         </div>
                          <div className="p-4 bg-purple-50 rounded border border-purple-100">
                             <div className="text-2xl font-bold text-purple-700">{stats.pages}</div>

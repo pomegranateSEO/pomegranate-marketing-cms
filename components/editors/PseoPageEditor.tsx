@@ -1,5 +1,4 @@
 
-
 import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Button } from '../ui/button';
@@ -43,8 +42,8 @@ export const PseoPageEditor: React.FC<Props> = ({ page, business, service, locat
       custom_head: (page.unique_local_context as any)?.custom_head || '',
       unique_process_content: (page.unique_process_content as any)?.content || '',
       unique_faqs: Array.isArray(page.unique_faqs) ? page.unique_faqs : [],
-      about_entities: page.about_external_ids || [],
-      mentions_entities: page.mentions_external_ids || [],
+      about_entities: page.about_entities || [],
+      mentions_entities: page.mentions_entities || [],
       keywords: (page.keywords || []).join(', '),
       schema_json_ld: page.schema_json_ld ? JSON.stringify(page.schema_json_ld, null, 2) : '',
     }
@@ -75,8 +74,8 @@ export const PseoPageEditor: React.FC<Props> = ({ page, business, service, locat
           content: data.unique_process_content
         },
         unique_faqs: data.unique_faqs,
-        about_external_ids: data.about_entities,
-        mentions_external_ids: data.mentions_entities,
+        about_entities: data.about_entities,
+        mentions_entities: data.mentions_entities,
         keywords: data.keywords.split(',').map((k: string) => k.trim()).filter(Boolean),
         schema_json_ld: data.schema_json_ld ? JSON.parse(data.schema_json_ld) : null,
       };
@@ -109,8 +108,8 @@ export const PseoPageEditor: React.FC<Props> = ({ page, business, service, locat
         ...page,
         seo_title: formData.seo_title,
         seo_meta_desc: formData.seo_meta_desc,
-        about_external_ids: formData.about_entities,
-        mentions_external_ids: formData.mentions_entities
+        about_entities: formData.about_entities,
+        mentions_entities: formData.mentions_entities
       };
 
       const schemaString = generateServiceLocationSchema(

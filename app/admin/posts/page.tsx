@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { PenTool, Plus, Edit2, Trash2, Loader2, FileText, Save, ArrowLeft, Image as ImageIcon, X, AlertTriangle, Code } from 'lucide-react';
+import { PenTool, Plus, Edit2, Trash2, Loader2, FileText, Save, ArrowLeft, Image as ImageIcon, X, AlertTriangle, Code, Lightbulb } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Textarea } from '../../../components/ui/textarea';
@@ -8,7 +8,8 @@ import { Label } from '../../../components/ui/label';
 import { fetchPosts, createPost, updatePost, deletePost } from '../../../lib/db/posts';
 import { fetchBusinesses } from '../../../lib/db/businesses';
 import { fetchKnowledgeEntities } from '../../../lib/db/knowledge';
-import type { BlogPost, Business, GlobalTheme, KnowledgeEntity } from '../../../lib/types';
+import { fetchBlogTopics } from '../../../lib/db/blog-topics';
+import type { BlogPost, Business, GlobalTheme, KnowledgeEntity, BlogTopic } from '../../../lib/types';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 import { VisualContentEditor } from '../../../components/shared/VisualContentEditor';
 import { MediaManager } from '../../../components/shared/MediaManager';
@@ -19,6 +20,7 @@ import { KnowledgeEntitySelector } from '../../../components/shared/KnowledgeEnt
 export default function PostsPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [knowledgeEntities, setKnowledgeEntities] = useState<KnowledgeEntity[]>([]);
+  const [topics, setTopics] = useState<BlogTopic[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [rootBusiness, setRootBusiness] = useState<Business | null>(null);
@@ -48,13 +50,15 @@ export default function PostsPage() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [postsData, businessesData, keData] = await Promise.all([
+      const [postsData, businessesData, keData, topicsData] = await Promise.all([
         fetchPosts(),
         fetchBusinesses(),
-        fetchKnowledgeEntities()
+        fetchKnowledgeEntities(),
+        fetchBlogTopics()
       ]);
       setPosts(postsData);
       setKnowledgeEntities(keData);
+      setTopics(topicsData);
       if (businessesData.length > 0) {
         setRootBusiness(businessesData[0]);
       }
@@ -153,6 +157,22 @@ export default function PostsPage() {
     setShowMediaPicker(false);
   };
 
+  const handleTopicSelect = (topicId: string) => {
+    const topic = topics.find(t => t.id === topicId);
+    if (!topic) return;
+    
+    // Only update fields if they are empty or user confirms overwrite?
+    // For simplicity, we assume selection means intent to use.
+    setFormState(prev => ({
+      ...prev,
+      title: topic.name,
+      slug: topic.slug || prev.slug,
+      excerpt: topic.description || prev.excerpt,
+      // Use topic name as target keyword if keyword is empty
+      target_keyword_input: prev.target_keyword_input || topic.name
+    }));
+  };
+
   // Content for SINGLE post entity generation
   const getPostContent = () => {
     return `Title: ${formState.title}\nExcerpt: ${formState.excerpt}\nBody Content:\n${formState.content}`;
@@ -213,6 +233,28 @@ export default function PostsPage() {
           
           {/* CONTENT TAB */}
           <div className={activeTab === 'content' ? 'block' : 'hidden'}>
+              
+              {/* TOPIC SELECTOR */}
+              <div className="space-y-2 mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+                <Label className="text-yellow-800 flex items-center gap-2">
+                   <Lightbulb className="h-4 w-4" />
+                   Start from Roadmap Topic (Optional)
+                </Label>
+                <div className="flex gap-2">
+                   <select 
+                      className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm"
+                      onChange={(e) => handleTopicSelect(e.target.value)}
+                      defaultValue=""
+                   >
+                      <option value="">-- Select a Suggested Topic --</option>
+                      {topics.map(t => (
+                         <option key={t.id} value={t.id}>{t.name} ({t.topic_type})</option>
+                      ))}
+                   </select>
+                </div>
+                <p className="text-xs text-yellow-700">Selecting a topic will auto-populate the Headline, Slug, and Description.</p>
+              </div>
+
               {/* KEYWORD FIRST */}
               <div className="bg-blue-50/50 p-4 rounded border border-blue-100 mb-6">
                   <Label className="text-blue-800 font-semibold mb-1 block">Target Keyword (Primary)</Label>

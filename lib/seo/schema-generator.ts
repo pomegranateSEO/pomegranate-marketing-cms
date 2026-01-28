@@ -34,8 +34,7 @@ export const generateServiceLocationSchema = (
   }));
 
   // 2. Resolve About/Mentions Entities
-  // We expect knowledgeEntities to be passed in. We categorize them based on page.about_external_ids / page.mentions_external_ids
-  // For this generator, we assume the passed array IS the list to use, or we filter if IDs are available.
+  // We expect knowledgeEntities to be passed in. We categorize them based on page.about_entities / page.mentions_entities
   
   const mapEntity = (e: KnowledgeEntity) => ({
     "@type": "Thing",
@@ -45,11 +44,11 @@ export const generateServiceLocationSchema = (
   });
 
   const aboutEntities = knowledgeEntities
-    .filter(e => page.about_external_ids?.includes(e.id))
+    .filter(e => page.about_entities?.includes(e.id))
     .map(mapEntity);
 
   const mentionEntities = knowledgeEntities
-    .filter(e => page.mentions_external_ids?.includes(e.id))
+    .filter(e => page.mentions_entities?.includes(e.id))
     .map(mapEntity);
 
   // 3. Construct Service/Location Specifics

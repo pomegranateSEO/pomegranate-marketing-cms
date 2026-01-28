@@ -1,5 +1,4 @@
 
-
 export type Json =
   | string
   | number
@@ -220,8 +219,8 @@ export interface PseoPageInstance {
   unique_faqs?: Json;
   
   // Standardized Entity References
-  about_external_ids?: string[]; // uuid array
-  mentions_external_ids?: string[]; // uuid array
+  about_entities?: string[]; // uuid array
+  mentions_entities?: string[]; // uuid array
   
   keywords?: string[];
   image_urls?: string[];
@@ -311,4 +310,34 @@ export interface CTABlock {
   theme_style?: 'primary' | 'dark' | 'light' | 'outline' | 'image';
   created_at?: string;
   last_updated?: string;
+}
+
+export interface BlogTopic {
+  id: string;
+  business_id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  parent_topic_id?: string | null;
+  depth_level: number; // 0=pillar, 1=cluster, 2=sub
+  topic_type: 'pillar' | 'cluster' | 'sub-cluster' | 'micro-topic';
+  primary_entity_id?: string;
+  related_service_ids?: string[];
+  related_industry_ids?: string[];
+  about_entities?: string[];
+  mentions_entities?: string[];
+  content_intent?: 'informational' | 'commercial' | 'transactional' | 'navigational';
+  pseo_variable_type?: 'location_id' | 'industry_id' | 'service_id' | 'none';
+  estimated_search_volume?: number;
+  keyword_difficulty?: number;
+  topical_authority_score?: number;
+  content_gap_priority?: number; // 1-10
+  suggested_content_count?: number;
+  existing_content_count?: number;
+  speakable_hints?: string[];
+  seo_notes?: string;
+  created_at?: string;
+  
+  // UI Helper
+  children?: BlogTopic[];
 }

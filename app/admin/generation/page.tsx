@@ -1,8 +1,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { 
-  Layers, RefreshCw, CheckCircle, Plus, Loader2, Search, 
-  Trash2, Edit, Globe, Check, X, Filter, ArrowLeft, Zap
+  Layers, Plus, Loader2, Search, 
+  Trash2, Edit, CheckCircle, Filter, ArrowLeft, Zap
 } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
@@ -88,7 +88,6 @@ export default function GenerationPage() {
     setSelection(new Set(missing));
   };
 
-  // Generic Generation Function (used by both Matrix and Dashboard)
   const generatePages = async (serviceId: string, locationIds: string[]) => {
     const service = services.find(s => s.id === serviceId);
     if (!service || locationIds.length === 0) return;
@@ -99,9 +98,6 @@ export default function GenerationPage() {
         const loc = locations.find(l => l.id === locId);
         if (!loc) return null;
 
-        // --- UPDATED URL LOGIC ---
-        // Nationwide/UK -> /{service}
-        // Local -> /locations/{loc}/{service}
         const lowerLoc = loc.name.toLowerCase().trim();
         const isNationwide = ['uk', 'united kingdom', 'nationwide', 'england'].includes(lowerLoc);
         
@@ -131,7 +127,6 @@ export default function GenerationPage() {
 
       await bulkCreatePageInstances(payloads);
       
-      // Refresh Data
       const freshPages = await fetchPageInstances();
       setAllPages(freshPages);
       
@@ -149,7 +144,6 @@ export default function GenerationPage() {
   };
 
   const handleQuickGenerate = (serviceId: string) => {
-    // Find all missing locations for this service
     const existingLocIds = new Set(allPages.filter(p => p.service_id === serviceId).map(p => p.location_id));
     const missingLocIds = locations.filter(l => !existingLocIds.has(l.id)).map(l => l.id);
     
@@ -175,7 +169,6 @@ export default function GenerationPage() {
         status: newStatus,
         published: newStatus === 'published'
       });
-      // Optimistic update or refresh
       const updated = allPages.map(p => p.id === page.id ? { ...p, status: newStatus, published: newStatus === 'published' } : p);
       setAllPages(updated as PseoPageInstance[]);
     } catch (e: any) {
@@ -194,11 +187,13 @@ export default function GenerationPage() {
   if (!selectedServiceId) {
     return (
       <div className="p-8 max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight">Generation Dashboard</h1>
-          <p className="text-slate-500 mt-2">
-            Overview of your Content Matrix ({services.length} Services × {locations.length} Locations).
-          </p>
+        <div className="mb-8 flex justify-between items-start">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Generation Dashboard</h1>
+            <p className="text-slate-500 mt-2">
+              Phase 7: Site Generation & Management
+            </p>
+          </div>
         </div>
 
         {services.length === 0 ? (
@@ -229,7 +224,6 @@ export default function GenerationPage() {
                       </div>
                     </div>
                     
-                    {/* Progress Bar */}
                     <div className="w-full bg-slate-100 rounded-full h-2 mb-4 overflow-hidden">
                       <div 
                         className={`h-2 rounded-full transition-all duration-500 ${count === total ? 'bg-green-500' : 'bg-primary'}`} 
@@ -282,11 +276,11 @@ export default function GenerationPage() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      {editingPage && rootBusiness && editingService && editingLocation && (
+      {editingPage && rootBusiness && activeService && editingLocation && (
         <PseoPageEditor 
           page={editingPage}
           business={rootBusiness}
-          service={editingService}
+          service={activeService}
           location={editingLocation}
           knowledgeEntities={knowledgeEntities}
           onClose={() => setEditingPage(null)} 
