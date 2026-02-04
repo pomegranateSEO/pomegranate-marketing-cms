@@ -18,16 +18,19 @@ import { generateTopicRoadmap, generateSubTopics, generateParentTopic } from '..
 import type { BlogTopic, Business, KnowledgeEntity } from '../../../lib/types';
 
 // --- MINDMAP NODE COMPONENT ---
-const TopicNode = ({ 
+
+interface TopicNodeProps {
+  topic: BlogTopic;
+  depth?: number;
+  isSelected: boolean;
+  onSelect: (topic: BlogTopic) => void;
+}
+
+const TopicNode: React.FC<TopicNodeProps> = ({ 
   topic, 
   depth = 0, 
   isSelected, 
   onSelect 
-}: { 
-  topic: BlogTopic; 
-  depth?: number;
-  isSelected: boolean;
-  onSelect: (topic: BlogTopic) => void;
 }) => {
   const [expanded, setExpanded] = useState(depth < 2); 
   const hasChildren = topic.children && topic.children.length > 0;

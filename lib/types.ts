@@ -7,6 +7,48 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[];
 
+// --- NEW V2: Page Design Studio Types ---
+
+export interface RenderedBlock {
+  id: string;
+  name: string;
+  category: string;
+  html: string;
+  isVisible: boolean;
+  isGlobal?: boolean;
+  globalId?: string;
+}
+
+export interface DesignTemplate {
+  id: string;
+  business_id: string;
+  name: string;
+  description?: string;
+  content_type: 'page' | 'blog_post' | 'service_page' | string;
+  layout_config: Json; // Layout definitions
+  mandatory_components: Json; // Array of component IDs
+  optional_components: Json; // Array of component IDs
+  theme_config?: Json;
+  is_default: boolean;
+  created_at: string;
+  last_updated: string;
+}
+
+export interface ComponentLibraryItem {
+  id: string;
+  business_id: string;
+  component_name: string;
+  component_type: string; // 'Header', 'Footer', 'CTA', 'Hero', etc.
+  is_mandatory: boolean;
+  config_schema?: Json;
+  default_props?: Json;
+  html_content?: string;
+  preview_image_url?: string;
+  created_at: string;
+}
+
+// ----------------------------------------
+
 export interface OpeningHours {
   day: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
   opens: string; // "09:00"
@@ -85,6 +127,10 @@ export interface Business {
   alternate_name?: string | null; // text
   image?: Json | null; // jsonb
   number_of_employees?: number | null; // integer
+  
+  // V2 Additions
+  robots_txt_rules?: string;
+  llms_txt_rules?: string;
 }
 
 export interface Service {
@@ -151,6 +197,7 @@ export interface KnowledgeEntity {
   wikipedia_url?: string;
   wikidata_url?: string;
   created_at: string;
+  last_updated?: string;
 }
 
 export interface Review {
@@ -181,7 +228,28 @@ export interface BlogPost {
   keywords?: string[];
   about_entities?: string[]; // uuid array
   mentions_entities?: string[]; // uuid array
-  faqs?: Json;
+  faqs?: Json; // or FAQs ARRAY in SQL? Likely jsonb array in practice for simple storage
+
+  // V2 Additions
+  article_section?: string;
+  author_name?: string;
+  author_url?: string;
+  author_image_url?: string;
+  date_published?: string;
+  date_modified?: string;
+  scheduled_at?: string;
+  word_count?: number;
+  in_language?: string;
+  publisher_id?: string;
+  speaksable_selectors?: string[];
+  custom_head_html?: string[];
+  generated_schema_markup?: string[];
+  translation_group_id?: string;
+  main_entity_id?: string;
+  
+  // Design Studio
+  design_template_id?: string;
+  rendered_blocks?: RenderedBlock[];
 }
 
 export interface StaticPage {
@@ -199,6 +267,25 @@ export interface StaticPage {
   faqs?: Json;
   about_entities?: string[]; // uuid array
   mentions_entities?: string[]; // uuid array
+
+  // V2 Additions
+  breadcrumb_json?: Json;
+  breadcrumbs?: Json;
+  webpage_type?: string;
+  primary_entity_id?: string;
+  speaksable_selectors?: string[];
+  main_entity_id?: string;
+  in_language?: string;
+  parent_page_id?: string;
+  keywords?: string[];
+  custom_head_html?: string[];
+  generated_schema_markup?: string[];
+  translation_group_id?: string;
+  scheduled_at?: string;
+
+  // Design Studio
+  design_template_id?: string;
+  rendered_blocks?: RenderedBlock[];
 }
 
 export interface PseoPageInstance {
@@ -223,7 +310,22 @@ export interface PseoPageInstance {
   mentions_entities?: string[]; // uuid array
   
   keywords?: string[];
-  image_urls?: string[];
+  image_urls?: string[]; // NOTE: Use uploaded_image_urls in DB for V2 if different
+
+  // V2 Additions
+  in_language?: string;
+  translation_group_id?: string;
+  main_entity_id?: string;
+  custom_head_html?: string[];
+  generated_schema_markup?: string[];
+  uploaded_image_urls?: string[] | Json;
+  image_count?: number;
+  validation_status?: Json;
+  scheduled_at?: string;
+
+  // Design Studio
+  design_template_id?: string;
+  rendered_blocks?: RenderedBlock[];
 }
 
 export interface FreeTool {

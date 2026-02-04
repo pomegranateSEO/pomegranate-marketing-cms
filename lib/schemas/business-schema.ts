@@ -71,6 +71,10 @@ export const businessFormSchema = z.object({
   opening_hours: z.array(openingHoursSchema).optional(),
   rating_value: optionalNumber,
   review_count: optionalNumber,
+  
+  // V2 Additions
+  robots_txt_rules: z.string().optional(),
+  llms_txt_rules: z.string().optional(),
 });
 
 export type BusinessFormValues = z.infer<typeof businessFormSchema>;
