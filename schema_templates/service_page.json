@@ -1,0 +1,138 @@
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": "https://www.example.com/services/example-service#faqpage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What does this service include?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This service typically includes consultation, planning, implementation, and ongoing support tailored to the client’s needs."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Who is this service suitable for?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It is suitable for organisations of different sizes, including startups, SMEs, and larger businesses, depending on the service scope."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you offer support after delivery?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, support options can include maintenance, updates, optimisation, and advisory support depending on the agreed package."
+      }
+    }
+  ],
+  "isPartOf": {
+    "@type": "WebPage",
+    "@id": "https://www.example.com/services/example-service#webpage",
+    "url": "https://www.example.com/services/example-service",
+    "name": "Example Service Page",
+    "description": "A general service page describing service scope, benefits, FAQs, and provider information.",
+    "isFamilyFriendly": true,
+    "inLanguage": "en-GB",
+    "isPartOf": {
+      "@type": "WebSite",
+      "@id": "https://www.example.com#website",
+      "url": "https://www.example.com",
+      "name": "Example Company",
+      "publisher": {
+        "@type": "Organization",
+        "@id": "https://www.example.com#organization",
+        "name": "Example Company Ltd",
+        "url": "https://www.example.com",
+        "logo": {
+          "@type": "ImageObject",
+          "@id": "https://www.example.com#logo",
+          "url": "https://www.example.com/logo.svg",
+          "contentUrl": "https://www.example.com/logo.svg",
+          "caption": "Example Company Logo"
+        },
+        "image": {
+          "@id": "https://www.example.com#logo"
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "5",
+          "reviewCount": "10"
+        }
+      }
+    },
+    "mainEntity": {
+      "@type": "Service",
+      "@id": "https://www.example.com/services/example-service#service",
+      "name": "Example Professional Service",
+      "description": "A professional service designed to help organisations improve operations, systems, or digital capability.",
+      "serviceType": "Professional Service",
+      "additionalType": "https://www.wikidata.org/wiki/Q339628",
+      "areaServed": [
+        {
+          "@type": "AdministrativeArea",
+          "name": "London",
+          "sameAs": [
+            "https://en.wikipedia.org/wiki/London",
+            "https://www.wikidata.org/wiki/Q84"
+          ]
+        },
+        {
+          "@type": "Country",
+          "name": "United Kingdom",
+          "sameAs": [
+            "https://en.wikipedia.org/wiki/United_Kingdom",
+            "https://www.wikidata.org/wiki/Q145"
+          ]
+        }
+      ],
+      "audience": [
+        {
+          "@type": "Audience",
+          "name": "Business Owners",
+          "audienceType": "Founders, directors, and decision-makers"
+        },
+        {
+          "@type": "BusinessAudience",
+          "name": "Small and medium-sized enterprises",
+          "audienceType": "SMEs and growing businesses",
+          "sameAs": [
+            "https://en.wikipedia.org/wiki/Small_and_medium-sized_enterprises",
+            "https://www.wikidata.org/wiki/Q256722"
+          ]
+        },
+        {
+          "@type": "BusinessAudience",
+          "name": "Enterprise Organisations",
+          "audienceType": "Large enterprises and corporate teams"
+        }
+      ],
+      "provider": {
+        "@type": "Organization",
+        "@id": "https://www.example.com#organization",
+        "name": "Example Company Ltd",
+        "url": "https://www.example.com",
+        "telephone": "+44 0000 000000",
+        "priceRange": "$$",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "1 Example Street",
+          "addressLocality": "London",
+          "addressRegion": "England",
+          "postalCode": "EC1A 1AA",
+          "addressCountry": "GB"
+        },
+        "sameAs": [
+          "https://www.linkedin.com/company/example-company/"
+        ]
+      },
+      "subjectOf": {
+        "@id": "https://www.example.com/services/example-service#faqpage"
+      }
+    }
+  }
+}
+</script>

@@ -1,0 +1,1627 @@
+Project  Roadmap   |   Pomegranate  Marketing   |   KG  CMS  →  Supabase  →  Stitch  →  Vercel  →  Live
+ 
+ 
+PROJECT  ROADMAP 
+Pomegranate  Marketing KG  CMS  (Google  AI  Studio)   ·   Supabase   ·   Stitch   ·   Vercel From  unfinished  admin  panel  to  live  migrated  website  on  pomegranate.marketing 
+ 
+63  pages  to  build   ·   68  ×  301  redirects   ·   97  ×  410  Gone Seven  Phases   Phase  1      Content  Model  Sign-Off   Phase  2      Database  &  CMS  Build-Out   Phase  3      Schema  Generation  in  Database   Phase  4      Template  Build  in  Stitch   Phase  5      Deploy  Test  Site  to  Vercel   Phase  6      Content  Migration,  Redirects  &  410s   Phase  7      Go-Live  &  Domain  Migration 
+How  to  use  this  document Each  phase  has  a  task  table.  The  Notes  /  Dependency  column  flags  what  must  be  true  before  a  task  can  begin.  
+Phase
+ 
+6
+ 
+contains
+ 
+the
+ 
+full
+ 
+301
+ 
+redirect
+ 
+map
+ 
+and
+ 
+410
+ 
+list
+ 
+as
+ 
+implementation
+ 
+references.
+ 
+Work
+ 
+through
+ 
+phases
+ 
+in
+ 
+order
+ 
+—
+ 
+phases
+ 
+1–3
+ 
+are
+ 
+foundational.  Status  key: 
+◯  Not  started ▷  In  progress ✓  Complete ⚑  Blocked ~  Ongoing    
+Project  Roadmap  v3  —  Pomegranate  Marketing  (inc.  v3  amendments:  people  table  ·  faq_list  ·  schema_json_ld)
+ 
+Project  Roadmap   |   Pomegranate  Marketing   |   KG  CMS  →  Supabase  →  Stitch  →  Vercel  →  Live
+ 
+  PHASE  1    
+  Content  Model  Sign-Off    Finalise  every  field,  schema  rule,  and  component  before  any  database  or  CMS  work  begins.  We  are  currently  here. 
+Nothing  in  Phase  2  onwards  should  begin  until  each  item  below  is  confirmed.  Structural  changes  after  the  
+database
+ 
+has
+ 
+been
+ 
+built
+ 
+cost
+ 
+significantly
+ 
+more
+ 
+time.  # Task Notes  /  Dependency ✓ 
+1.1 
+Review  all  13  page  templates  in  content  model  v3 Content  model  v3  document  issued ◯ 
+1.2 
+Confirm  Keyword  Cycling  Component  fields  are  complete 
+Template  review  done ◯ 
+1.3 
+Confirm  schema  fields:  what  CMS  exposes  vs  what  backend  derives 
+Agreed:  hasPart,  isPartOf,  BreadcrumbList  =  backend  derived 
+◯ 
+1.4 
+Confirm  about/mentions  only  on  pages,  blog_posts,  pseo_page_instances 
+Confirmed  in  session ✓ 
+1.5 
+Confirm  knowledge_graph_entities  dedup:  wikidata_qid  +  wikipedia_slug  (both  nullable) 
+Confirmed  in  session ✓ 
+1.6 
+Confirm  schema_json_ld  (jsonb)  as  the  single  JSON-LD  output  column  standard  —  replaces  generated_schema_markup 
+Amended  in  v3  amendments ◯ 
+1.7 
+Confirm  schema  will  be  built  and  stored  in  the  database,  not  assembled  at  render  time 
+Confirmed  in  session ✓ 
+1.8 
+Confirm  faq_list  (jsonb)  as  the  single  FAQ  column  standard  across  pages,  blog_posts,  services,  industries,  free_tools  —  replaces  faqs  /  FAQs  /  unique_faqs 
+Amended  in  v3  amendments ◯ 
+1.9 
+Confirm  associates  =  external  brands,  partners,  and  software  platforms  only  —  NOT  human  authors 
+Amended  in  v3  amendments ◯ 
+1.10 
+Confirm  public.people  table  is  needed  for  human  authors,  reviewers,  and  team  members  —  provides  Person  schema  for  BlogPosting  and  About  page  E-E-A-T 
+Amended  in  v3  amendments ◯ 
+1.11 
+Confirm  blog_posts.author_person_id  and  blog_posts.reviewer_person_id  as  FK  columns  pointing  to  people  table  —  transitional  author_name  /  author_url  fallback  fields  retained 
+Amended  in  v3  amendments ◯ 
+1.12 
+Sign  off  content  model  with  all  v3  amendments  applied  —  no  further  structural  changes 
+All  above  complete ◯ 
+ Gate  —  do  not  proceed  to  Phase  2  until: Content  model  v3  is  signed  off  including  all  amendments  (1.12).  Column  naming  standards  locked:  schema_json_ld  for  schema  cache;  faq_list  for  FAQs.  associates  /  people  separation  confirmed.  Any  change  after  this  point  requires  a  formal  amendment  note  before  the  DB  is  touched.    
+Project  Roadmap  v3  —  Pomegranate  Marketing  (inc.  v3  amendments:  people  table  ·  faq_list  ·  schema_json_ld)
+ 
+Project  Roadmap   |   Pomegranate  Marketing   |   KG  CMS  →  Supabase  →  Stitch  →  Vercel  →  Live
+ 
+  PHASE  2    
+  Database  &  CMS  Build-Out    Run  the  migration  SQL  against  Supabase,  then  build  or  complete  the  KG  CMS  admin  panels  in  Google  AI  Studio  to  reflect  
+every
+ 
+content
+ 
+model
+ 
+field. 
+Two  parallel  workstreams  that  can  run  concurrently.  The  CMS  panels  cannot  be  fully  tested  until  the  migration  is  
+confirmed
+ 
+complete.  
+  2A  —  Supabase  Migration    
+# Task Notes  /  Dependency ✓ 
+2A.1 
+Back  up  existing  Supabase  database  before  running  any  migration  SQL 
+Must  complete  before  2A.2 ◯ 
+2A.2 
+Run  core  migration  SQL  from  content  model  v3  —  Section  C  (keyword  cycling,  schema  hierarchy,  KG  entity  dedup) 
+Backup  confirmed ◯ 
+2A.3 
+Verify  all  new  columns:  keyword_cycling_blocks,  canonical_url  on  pages/blog_posts/pseo 
+Migration  SQL  run ◯ 
+2A.4 
+Verify  services  new  columns:  long_description,  seo_title,  seo_meta_desc,  canonical_url,  keyword_cycling_blocks 
+Migration  SQL  run ◯ 
+2A.5 
+Verify  industries  new  columns:  faq_list,  keyword_cycling_blocks,  canonical_url,  schema_json_ld 
+Migration  SQL  run ◯ 
+2A.6 
+Verify  free_tools  new  columns:  faq_list,  keyword_cycling_blocks,  seo_title,  seo_meta_desc,  canonical_url,  schema_json_ld 
+Migration  SQL  run ◯ 
+2A.7 
+Verify  businesses  new  columns:  website_schema_config,  sameas_urls 
+Migration  SQL  run ◯ 
+2A.8 
+Verify  knowledge_graph_entities  new  columns:  wikidata_qid,  wikipedia_slug  +  partial  unique  indexes 
+Migration  SQL  run ◯ 
+2A.9 
+Verify  GIN  indexes  on  about/mentions  arrays  for  pages,  blog_posts,  pseo_page_instances 
+Migration  SQL  run ◯ 
+2A.10 
+Smoke  test:  insert  test  row  in  pages  with  all  new  columns  —  confirm  no  errors,  confirm  defaults 
+All  columns  verified ◯ 
+2A.11 
+Create  public.people  table  —  full  schema  including  id,  business_id,  full_name,  slug,  job_title,  bio,  short_bio,  profile_image_url/alt,  email,  website_url,  linkedin_url,  sameas_urls,  expertise_areas[],  credentials[],  is_author,  is_reviewer,  is_team_member,  published,  seo_title,  seo_meta_desc,  canonical_url,  schema_json_ld,  in_language,  created_at,  last_updated 
+1.10  confirmed ◯ 
+2A
+Add  author_person_id  and  reviewer_person_id  FK  columns  to  blog_posts  —  both  nullable;  add  FK  constraints  to  people.id 
+people  table  created  (2A.11) ◯ 
+Project  Roadmap  v3  —  Pomegranate  Marketing  (inc.  v3  amendments:  people  table  ·  faq_list  ·  schema_json_ld)
+ 
+Project  Roadmap   |   Pomegranate  Marketing   |   KG  CMS  →  Supabase  →  Stitch  →  Vercel  →  Live
+ 
+# Task Notes  /  Dependency ✓ 
+.12 
+2A.13 
+Add  faq_list  jsonb  DEFAULT  '[]'  to  pages,  blog_posts,  services,  industries,  free_tools  (industries  +  free_tools  may  already  exist  from  2A.2  —  use  ADD  IF  NOT  EXISTS) 
+1.8  confirmed ◯ 
+2A.14 
+Add  schema_json_ld  jsonb  to  pages,  blog_posts,  services,  industries,  free_tools,  pseo_page_instances  (pseo  already  has  this  column  —  skip  if  exists) 
+1.6  confirmed ◯ 
+2A.15 
+Backfill  faq_list  from  legacy  columns  —  pages.faqs  →  faq_list;  blog_posts."FAQs"  →  faq_list;  pseo_page_instances.unique_faqs  →  faq_list.  Validate  row  counts  and  JSON  shapes  match  before  proceeding. 
+2A.13  complete ◯ 
+2A.16 
+Validate  backfill:  confirm  no  NULLs  in  faq_list  where  legacy  column  had  data;  spot-check  10  rows  per  table  in  Supabase 
+Backfill  run  (2A.15) ◯ 
+2A.17 
+Drop  legacy  FAQ  columns  once  app  compatibility  confirmed  —  pages.faqs,  blog_posts."FAQs".  NOTE:  pseo.unique_faqs  can  be  kept  as  reference  until  Phase  3  schema  generator  is  confirmed  reading  faq_list 
+2A.16  validated ◯ 
+2A.18 
+Verify:  people  table  exists  with  correct  constraints;  blog_posts  FKs  present;  faq_list  backfill  complete  on  all  tables;  schema_json_ld  present  on  all  content  tables 
+All  above  complete ◯ 
+ 
+  2B  —  KG  CMS  Admin  Panel  (Google  AI  Studio)    
+# Task Notes  /  Dependency ✓ 
+2B.1 
+Audit  current  admin  panel  —  document  which  content  model  fields  are  already  exposed  vs  missing 
+Migration  complete  (2A.18) ◯ 
+2B.2 
+Build  Keyword  Cycling  Block  editor  —  per-page  array  editor  covering  all  fields  from  content  model  Section  A 
+Audit  complete ◯ 
+2B.3 
+Build  entity  picker  for  about_entities  /  mentions_entities  —  searches  knowledge_graph_entities  by  name 
+Audit  complete ◯ 
+2B.4 
+Build  FAQ  editor  —  repeatable  Q+A  component  writing  to  faq_list  (jsonb)  column  on  all  content  types 
+Audit  complete ◯ 
+2B.5 
+Build  schema  type  selector  —  exposes  webpage_type  per  page  (WebPage,  BlogPosting,  AboutPage  etc.) 
+Audit  complete ◯ 
+2B.6 
+Build  knowledge_graph_entities  management  UI  —  add/edit  with  wikidata_qid,  wikipedia_slug,  entity_type 
+Audit  complete ◯ 
+Project  Roadmap  v3  —  Pomegranate  Marketing  (inc.  v3  amendments:  people  table  ·  faq_list  ·  schema_json_ld)
+ 
+Project  Roadmap   |   Pomegranate  Marketing   |   KG  CMS  →  Supabase  →  Stitch  →  Vercel  →  Live
+ 
+# Task Notes  /  Dependency ✓ 
+2B.7 
+Build  entity  scanner  integration  —  scan  content  body  against  Wikipedia/Wikidata  API,  suggest  entities 
+KG  entities  UI  built  (2B.6) ◯ 
+2B.8 
+Expose  canonical_url  field  on  all  content  type  editors Audit  complete ◯ 
+2B.9 
+Expose  seo_title  and  seo_meta_desc  on  services,  industries,  free_tools  editors 
+Audit  complete ◯ 
+2B.10 
+Build  sameas_urls  editor  on  business  record  —  array  of  social/profile  URLs 
+Audit  complete ◯ 
+2B.11 
+Build  people/team  management  UI  —  create/edit  team  members  with  all  fields:  full_name,  slug,  job_title,  bio,  short_bio,  profile_image,  expertise_areas,  credentials,  linkedin_url,  sameas_urls,  is_author  /  is_reviewer  /  is_team_member  toggles,  published  toggle 
+people  table  created  (2A.11) ◯ 
+2B.12 
+Build  author  picker  on  blog_posts  editor  —  primary  field:  author_person_id  (searches  people  where  is_author=true,  shows  name  +  job_title);  legacy  author_name  /  author_url  fields  retained  as  visible  fallback/override 
+people  UI  built  (2B.11) ◯ 
+2B.13 
+Build  reviewer  picker  on  blog_posts  editor  —  reviewer_person_id  (optional;  searches  people  where  is_reviewer=true) 
+people  UI  built  (2B.11) ◯ 
+2B.14 
+Build  associates  editor  —  confirm  associates  UI  makes  clear  this  is  for  external  brands/partners/software  platforms  only;  update  any  field  labels  that  previously  implied  human  authorship 
+Audit  complete ◯ 
+2B.15 
+QA  all  CMS  panels  against  content  model  field  list  —  every  Required:  Yes  field  must  be  editable.  Confirm  faq_list  editor  writes  correct  jsonb  shape.  Confirm  author_person_id  picker  returns  people  records. 
+All  panels  built ◯ 
+ Gate  —  do  not  proceed  to  Phase  3  until: Migration  smoke  test  and  all  verification  steps  passed  (2A.18).  All  CMS  panels  QA'd  (2B.15).  People/author  UI  functional.  FAQ  editor  confirmed  writing  to  faq_list.  Associates  UI  correctly  labelled.    
+Project  Roadmap  v3  —  Pomegranate  Marketing  (inc.  v3  amendments:  people  table  ·  faq_list  ·  schema_json_ld)
+ 
+Project  Roadmap   |   Pomegranate  Marketing   |   KG  CMS  →  Supabase  →  Stitch  →  Vercel  →  Live
+ 
+  PHASE  3    
+  Schema  Generation  in  Database    Build  the  JSON-LD  generation  logic  so  the  CMS  produces  correct  schema  markup  stored  in  schema_json_ld  on  save/publish. 
+The  CMS  collects  inputs.  This  phase  is  the  logic  layer  that  assembles  those  inputs  into  valid  JSON-LD  and  writes  
+it
+ 
+to
+ 
+schema_json_ld
+ 
+(jsonb).
+ 
+The
+ 
+front
+ 
+end
+ 
+reads
+ 
+that
+ 
+column
+ 
+—
+ 
+it
+ 
+does
+ 
+not
+ 
+generate
+ 
+schema
+ 
+itself.
+ 
+Derived
+ 
+properties
+ 
+(hasPart,
+ 
+isPartOf,
+ 
+BreadcrumbList)
+ 
+are
+ 
+calculated
+ 
+here
+ 
+from
+ 
+the
+ 
+database
+ 
+state.
+ 
+FAQ
+ 
+data
+ 
+is
+ 
+read
+ 
+from
+ 
+faq_list.
+ 
+Author
+ 
+data
+ 
+is
+ 
+resolved
+ 
+via
+ 
+author_person_id
+ 
+→
+ 
+people
+ 
+table,
+ 
+with
+ 
+fallback
+ 
+to
+ 
+author_name
+ 
+/
+ 
+author_url
+ 
+/
+ 
+author_image_url
+ 
+if
+ 
+person
+ 
+record
+ 
+is
+ 
+absent.  # Task Notes  /  Dependency ✓ 
+3.1 
+Define  assembly  rules  per  page  type  —  which  DB  fields  map  to  which  schema  properties 
+Phase  2  complete ◯ 
+3.2 
+Build  WebSite  schema  generator  —  pulls  from  businesses;  derives  hasPart  by  querying  all  published  pages 
+Rules  defined  (3.1) ◯ 
+3.3 
+Build  Organization/LocalBusiness  generator  —  full  object  on  homepage/about;  @id  reference  elsewhere 
+Rules  defined ◯ 
+3.4 
+Build  WebPage  subtype  generator  —  switches  on  webpage_type  column 
+Rules  defined ◯ 
+3.5 
+Build  Service  schema  generator  —  for  service  pages  and  pseo_page_instances 
+Rules  defined ◯ 
+3.6 
+Build  BlogPosting  schema  generator  —  resolve  author  via  author_person_id  →  people  table  (Person  schema:  name,  jobTitle,  url,  image,  sameAs);  fallback  to  author_name  /  author_url  /  author_image_url  if  person  FK  is  null.  Resolve  reviewer_person_id  similarly  if  present. 
+Rules  defined ◯ 
+3.7 
+Build  FAQPage  generator  —  reads  from  faq_list  (jsonb)  on  whichever  table  is  being  generated;  conditional  on  array  being  non-empty 
+Rules  defined ◯ 
+3.8 
+Build  about  property  generator  —  resolves  about_entities  UUIDs  →  knowledge_graph_entities  records 
+Rules  defined ◯ 
+3.9 
+Build  mentions  property  generator  —  resolves  mentions_entities  UUIDs 
+Rules  defined ◯ 
+3.10 
+Build  BreadcrumbList  generator  —  derives  from  parent_page_id  chain  in  pages  table 
+Rules  defined ◯ 
+3.11 
+Wire  all  generators:  on  CMS  save/publish,  assemble  full  JSON-LD  graph  and  write  to  schema_json_ld  (jsonb) 
+All  generators  built ◯ 
+3.12 
+Test  output  on  one  page  of  each  type  —  validate  with  Google  Rich  Results  Test 
+Generators  wired  (3.11) ◯ 
+3.13 
+Resolve  any  validation  errors  from  Rich  Results  Test Tests  run ◯ 
+3.14 
+Backfill  schema_json_ld  from  legacy  generated_schema_markup  data  where  present  —  run  generators  against  all  existing  published  rows,  write  output  to  schema_json_ld 
+3.11  complete ◯ 
+Project  Roadmap  v3  —  Pomegranate  Marketing  (inc.  v3  amendments:  people  table  ·  faq_list  ·  schema_json_ld)
+ 
+Project  Roadmap   |   Pomegranate  Marketing   |   KG  CMS  →  Supabase  →  Stitch  →  Vercel  →  Live
+ 
+# Task Notes  /  Dependency ✓ 
+3.15 
+Deprecate  generated_schema_markup  —  update  all  CMS  reads/writes  to  use  schema_json_ld  only;  confirm  no  code  paths  still  reference  generated_schema_markup;  then  DROP  COLUMN  on  pages,  blog_posts,  pseo_page_instances 
+3.14  backfill  validated ◯ 
+ Gate  —  do  not  proceed  to  Phase  4  until: At  least  one  page  of  each  type  produces  valid  JSON-LD  and  passes  Google  Rich  Results  Test  (3.12–3.13).    
+Project  Roadmap  v3  —  Pomegranate  Marketing  (inc.  v3  amendments:  people  table  ·  faq_list  ·  schema_json_ld)
+ 
+Project  Roadmap   |   Pomegranate  Marketing   |   KG  CMS  →  Supabase  →  Stitch  →  Vercel  →  Live
+ 
+  PHASE  4    
+  Template  Build  in  Stitch    Build  all  13  page  templates  wired  to  Supabase.  Shared  components  first.  Schema  head  injector  reads  schema_json_ld. 
+Component  variant  note:  content  model  fields  are  variant-agnostic  —  the  same  field  schema  (headline,  
+subheadline,
+ 
+body,
+ 
+CTA
+ 
+pair,
+ 
+image,
+ 
+trust
+ 
+signals,
+ 
+etc.)
+ 
+serves
+ 
+all
+ 
+visual
+ 
+variants
+ 
+of
+ 
+a
+ 
+component.
+ 
+A
+ 
+display_variant
+ 
+selector
+ 
+field
+ 
+is
+ 
+included
+ 
+in
+ 
+each
+ 
+component
+ 
+block.
+ 
+Variant-specific
+ 
+optional
+ 
+fields
+ 
+(e.g.
+ 
+stat_items[]
+ 
+on
+ 
+the
+ 
+proof-led
+ 
+hero)
+ 
+are
+ 
+already
+ 
+included
+ 
+in
+ 
+the
+ 
+content
+ 
+model
+ 
+as
+ 
+optional.
+ 
+Lock
+ 
+the
+ 
+actual
+ 
+variant
+ 
+choices
+ 
+per
+ 
+template
+ 
+type
+ 
+in
+ 
+4A.0
+ 
+before
+ 
+Stitch
+ 
+build
+ 
+begins
+ 
+—
+ 
+this
+ 
+is
+ 
+a
+ 
+design
+ 
+decision,
+ 
+not
+ 
+a
+ 
+database
+ 
+decision,
+ 
+and
+ 
+can
+ 
+be
+ 
+made
+ 
+independently
+ 
+of
+ 
+Phase
+ 
+2.  
+  4A  —  Pre-Build:  Lock  Component  Variants    
+# Task Notes  /  Dependency ✓ 
+4A.0 
+Lock  component  variant  selections  for  each  template  type  before  any  Stitch  build  work  begins  —  Hero  (3  variants:  conversion  /  proof-led  /  image-split);  CTA  (3  variants);  Feature/service  highlights  (3);  Testimonials/proof  (3);  FAQ  (2);  Process/timeline  (2).  Document  which  variant  each  template  will  use.  This  is  a  design  decision,  not  a  DB  decision  —  can  be  done  in  parallel  with  Phase  2. 
+Phase  3  complete ◯ 
+ 
+  4B  —  Shared  Components  (build  before  any  templates)    
+# Task Notes  /  Dependency ✓ 
+4B.1 
+Keyword  Cycling  Component  —  cycling  block  config,  typewriter  animation,  static  fallback  for  no-JS 
+Variants  locked  (4A.0) ◯ 
+4B.2 
+Schema  head  injector  —  reads  schema_json_ld,  outputs  JSON-LD  <script>  tag  in  <head> 
+Variants  locked  (4A.0) ◯ 
+4B.3 
+Global  Header  —  primary  nav:  Home  |  SEO  |  Web  Design  |  Training  |  About  |  Blog  |  Contact 
+Variants  locked  (4A.0) ◯ 
+4B.4 
+Global  Footer  —  four  column  structure  per  navigation  spec 
+Variants  locked  (4A.0) ◯ 
+4B.5 
+Breadcrumb  component Variants  locked  (4A.0) ◯ 
+4B.6 
+Testimonial  Card  /  Proof  components  —  build  all  3  variants:  single  featured  quote,  3-card  grid,  review  strip 
+Variants  locked  (4A.0) ◯ 
+4B.7 
+Hero  components  —  build  all  3  variants:  conversion  hero,  proof-led  hero,  image-split  hero 
+Variants  locked  (4A.0) ◯ 
+4B.8 
+CTA  Block  components  —  build  all  3  variants:  simple  banner,  split  with  image,  proof  +  CTA 
+Variants  locked  (4A.0) ◯ 
+4B.9 
+Feature  /  Service  Highlight  components  —  build  all  3  variants:  icon  card  grid,  text  rows  with  checkmarks,  alternating  image+feature  rows 
+Variants  locked  (4A.0) ◯ 
+Project  Roadmap  v3  —  Pomegranate  Marketing  (inc.  v3  amendments:  people  table  ·  faq_list  ·  schema_json_ld)
+ 
+Project  Roadmap   |   Pomegranate  Marketing   |   KG  CMS  →  Supabase  →  Stitch  →  Vercel  →  Live
+ 
+# Task Notes  /  Dependency ✓ 
+4B.10 
+FAQ  Accordion  components  —  build  2  variants:  standard  accordion,  two-column  Q+A  layout  —  both  read  from  faq_list  jsonb 
+Variants  locked  (4A.0) ◯ 
+4B.11 
+Service  Card  component Variants  locked  (4A.0) ◯ 
+4B.12 
+Process  /  Steps  component  —  2  variants:  vertical  step  list,  horizontal/timeline 
+Variants  locked  (4A.0) ◯ 
+4B.13 
+Author  /  Expert  block  —  2  variants:  compact  author  card,  expanded  credibility  panel  —  reads  from  people  record  via  author_person_id 
+Variants  locked  (4A.0) ◯ 
+4B.14 
+Local  Proof  block  (for  Localised  Service  /  PSEO  pages)  —  2  variants:  landmarks  +  service  relevance,  why-choose-us  proof  panel 
+Variants  locked  (4A.0) ◯ 
+4B.15 
+Related  Resources  /  Internal  Linking  cards  —  2  variants:  card  grid,  list  with  descriptions 
+Variants  locked  (4A.0) ◯ 
+ 
+  4C  —  Page  Templates    
+# Task Notes  /  Dependency ✓ 
+4C.1 
+Homepage Shared  components  built  (4B  complete) ◯ 
+4C.2 
+Service  Category  ◯ 
+4C.3 
+Service  Specifics  (covers  all  L2  services  +  training  pages) 
+ ◯ 
+4C.4 
+Hub  (Blog,  Locations,  Industries,  Platforms)  ◯ 
+4C.5 
+Flat  Location  ◯ 
+4C.6 
+Localised  Service  (L3  pages)  ◯ 
+4C.7 
+Industries  Page  ◯ 
+Project  Roadmap  v3  —  Pomegranate  Marketing  (inc.  v3  amendments:  people  table  ·  faq_list  ·  schema_json_ld)
+ 
+Project  Roadmap   |   Pomegranate  Marketing   |   KG  CMS  →  Supabase  →  Stitch  →  Vercel  →  Live
+ 
+# Task Notes  /  Dependency ✓ 
+4C.8 
+Individual  Blog  Post  —  includes  author  block  reading  from  people  record 
+ ◯ 
+4C.9 
+Downloads  ◯ 
+4C.10 
+Free  Tools  ◯ 
+4C.11 
+About  —  includes  team  section  reading  from  people  records  where  is_team_member=true 
+ ◯ 
+4C.12 
+Contact  ◯ 
+4C.13 
+Legal  /  Utility  (Privacy  Policy  +  Terms  of  Service)  ◯ 
+ 
+  4D  —  Template  QA    
+# Task Notes  /  Dependency ✓ 
+4D.1 
+Review  each  template  against  content  model  field  list  —  every  Required:  Yes  field  rendered  or  accounted  for 
+All  13  templates  built ◯ 
+4D.2 
+Test  Keyword  Cycling  Component  across  all  applicable  templates  —  animation,  fallback,  accessibility  (aria-live) 
+All  templates  built ◯ 
+4D.3 
+Confirm  JSON-LD  appears  correctly  in  page  source  on  each  template  type  —  schema_json_ld  column  value  rendered  verbatim 
+All  templates  built ◯ 
+4D.4 
+Test  author  block  on  blog  post  template  —  confirm  Person  schema  rendered  when  author_person_id  is  set;  confirm  fallback  to  author_name  works  when  FK  is  null 
+All  templates  built ◯ 
+4D.5 
+Mobile  responsiveness  check  across  all  13  templates All  templates  built ◯ 
+4D.6 
+Cross-browser  check  (Chrome,  Firefox,  Safari,  Edge)  on  all  templates 
+All  templates  built ◯ 
+ Gate  —  do  not  proceed  to  Phase  5  until: All  13  templates  QA'd  (4D.1–4D.6).  Schema  rendering  confirmed  in  page  source.  Cycling  component  passes  accessibility  check.  Author  block  confirmed  reading  from  people  table.  
+Project  Roadmap  v3  —  Pomegranate  Marketing  (inc.  v3  amendments:  people  table  ·  faq_list  ·  schema_json_ld)
+ 
+Project  Roadmap   |   Pomegranate  Marketing   |   KG  CMS  →  Supabase  →  Stitch  →  Vercel  →  Live
+ 
+  4D  —  Component  Variant  Plan  (3  /  2  /  1  Rule)    The  component  variant  plan  governs  how  many  visual  variants  to  build  per  component  family.  The  rule:  3  variants  
+for
+ 
+top-of-page
+ 
+/
+ 
+conversion-critical
+ 
+components;
+ 
+2
+ 
+variants
+ 
+for
+ 
+supporting
+ 
+/
+ 
+explanatory
+ 
+components;
+ 
+1
+ 
+variant
+ 
+for
+ 
+utility
+ 
+/
+ 
+structural
+ 
+/
+ 
+invisible
+ 
+components.
+ 
+Build
+ 
+order
+ 
+follows
+ 
+the
+ 
+MVP
+ 
+target
+ 
+below.  Component  Family Min  Variants Tier First-build  priority 
+Hero  sections 3 Conversion-critical Phase  A CTA  sections 3 Conversion-critical Phase  A Feature  /  service  highlights 3 Conversion-critical Phase  A Testimonials  /  social  proof 3 Conversion-critical Phase  A FAQ  display  (accordion  /  Q&A) 2–3 Conversion-critical Phase  A Process  /  steps  /  timeline 2 Supporting Phase  A Related  resources  /  internal  linking 2 Supporting Phase  A Local  proof  /  location  context  (PSEO) 
+2 Supporting  —  critical  for  L3 
+Phase  B 
+Tool  explainer  /  how-to-use  steps 2 Supporting Phase  B Author  /  expert  intro  block 2 Supporting  —  E-E-A-T Phase  B Case  study  outcomes  block 2 Supporting Phase  B Comparison  blocks 2 Supporting Phase  C Stats  /  metrics  /  outcomes 2 Supporting Phase  C Pricing  /  package  cards 2 Supporting Phase  C Breadcrumbs 1 Utility Phase  A Schema  script  injector 1 Utility  —  invisible Phase  A Table  of  contents 1 Utility Phase  B Embed  wrapper  (video/tool/map) 1 Utility Phase  B Download  /  gated  resource  card 1 Utility Phase  B Contact  /  info  panel 1 Utility Phase  B Divider  /  section  separator 1 Utility Phase  A  MVP  absolute  minimum  (if  under  heavy  time  pressure): 2  heroes  ·  2  CTAs  ·  2  feature  blocks  ·  2  proof  blocks  ·  2  FAQs  ·  1  process  ·  1  author  block  ·  1  related  links  ·  1  local  proof  ·  utilities  1  each.  This  works  but  pages  will  feel  repetitive  quickly.  The  3/2/1  target  above  is  the  healthy  minimum.  Component  build  order  within  Phase  4: 
+Build Families When  you  have  this  you  can  cover 
+Phase  A  —  Must-have 
+Hero  (3)  ·  CTA  (3)  ·  Feature  highlights  (3)  ·  FAQ  (2)  ·  Testimonials  (2–3)  ·  Process  (2)  ·  Breadcrumbs  (1)  ·  Related  resources  (2)  ·  Divider  (1)  ·  Schema  injector  (1) 
+Services  ·  Blog  ·  About  ·  Contact  ·  Legal 
+Phase  B  —  Page-type  
+Local  proof  (2)  ·  Tool  explainer  (2)  ·  Author/team  block  (2)  ·  Case  study  outcome  (2)  ·  TOC  (1)  ·  Embed  
+All  13  templates  fully  supported  ·  PSEO  pages  distinct  from  each  other  ·  Free  Tools  pages  complete 
+Project  Roadmap  v3  —  Pomegranate  Marketing  (inc.  v3  amendments:  people  table  ·  faq_list  ·  schema_json_ld)
+ 
+Project  Roadmap   |   Pomegranate  Marketing   |   KG  CMS  →  Supabase  →  Stitch  →  Vercel  →  Live
+ 
+Build Families When  you  have  this  you  can  cover 
+strengtheners 
+wrapper  (1)  ·  Download  card  (1)  ·  Contact  panel  (1) 
+Phase  C  —  Expansion  /  polish 
+Comparison  (2)  ·  Stats/outcomes  (2)  ·  Pricing  (2)  ·  Additional  hero/proof  variants  if  repetition  observed  in  QA 
+Full  commercial  polish  ·  more  conversion  testing  surface 
+   
+Project  Roadmap  v3  —  Pomegranate  Marketing  (inc.  v3  amendments:  people  table  ·  faq_list  ·  schema_json_ld)
+ 
+Project  Roadmap   |   Pomegranate  Marketing   |   KG  CMS  →  Supabase  →  Stitch  →  Vercel  →  Live
+ 
+  PHASE  5    
+  Deploy  Test  Site  to  Vercel    Connect  Stitch  to  Vercel,  deploy  on  staging  URL,  and  run  full  end-to-end  checks  before  any  content  migration. 
+# Task Notes  /  Dependency ✓ 
+5.1 
+Connect  Stitch  project  to  Vercel  —  configure  build  settings  and  environment  variables 
+Phase  4  complete ◯ 
+5.2 
+Point  Vercel  environment  to  staging/test  Supabase  —  do  not  use  production  DB  on  staging 
+Vercel  connected ◯ 
+5.3 
+Trigger  first  deploy  —  confirm  build  succeeds  with  no  errors 
+Env  config  set ◯ 
+5.4 
+Configure  staging  domain  —  e.g.  staging.pomegranate.marketing  or  Vercel  preview  URL 
+First  deploy  successful ◯ 
+5.5 
+Confirm  robots.txt  on  staging  explicitly  blocks  all  crawlers  —  staging  must  not  be  indexed 
+Staging  URL  live ◯ 
+5.6 
+Create  one  test  page  of  each  of  the  13  template  types  with  dummy  content  via  CMS 
+Staging  live ◯ 
+5.7 
+Walk  through  all  13  test  pages  on  staging  —  visual,  functional,  and  link  check 
+Test  pages  created ◯ 
+5.8 
+Confirm  schema  JSON-LD  in  page  source  for  each  template  type  —  validate  in  Rich  Results  Test 
+Test  pages  created ◯ 
+5.9 
+Test  Keyword  Cycling  Component  on  staging  —  confirm  animation,  static  fallback,  and  aria-live  behaviour 
+Test  pages  created ◯ 
+5.10 
+Test  all  internal  navigation  links,  breadcrumbs,  and  CTA  buttons 
+Test  pages  created ◯ 
+5.11 
+Run  Google  PageSpeed  /  Core  Web  Vitals  on  staging  —  document  scores,  flag  critical  issues 
+Test  pages  live ◯ 
+5.12 
+Resolve  all  issues  found  in  5.7–5.11 All  checks  run ◯ 
+ Gate  —  do  not  proceed  to  Phase  6  until: Staging  is  fully  functional.  All  templates  pass  visual,  schema,  and  accessibility  QA.  robots.txt  confirmed  blocking  indexation.  CWV  scores  documented.    
+Project  Roadmap  v3  —  Pomegranate  Marketing  (inc.  v3  amendments:  people  table  ·  faq_list  ·  schema_json_ld)
+ 
+Project  Roadmap   |   Pomegranate  Marketing   |   KG  CMS  →  Supabase  →  Stitch  →  Vercel  →  Live
+ 
+  PHASE  6    
+  Content  Migration,  Redirects  &  410s    Migrate  all  63  pages  into  CMS.  Implement  the  full  301  redirect  map  and  410  Gone  list  in  Vercel  config.  QA  before  go-live. 
+This  is  the  most  time-intensive  phase.  Work  through  content  types  in  priority  order  —  highest-traffic  commercial  
+pages
+ 
+first,
+ 
+blog
+ 
+migration
+ 
+last.
+ 
+The
+ 
+redirect
+ 
+and
+ 
+410
+ 
+implementation
+ 
+should
+ 
+be
+ 
+done
+ 
+in
+ 
+parallel
+ 
+with
+ 
+content
+ 
+migration
+ 
+so
+ 
+everything
+ 
+is
+ 
+testable
+ 
+on
+ 
+staging
+ 
+together.  
+  6A  —  Audit  &  Preparation    
+# Task Notes  /  Dependency ✓ 
+6A.1 
+Export  all  existing  content  from  pomegranate.marketing  WordPress  —  copy,  meta,  images  per  page 
+Phase  5  complete ◯ 
+6A.2 
+Cross-reference  exported  URLs  against  301  map  and  410  list  —  confirm  every  legacy  URL  is  accounted  for 
+Export  complete ◯ 
+6A.3 
+Identify  existing  content  that  does  not  fit  the  new  content  model  —  flag  for  rewrite  or  discard 
+URL  audit  done ◯ 
+6A.4 
+Export  all  27  blog  posts  with  full  metadata  (title,  date,  author,  categories,  featured  images) 
+Export  complete ◯ 
+6A.5 
+Export  all  existing  images  —  check  sizes,  confirm  alt  text 
+Export  complete ◯ 
+ 
+  6B  —  Content  Entry  by  Priority    
+# Task Notes  /  Dependency ✓ 
+6B.1 
+Homepage  —  copy,  cycling  keywords,  schema  fields,  testimonials 
+CMS  ready  on  staging ◯ 
+6B.2 
+/seo-services/  —  Service  Category Homepage  done ◯ 
+6B.3 
+/web-design-services/  —  Service  Category  ◯ 
+6B.4 
+/web-design-seo-training/  —  Service  page  (not  category) 
+ ◯ 
+6B.5 
+6  ×  specific  SEO  service  pages  under  /seo-services/ Service  categories  done ◯ 
+6B.6 
+/web-design-services/landing-page-development-services/ 
+Service  categories  done ◯ 
+6B.7 
+/platforms/  hub  +  /platforms/wordpress-seo-services/  ◯ 
+Project  Roadmap  v3  —  Pomegranate  Marketing  (inc.  v3  amendments:  people  table  ·  faq_list  ·  schema_json_ld)
+ 
+Project  Roadmap   |   Pomegranate  Marketing   |   KG  CMS  →  Supabase  →  Stitch  →  Vercel  →  Live
+ 
+# Task Notes  /  Dependency ✓ 
+6B.8 
+/about/  ◯ 
+6B.9 
+/contact/  ◯ 
+6B.10 
+6  ×  Flat  Location  pages  under  /locations/ Location  hub  configured ◯ 
+6B.11 
+8  ×  Localised  Service  pages  (L3) Flat  locations  done ◯ 
+6B.12 
+/blog/  hub  configuration  ◯ 
+6B.13 
+27  ×  blog  posts  —  migrate  content,  set  all  metadata  fields,  assign  categories 
+Blog  hub  done ◯ 
+6B.14 
+/downloads/  —  hub  +  any  existing  resource  entries  ◯ 
+6B.15 
+/free-tools/  —  hub  +  any  existing  tool  entries  ◯ 
+6B.16 
+/industries/  —  placeholder  (no  child  pages  at  launch)  ◯ 
+6B.17 
+/privacy-policy/  —  update  Last  Updated  date  ◯ 
+6B.18 
+/terms-of-service/  —  update  Last  Updated  date  ◯ 
+ 
+  6C  —  Enrichment    
+# Task Notes  /  Dependency ✓ 
+6C.1 
+Add  FAQ  items  to  all  service,  location,  and  localised  service  pages 
+All  content  migrated ◯ 
+6C.2 
+Add  Keyword  Cycling  blocks  to  all  applicable  pages All  content  migrated ◯ 
+Project  Roadmap  v3  —  Pomegranate  Marketing  (inc.  v3  amendments:  people  table  ·  faq_list  ·  schema_json_ld)
+ 
+Project  Roadmap   |   Pomegranate  Marketing   |   KG  CMS  →  Supabase  →  Stitch  →  Vercel  →  Live
+ 
+# Task Notes  /  Dependency ✓ 
+6C.3 
+Run  entity  scanner  on  all  pages  —  review  and  confirm  about/mentions  entities  per  page 
+Entity  scanner  built  (2B.7) ◯ 
+6C.4 
+Spot-check  schema_json_ld  output  in  CMS  for  each  page  type  —  confirm  correct  JSON-LD 
+Entity  scan  complete ◯ 
+ 
+  6D  —  301  Redirect  Implementation    The  full  redirect  map  below  is  the  implementation  reference.  Each  entry  becomes  a  single  line  in  the  Vercel  
+vercel.json
+ 
+redirects
+ 
+array. Total  301  redirects:  68  entries  Vercel.json  format  note {  "redirects":  [  {  "source":  "/old-path",  "destination":  "/new-path",  "permanent":  true  }  ]  }  —  permanent:  true  outputs  a  301  status  code.  FROM  (legacy  URL) TO  (new  URL) 
+https://pomegranate.marketing/?kubio_recommend_page=77
+ 
+/
+ 
+https://pomegranate.marketing/?kubio_recommend_page=112
+ 
+/
+ 
+https://pomegranate.marketing/?kubio_recommend_page=101
+ 
+/
+ 
+https://pomegranate.marketing/national-seo-company/
+ 
+/about/
+ 
+https://pomegranate.marketing/free-seo-consultation/
+ 
+/contact/
+ 
+https://pomegranate.marketing/online-seo-quote/
+ 
+/contact/
+ 
+https://pomegranate.marketing/contact/
+ /contact/
+ 
+https://pomegranate.marketing/seo-blog-uk/
+ /blog/
+ 
+https://pomegranate.marketing/seo-blog-uk/category/ai-llms/
+ 
+/blog/
+ 
+https://pomegranate.marketing/seo-blog-uk/category/analytics-reporting/
+ 
+/blog/
+ 
+https://pomegranate.marketing/seo-blog-uk/category/content-link-building/
+ 
+/blog/
+ 
+https://pomegranate.marketing/seo-blog-uk/category/digital-marketing/
+ 
+/blog/
+ 
+https://pomegranate.marketing/seo-blog-uk/category/local-national-seo/
+ 
+/blog/
+ 
+https://pomegranate.marketing/seo-blog-uk/category/niche-specific-seo/
+ 
+/blog/
+ 
+https://pomegranate.marketing/seo-blog-uk/category/seo-careers-business/
+ 
+/blog/
+ 
+https://pomegranate.marketing/seo-blog-uk/category/seo-copywriting/
+ 
+/blog/
+ 
+https://pomegranate.marketing/seo-blog-uk/category/seo-fundamentals-strategy/
+ 
+/blog/
+ 
+Project  Roadmap  v3  —  Pomegranate  Marketing  (inc.  v3  amendments:  people  table  ·  faq_list  ·  schema_json_ld)
+ 
+Project  Roadmap   |   Pomegranate  Marketing   |   KG  CMS  →  Supabase  →  Stitch  →  Vercel  →  Live
+ 
+FROM  (legacy  URL) TO  (new  URL) 
+https://pomegranate.marketing/seo-blog-uk/ai-and-seo/
+ 
+/blog/ai-and-seo/
+ 
+https://pomegranate.marketing/seo-blog-uk/best-practices-for-website-development-company-website/
+ 
+/blog/best-practices-for-website-development-company-website/
+ 
+https://pomegranate.marketing/seo-blog-uk/best-seo-copywriting-course/
+ 
+/blog/best-seo-copywriting-course/
+ 
+https://pomegranate.marketing/seo-blog-uk/best-seo-courses-uk-2025/
+ 
+/blog/best-seo-courses-uk-2025/
+ 
+https://pomegranate.marketing/seo-blog-uk/best-seo-services-for-small-business/
+ 
+/blog/best-seo-services-for-small-business/
+ 
+https://pomegranate.marketing/seo-blog-uk/can-anyone-tutor-uk-private-tutoring-career-guide/
+ 
+/blog/can-anyone-tutor-uk-private-tutoring-career-guide/
+ 
+https://pomegranate.marketing/seo-blog-uk/can-i-learn-seo-on-my-own/
+ 
+/blog/can-i-learn-seo-on-my-own/
+ 
+https://pomegranate.marketing/seo-blog-uk/guide-to-seo-for-private-tutors/
+ 
+/blog/guide-to-seo-for-private-tutors/
+ 
+https://pomegranate.marketing/seo-blog-uk/how-much-do-seo-consultants-charge/
+ 
+/blog/how-much-do-seo-consultants-charge/
+ 
+https://pomegranate.marketing/seo-blog-uk/is-seo-certification-worth-it/
+ 
+/blog/is-seo-certification-worth-it/
+ 
+https://pomegranate.marketing/seo-blog-uk/keyword-tool-youtube/
+ 
+/blog/keyword-tool-youtube/
+ 
+https://pomegranate.marketing/seo-blog-uk/morocco-seo-your-ultimate-market-guide/
+ 
+/blog/morocco-seo-your-ultimate-market-guide/
+ 
+https://pomegranate.marketing/seo-blog-uk/pomegranate-marketing-strategy/
+ 
+/blog/pomegranate-marketing-strategy/
+ 
+https://pomegranate.marketing/seo-blog-uk/semrush-seo-toolkit-certification-free/
+ 
+/blog/semrush-seo-toolkit-certification-free/
+ 
+https://pomegranate.marketing/seo-blog-uk/seo-copywriting-examples/
+ 
+/blog/seo-copywriting-examples/
+ 
+https://pomegranate.marketing/seo-blog-uk/seo-for-tailors/
+ 
+/blog/seo-for-tailors/
+ 
+https://pomegranate.marketing/seo-blog-uk/seo-packages-london/
+ 
+/blog/seo-packages-london/
+ 
+https://pomegranate.marketing/seo-blog-uk/seo-quote-template/
+ 
+/blog/seo-quote-template/
+ 
+https://pomegranate.marketing/seo-blog-uk/seo-quotes-for-instagram/
+ 
+/blog/seo-quotes-for-instagram/
+ 
+https://pomegranate.marketing/seo-blog-uk/seo-training-online-courses-free-guide/
+ 
+/blog/seo-training-online-courses-free-guide/
+ 
+https://pomegranate.marketing/seo-blog-uk/seo-training-semrush-the-complete-guide-for-uk-marketers/
+ 
+/blog/seo-training-semrush-the-complete-guide-for-uk-marketers/
+ 
+https://pomegranate.marketing/seo-blog-uk/top-websites-in-the-uk/
+ 
+/blog/top-websites-in-the-uk/
+ 
+https://pomegranate.marketing/seo-blog-uk/website-visibility/
+ 
+/blog/website-visibility/
+ 
+https://pomegranate.marketing/seo-blog-uk/what-is-seo-copywriting-rules/
+ 
+/blog/what-is-seo-copywriting-rules/
+ 
+https://pomegranate.marketing/seo-blog-uk/why-digital-marketing-as-a-career-2026-future-proof-strategies/
+ 
+/blog/why-digital-marketing-as-a-career-2026-future-proof-strategies/
+ 
+Project  Roadmap  v3  —  Pomegranate  Marketing  (inc.  v3  amendments:  people  table  ·  faq_list  ·  schema_json_ld)
+ 
+Project  Roadmap   |   Pomegranate  Marketing   |   KG  CMS  →  Supabase  →  Stitch  →  Vercel  →  Live
+ 
+FROM  (legacy  URL) TO  (new  URL) 
+https://pomegranate.marketing/seo-blog-uk/why-keyword-research-is-important-in-seo/
+ 
+/blog/why-keyword-research-is-important-in-seo/
+ 
+https://pomegranate.marketing/seo-blog-uk/affordable-seo-agency-uk/
+ 
+/seo-services/
+ 
+https://pomegranate.marketing/seo-blog-uk/seo-training-website/
+ 
+/web-design-seo-training/
+ 
+https://pomegranate.marketing/small-business-seo-london/keyword-research-agency-london/
+ 
+/locations/london/keyword-research/
+ 
+https://pomegranate.marketing/local-seo-company-in-london/
+ 
+/locations/london/local-seo-services/
+ 
+https://pomegranate.marketing/small-business-seo-london/
+ 
+/locations/london/
+ 
+https://pomegranate.marketing/seo-expert-morocco/seo-expert-marrakesh/
+ 
+/locations/marrakesh/seo-services/
+ 
+https://pomegranate.marketing/seo-expert-morocco/
+ 
+/locations/morocco/seo-services/
+ 
+https://pomegranate.marketing/small-business-seo-london/seo-north-london/
+ 
+/locations/north-london/seo-services/
+ 
+https://pomegranate.marketing/small-business-seo-london/seo-south-london/
+ 
+/locations/south-london/seo-services/
+ 
+https://pomegranate.marketing/small-business-seo-london/search-engine-optimisation-in-waltham-forest/
+ 
+/locations/waltham-forest/seo-services/
+ 
+https://pomegranate.marketing/wordpress-seo-service/
+ 
+/platforms/wordpress-seo-services/
+ 
+https://pomegranate.marketing/b2b-seo-service/
+ 
+/seo-services/b2b-seo-service/
+ 
+https://pomegranate.marketing/google-business-profile-optimisation-service/
+ 
+/seo-services/google-business-profile-optimisation-service/
+ 
+https://pomegranate.marketing/national-seo-packages/
+ 
+/seo-services/national-seo-packages/
+ 
+https://pomegranate.marketing/on-page-seo-service/
+ 
+/seo-services/on-page-seo-service/
+ 
+https://pomegranate.marketing/schema-markup-service/
+ 
+/seo-services/schema-markup-service/
+ 
+https://pomegranate.marketing/landing-page-development-services/
+ 
+/web-design-services/landing-page-development-services/
+ 
+https://pomegranate.marketing/small-business-seo-london/enterprise-seo-london/
+ 
+/locations/london/
+ 
+https://pomegranate.marketing/small-business-seo-london/london-seo-prices/
+ 
+/locations/london/
+ 
+https://pomegranate.marketing/small-business-seo-london/seo-packages-for-sme-businesses-london/
+ 
+/locations/london/
+ 
+https://pomegranate.marketing/small-business-seo-london/seo-packages-for-startup-businesses-london/
+ 
+/locations/london/
+ 
+https://pomegranate.marketing/small-business-seo-london/on-page-optimisation-london/
+ 
+/locations/london/
+ 
+https://pomegranate.marketing/seo-expert-morocco/consultant-seo-casablanca/
+ 
+/locations/marrakesh/seo-services/
+ 
+https://pomegranate.marketing/seo-downloads/
+ /downloads/
+ 
+Project  Roadmap  v3  —  Pomegranate  Marketing  (inc.  v3  amendments:  people  table  ·  faq_list  ·  schema_json_ld)
+ 
+Project  Roadmap   |   Pomegranate  Marketing   |   KG  CMS  →  Supabase  →  Stitch  →  Vercel  →  Live
+ 
+FROM  (legacy  URL) TO  (new  URL) 
+https://pomegranate.marketing/privacy-policy/
+ 
+/privacy-policy/
+ 
+ # Task Notes  /  Dependency ✓ 
+6D.1 
+Implement  all  68  ×  301  redirects  in  vercel.json Redirect  map  above ◯ 
+6D.2 
+Test  every  redirect  on  staging  —  confirm  301  status  and  correct  destination 
+Redirects  implemented ◯ 
+6D.3 
+Check  for  redirect  chains  (A  →  B  →  C)  —  flatten  to  direct  A  →  C  where  found 
+All  redirects  tested ◯ 
+ 
+  6E  —  410  Gone  Implementation    97  URLs  to  be  returned  as  HTTP  410  Gone.  These  are  low-quality,  off-topic,  or  superseded  pages  that  should  not  
+be
+ 
+redirected
+ 
+—
+ 
+they
+ 
+should
+ 
+simply
+ 
+signal
+ 
+to
+ 
+Google
+ 
+that
+ 
+the
+ 
+content
+ 
+is
+ 
+gone
+ 
+permanently.
+ 
+Implemented
+ 
+in
+ 
+vercel.json
+ 
+as
+ 
+rewrites
+ 
+to
+ 
+a
+ 
+410
+ 
+handler,
+ 
+or
+ 
+via
+ 
+middleware.  410  Gone  —  Legacy  URLs  to  deindex  permanently 
+https://pomegranate.marketing/seo-blog-uk/mastering-seo-organic-top-10-tips/
+ https://pomegranate.marketing/seo-blog-uk/pay-per-click-marketing-services/
+ https://pomegranate.marketing/seo-blog-uk/seo-copywriter/
+ https://pomegranate.marketing/seo-blog-uk/how-to-add-keywords-to-your-website/
+ https://pomegranate.marketing/seo-blog-uk/ecommerce-web-design-agency/
+ https://pomegranate.marketing/seo-blog-uk/freelance-search-engine-optimization/
+ https://pomegranate.marketing/seo-blog-uk/small-business-seo-marketing/
+ https://pomegranate.marketing/seo-blog-uk/why-should-i-do-keyword-research/
+ https://pomegranate.marketing/seo-blog-uk/seo-quote/
+ https://pomegranate.marketing/seo-blog-uk/how-much-do-seo-companies-make/
+ https://pomegranate.marketing/seo-blog-uk/detailed-seo-extension/
+ https://pomegranate.marketing/seo-blog-uk/monthly-seo-services/
+ https://pomegranate.marketing/seo-blog-uk/seo-packages/
+ https://pomegranate.marketing/seo-blog-uk/best-seo-firms-uk/
+ https://pomegranate.marketing/seo-blog-uk/why-hire-search-engine-optimisation-consultants/
+ https://pomegranate.marketing/seo-blog-uk/best-seo-website/
+ https://pomegranate.marketing/seo-blog-uk/seo-companies-near-me/
+ https://pomegranate.marketing/seo-blog-uk/seo-ads/
+ https://pomegranate.marketing/seo-blog-uk/seo-position/
+ https://pomegranate.marketing/seo-blog-uk/why-is-on-page-seo-important/
+ https://pomegranate.marketing/seo-blog-uk/why-content-marketing-is-important/
+ https://pomegranate.marketing/seo-blog-uk/what-is-off-page-seo-in-simple-words/
+ https://pomegranate.marketing/seo-blog-uk/what-is-link-building-why-is-it-important/
+ https://pomegranate.marketing/seo-blog-uk/seo-and-blogging/
+ https://pomegranate.marketing/seo-blog-uk/seo-vs-ads/
+ https://pomegranate.marketing/seo-blog-uk/small-business-local-seo/
+ 
+Project  Roadmap  v3  —  Pomegranate  Marketing  (inc.  v3  amendments:  people  table  ·  faq_list  ·  schema_json_ld)
+ 
+Project  Roadmap   |   Pomegranate  Marketing   |   KG  CMS  →  Supabase  →  Stitch  →  Vercel  →  Live
+ 
+410  Gone  —  Legacy  URLs  to  deindex  permanently 
+https://pomegranate.marketing/seo-blog-uk/how-does-local-seo-work/
+ https://pomegranate.marketing/seo-blog-uk/unlock-growth-with-national-seo-services/
+ https://pomegranate.marketing/seo-blog-uk/local-seo-services-uk/
+ https://pomegranate.marketing/seo-blog-uk/backlinks-with-high-domain-authority/
+ https://pomegranate.marketing/seo-blog-uk/choose-the-right-website-design-packages/
+ https://pomegranate.marketing/seo-blog-uk/boost-traffic-tips-from-wordpress-seo-expert/
+ https://pomegranate.marketing/seo-blog-uk/search-engine-optimisation-consultancy-near-me-my-2025-guide/
+ https://pomegranate.marketing/seo-blog-uk/seo-specialist/
+ https://pomegranate.marketing/seo-blog-uk/hire-freelance-seo-consultant-manchester/
+ https://pomegranate.marketing/seo-blog-uk/how-to-choose-seo-consultant-london/
+ https://pomegranate.marketing/seo-blog-uk/7-seo-reporting-tools-for-agencies/
+ https://pomegranate.marketing/seo-blog-uk/how-to-become-an-seo-professional/
+ https://pomegranate.marketing/seo-blog-uk/guide-to-building-professional-websites/
+ https://pomegranate.marketing/seo-blog-uk/guide-to-web-design-for-marketing/
+ https://pomegranate.marketing/seo-blog-uk/white-label-seo-report-benefits/
+ https://pomegranate.marketing/seo-blog-uk/seo-content-strategy/
+ https://pomegranate.marketing/seo-blog-uk/website-designer-pay/
+ https://pomegranate.marketing/seo-blog-uk/work-of-a-web-designer/
+ https://pomegranate.marketing/seo-blog-uk/the-future-of-ai-agents-in-digital-marketing/
+ https://pomegranate.marketing/seo-blog-uk/marketing-automation-and-ai/
+ https://pomegranate.marketing/seo-blog-uk/technical-seo-training/
+ https://pomegranate.marketing/seo-blog-uk/seo-specialist-free-certification-guide/
+ https://pomegranate.marketing/seo-blog-uk/seo-training-london/
+ https://pomegranate.marketing/seo-blog-uk/seo-vs-local-seo/
+ https://pomegranate.marketing/seo-blog-uk/seo-training-services/
+ https://pomegranate.marketing/seo-blog-uk/moz-seo-certification-free/
+ https://pomegranate.marketing/seo-blog-uk/the-ultimate-guide-to-seo-training-videos-master-search-optimisation-in-2025/
+ https://pomegranate.marketing/seo-blog-uk/seo-training-london-expert-insights-2025-success/
+ https://pomegranate.marketing/seo-blog-uk/how-do-you-do-seo-on-youtube/
+ https://pomegranate.marketing/seo-blog-uk/seo-training-tesda/
+ https://pomegranate.marketing/seo-blog-uk/mastering-seo-training-in-pune/
+ https://pomegranate.marketing/seo-blog-uk/seo-practical-training/
+ https://pomegranate.marketing/seo-blog-uk/seo-content-writing-vs-seo-copywriting/
+ https://pomegranate.marketing/seo-blog-uk/what-is-seo-copywriting/
+ https://pomegranate.marketing/seo-blog-uk/seo-copywriter-job-description/
+ https://pomegranate.marketing/seo-blog-uk/seo-copywriting-with-ai/
+ https://pomegranate.marketing/seo-blog-uk/the-ultimate-guide-to-seo-copywriting-services/
+ https://pomegranate.marketing/seo-blog-uk/what-is-a-seo-content-brief/
+ https://pomegranate.marketing/seo-blog-uk/finding-a-top-seo-copywriter-uk-your-global-guide-to-digital-visibility/
+ https://pomegranate.marketing/seo-blog-uk/seo-copywriting-for-beginners/
+ https://pomegranate.marketing/seo-blog-uk/how-to-write-seo-copy/
+ https://pomegranate.marketing/seo-blog-uk/what-is-seo-copywriting-youtube/
+ https://pomegranate.marketing/seo-blog-uk/what-is-seo-copywriting-portfolio/
+ https://pomegranate.marketing/seo-blog-uk/digital-marketing-and-seo/
+ 
+Project  Roadmap  v3  —  Pomegranate  Marketing  (inc.  v3  amendments:  people  table  ·  faq_list  ·  schema_json_ld)
+ 
+Project  Roadmap   |   Pomegranate  Marketing   |   KG  CMS  →  Supabase  →  Stitch  →  Vercel  →  Live
+ 
+410  Gone  —  Legacy  URLs  to  deindex  permanently 
+https://pomegranate.marketing/seo-blog-uk/how-to-choose-a-consultant-digital-marketing-partner-for-2026-growth/
+ https://pomegranate.marketing/seo-blog-uk/what-is-copywriting-why-it-is-important-in-seo-and-sales/
+ https://pomegranate.marketing/seo-blog-uk/how-to-write-seo-copy-in-wordpress/
+ https://pomegranate.marketing/seo-blog-uk/digital-marketing-is-a-it-job/
+ https://pomegranate.marketing/seo-blog-uk/mastering-yoast-seo-copywriting/
+ https://pomegranate.marketing/seo-blog-uk/seo-content-writer-salary/
+ https://pomegranate.marketing/seo-blog-uk/the-business-impact-of-digital-marketing/
+ https://pomegranate.marketing/html-sitemap-for-seo/
+ https://pomegranate.marketing/seo-copywriting-service/
+ https://pomegranate.marketing/internal-linking-service/
+ https://pomegranate.marketing/free-local-seo-consultation/
+ https://pomegranate.marketing/natural-link-building-service/
+ https://pomegranate.marketing/seo-tutoring/
+ https://pomegranate.marketing/seo-website-audit-services/
+ https://pomegranate.marketing/seo-keyword-research-services/
+ https://pomegranate.marketing/domain-seo-service/
+ https://pomegranate.marketing/blog-copywriting-service/
+ https://pomegranate.marketing/seo-reporting-service/
+ https://pomegranate.marketing/seo-training-service/
+ https://pomegranate.marketing/seo-coaching/
+ https://pomegranate.marketing/shopify-seo-company/
+ https://pomegranate.marketing/woocommerce-seo-services/
+ https://pomegranate.marketing/squarespace-seo-specialist/
+ https://pomegranate.marketing/ecommerce-seo-packages/
+ https://pomegranate.marketing/seo-services-for-accountants/
+ https://pomegranate.marketing/small-business-seo-packages/
+ https://pomegranate.marketing/enterprise-seo-package/
+  # Task Notes  /  Dependency ✓ 
+6E.1 
+Implement  410  responses  for  all  97  URLs  —  via  Vercel  middleware  or  custom  410  handler 
+410  list  above ◯ 
+6E.2 
+Test  10  random  entries  from  the  410  list  on  staging  —  confirm  410  status  code  (not  301,  not  404) 
+410s  implemented ◯ 
+6E.3 
+Confirm  these  URLs  are  excluded  from  sitemap.xml 410s  implemented ◯ 
+ Gate  —  do  not  proceed  to  Phase  7  until: All  63  pages  migrated  and  enriched  (6B+6C).  Schema  spot-check  passed  (6C.4).  All  301s  tested  on  staging  (6D.2).  All  410s  confirmed  returning  correct  status  (6E.2).    
+Project  Roadmap  v3  —  Pomegranate  Marketing  (inc.  v3  amendments:  people  table  ·  faq_list  ·  schema_json_ld)
+ 
+Project  Roadmap   |   Pomegranate  Marketing   |   KG  CMS  →  Supabase  →  Stitch  →  Vercel  →  Live
+ 
+  PHASE  7    
+  Go-Live  &  Domain  Migration    Final  checks,  domain  transfer  to  Vercel,  and  immediate  post-launch  monitoring  on  pomegranate.marketing. 
+  7A  —  Pre-Launch  Checks    
+# Task Notes  /  Dependency ✓ 
+7A.1 
+Confirm  staging  passes  full  SEO  and  testing  checklist  (separate  document) 
+Phase  6  complete ◯ 
+7A.2 
+Set  production  environment  variables  in  Vercel  —  point  to  production  Supabase  (not  staging) 
+Staging  QA  complete ◯ 
+7A.3 
+Confirm  robots.txt  on  production  build  allows  indexing  —  remove  staging  crawl  block 
+Production  env  set ◯ 
+7A.4 
+Confirm  sitemap.xml  generates  correctly  and  is  accessible  at  /sitemap.xml  on  production  build 
+Production  env  set ◯ 
+7A.5 
+Confirm  all  canonical  URLs  resolve  to  https://pomegranate.marketing/  (not  staging  URL) 
+Production  env  set ◯ 
+7A.6 
+Verify  Google  Search  Console  —  confirm  ownership  of  pomegranate.marketing  verified  and  ready 
+ ◯ 
+7A.7 
+Notify  any  third-party  integrations  (analytics,  CRM,  form  handlers)  of  domain/URL  changes 
+ ◯ 
+7A.8 
+Take  a  final  full  crawl  of  the  old  WordPress  site  with  Screaming  Frog  —  baseline  for  comparison  post-launch 
+ ◯ 
+ 
+  7B  —  Domain  Switch    
+# Task Notes  /  Dependency ✓ 
+7B.1 
+Add  pomegranate.marketing  as  production  domain  in  Vercel  project  settings 
+Pre-launch  checks  done  (7A) ◯ 
+7B.2 
+Update  DNS  records  —  point  pomegranate.marketing  to  Vercel  nameservers  or  A/CNAME  records 
+Domain  added  to  Vercel ◯ 
+7B.3 
+Confirm  SSL  certificate  provisioned  automatically  by  Vercel  after  DNS  propagation 
+DNS  updated ◯ 
+7B.4 
+Confirm  old  WordPress  site  is  no  longer  serving  —  new  Stitch  site  resolves  on  pomegranate.marketing 
+DNS  propagated ◯ 
+7B.5 
+Submit  sitemap.xml  to  Google  Search  Console Site  live  on  domain ◯ 
+Project  Roadmap  v3  —  Pomegranate  Marketing  (inc.  v3  amendments:  people  table  ·  faq_list  ·  schema_json_ld)
+ 
+Project  Roadmap   |   Pomegranate  Marketing   |   KG  CMS  →  Supabase  →  Stitch  →  Vercel  →  Live
+ 
+# Task Notes  /  Dependency ✓ 
+7B.6 
+Request  indexing  for  homepage  and  all  key  commercial  pages  via  Search  Console  URL  Inspection 
+Sitemap  submitted ◯ 
+ 
+  7C  —  Post-Launch  Monitoring  (first  2  weeks)    
+# Task Notes  /  Dependency ✓ 
+7C.1 
+Monitor  Google  Search  Console  for  crawl  errors  —  check  daily  for  first  7  days 
+Site  live ~ 
+7C.2 
+Confirm  all  301  redirects  resolving  correctly  on  production  (spot-check  10  entries) 
+Site  live ◯ 
+7C.3 
+Confirm  all  410  pages  returning  410  status  on  production  (spot-check  10  entries) 
+Site  live ◯ 
+7C.4 
+Run  Google  Rich  Results  Test  on  homepage,  one  service  page,  one  blog  post,  one  location  page 
+Site  live ◯ 
+7C.5 
+Run  Core  Web  Vitals  on  production  —  confirm  no  regression  from  staging  scores 
+Site  live ◯ 
+7C.6 
+Test  Contact  form,  Downloads  forms  —  confirm  submissions  delivering  correctly 
+Site  live ◯ 
+7C.7 
+Monitor  Search  Console  for  unexpected  404s  from  organic  search  —  first  14  days 
+Site  live ~ 
+7C.8 
+Monitor  organic  ranking  positions  against  pre-launch  baseline  —  flag  significant  drops 
+2  weeks  post-launch ~ 
+ DNS  propagation  note: DNS  changes  can  take  between  a  few  minutes  and  48  hours  to  fully  propagate  globally.  Plan  the  domain  switch  for  a  low-traffic  period  —  Tuesday  to  Thursday  morning  is  typically  best.  Do  not  switch  on  a  Friday.    
+Project  Roadmap  v3  —  Pomegranate  Marketing  (inc.  v3  amendments:  people  table  ·  faq_list  ·  schema_json_ld)
+ 
+Project  Roadmap   |   Pomegranate  Marketing   |   KG  CMS  →  Supabase  →  Stitch  →  Vercel  →  Live
+ 
+  APPENDIX:  New  Site  Page  Inventory  (63  pages)    
+Reference  list  of  all  pages  to  be  built  and  their  schema  types.  Used  for  migration  tracking  in  Phase  6  and  
+redirect/410
+ 
+validation
+ 
+in
+ 
+Phase
+ 
+7.  URL  /  Level Page  Title Primary  Schema 
+L0   /
+ Homepage WebSite,  LocalBusiness,  Organization 
+L1   /seo-services/
+ SEO  Services  category CollectionPage,  Service 
+L1   /web-design-services/
+ Web  Design  Services  category CollectionPage,  Service 
+L1   /web-design-seo-training/
+ 
+Training  (service  page) WebPage,  Service 
+L1   /platforms/
+ Platforms  hub CollectionPage 
+L1   /locations/
+ Locations  hub CollectionPage 
+L1   /industries/
+ Industries  hub  —  placeholder CollectionPage 
+L1   /blog/
+ Blog  hub Blog,  CollectionPage 
+L1   /about/
+ About AboutPage,  Organization 
+L1   /contact/
+ Contact ContactPage,  LocalBusiness 
+L1   /downloads/
+ Downloads CollectionPage 
+L1   /free-tools/
+ Free  Tools WebPage,  SoftwareApplication 
+L1   /privacy-policy/
+ Privacy  Policy WebPage 
+L1   /terms-of-service/
+ Terms  of  Service WebPage 
+L2   /seo-services/b2b-seo-service/
+ 
+B2B  SEO  Service WebPage,  Service,  Offer 
+L2   /seo-services/google-business-profile-optimisation-service/
+ 
+GBP  Optimisation WebPage,  Service,  Offer 
+L2   /seo-services/national-seo-packages/
+ 
+National  SEO  Packages WebPage,  Service,  Offer 
+L2   /seo-services/on-page-seo-service/
+ 
+On-Page  SEO  Service WebPage,  Service,  Offer 
+L2   /seo-services/schema-markup-service/
+ 
+Schema  Markup  Service WebPage,  Service,  Offer 
+L2   /seo-services/keyword-research/
+ 
+Keyword  Research WebPage,  Service,  Offer 
+L2   /web-design-services/landing-page-development-services/
+ 
+Landing  Page  Dev WebPage,  Service,  Offer 
+L2   /platforms/wordpress-seo-services/
+ 
+WordPress  SEO  Services WebPage,  Service,  Offer 
+L2   /locations/london/
+ London  location LocalBusiness,  areaServed 
+L2   /locations/marrakesh/
+ Marrakesh  location LocalBusiness,  areaServed 
+L2   /locations/morocco/
+ Morocco  location LocalBusiness,  areaServed 
+Project  Roadmap  v3  —  Pomegranate  Marketing  (inc.  v3  amendments:  people  table  ·  faq_list  ·  schema_json_ld)
+ 
+Project  Roadmap   |   Pomegranate  Marketing   |   KG  CMS  →  Supabase  →  Stitch  →  Vercel  →  Live
+ 
+URL  /  Level Page  Title Primary  Schema 
+L2   /locations/north-london/
+ 
+North  London  location LocalBusiness,  areaServed 
+L2   /locations/south-london/
+ 
+South  London  location LocalBusiness,  areaServed 
+L2   /locations/waltham-forest/
+ 
+Waltham  Forest  location LocalBusiness,  areaServed 
+L3   /locations/london/keyword-research/
+ 
+London  Keyword  Research Service,  LocalBusiness,  areaServed 
+L3   /locations/london/local-seo-services/
+ 
+London  Local  SEO Service,  LocalBusiness,  areaServed 
+L3   /locations/london/seo-services/
+ 
+London  SEO  Services Service,  LocalBusiness,  areaServed 
+L3   /locations/marrakesh/seo-services/
+ 
+Marrakesh  SEO Service,  LocalBusiness,  areaServed 
+L3   /locations/morocco/seo-services/
+ 
+Morocco  SEO Service,  LocalBusiness,  areaServed 
+L3   /locations/north-london/seo-services/
+ 
+North  London  SEO Service,  LocalBusiness,  areaServed 
+L3   /locations/south-london/seo-services/
+ 
+South  London  SEO Service,  LocalBusiness,  areaServed 
+L3   /locations/waltham-forest/seo-services/
+ 
+Waltham  Forest  SEO Service,  LocalBusiness,  areaServed 
+L2   /blog/[27  posts]
+ 27  blog  posts BlogPosting,  Article   
+Project  Roadmap  v3  —  Pomegranate  Marketing  (inc.  v3  amendments:  people  table  ·  faq_list  ·  schema_json_ld)
+ 

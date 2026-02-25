@@ -1,0 +1,1747 @@
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+ 
+CONTENT  MODEL  REFERENCE 
+Local  Service  Business  Website 
+13  Page  Templates  +  Global  Components  +  Schema  Architecture  +  DB  Migration Updated:  Keyword  Cycling  Component   ·   Full  Schema  Hierarchy   ·   Supabase  Migration 
+ 
+1.   Homepage 2.   Service  Category 3.   Service  Specifics 4.   Hub  (Blog  /  Locations  /  Industries  /  Platforms) 5.   Flat  Location 6.   Localised  Service 7.   Industries  Page 8.   Individual  Blog  Post 9.   Downloads 10.  Free  Tools 11.  About 12.  Contact 13.  Legal  /  Utility — A.   GLOBAL:  Keyword  Cycling  Component  (NEW) B.   GLOBAL:  Schema  Architecture  —  Full  Hierarchy  (NEW) C.   DATABASE:  Supabase  Migration  (NEW)  
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+  Template  1  of  13:  Homepage    
+Purpose:  Primary  brand  and  trust-building  page.  Introduces  the  business,  its  core  services,  locations  served,  and  drives  users  
+towards
+ 
+conversion. Schema:  WebSite,  LocalBusiness,  Organization,  BreadcrumbList,  FAQPage  (optional) Keyword  Cycling  Component:  ✓  Applicable  —  see  Global  Components  section  
+SEO  &  Meta  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Meta  Title Text  (60  chars  max) 
+Yes Primary  keyword  +  brand  name 
+Meta  Description Text  (155  chars  max) 
+Yes Value  proposition  with  a  call  to  action 
+Canonical  URL URL Yes Self-referencing  canonical 
+OG  Title Text Yes Can  match  meta  title  or  be  conversational 
+OG  Description Text Yes  
+OG  Image Image  (1200×630px) 
+Yes Brand-consistent  social  sharing  image 
+ 
+Hero  Section  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+H1  Headline Text  (60–80  chars) 
+Yes Lead  with  the  primary  value  proposition 
+Hero  Subheadline Text  (120–160  chars) 
+Yes Elaborates  on  the  H1;  supports  the  core  promise 
+Hero  Body  Copy Rich  Text  (1–3  sentences) 
+No Optional  supporting  statement 
+Primary  CTA  Label Text Yes e.g.  'Get  a  Free  Consultation' 
+Primary  CTA  URL URL  /  Anchor Yes  
+Secondary  CTA  Label Text No  
+Secondary  CTA  URL URL  /  Anchor No  
+Hero  Image  /  Visual Image  or  Video Yes High  quality;  relevant  to  service  or  outcome 
+Hero  Badge  /  Trust  Signal 
+Text  or  Image No Rating,  years  in  business,  or  certification  badge 
+  Choices:  ●  https://21st.dev/ravikatiyar/animated-hero/default -  Favourite  ●  https://21st.dev/haik-kashiyani/experience-hero/default -  Second  favourite   ●  https://21st.dev/shadway/hero-dithering-card/default -  Third  favourite  ●  https://21st.dev/aliimam/hero-designali/default ●   
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+Keyword  Cycling  Block  (see  Global  Components)  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Cycling  Block  —  Prefix  Text 
+Text No Static  text  before  the  animated  term  e.g.  'We  are  a' 
+Cycling  Block  —  Keywords  Array 
+Text  Array No The  cycling  terms  e.g.  ['SEO  agency','digital  marketing  agency'] 
+Cycling  Block  —  Suffix  Text 
+Text No Static  text  after  e.g.  'helping  businesses  grow' 
+Cycling  Block  —  Static  Fallback 
+Text No Used  in  schema,  OG,  and  no-JS  fallback  —  must  read  as  a  complete  sentence 
+Cycling  Block  —  Heading  Level 
+Select:  H1/H2/H3/p 
+No On  homepage  this  would  typically  be  H1  or  H2 
+ 
+Services  Overview  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Section  Heading Text Yes e.g.  'What  We  Do' 
+Section  Intro Rich  Text  (2–3  sentences) 
+No  
+Service  Card Repeatable  Component 
+Yes Min  3  cards 
+—  Card  Icon  /  Image Image  or  SVG No  
+—  Card  Heading Text Yes Short  service  name 
+—  Card  Description Text  (30–60  words) 
+Yes  
+—  Card  CTA  URL URL Yes Links  to  Service  Category  page  
+Why  Choose  Us  /  USPs  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Section  Heading Text Yes  
+USP  Item Repeatable  (3–6  items) 
+Yes Icon  +  Heading  +  Description 
+ 
+Social  Proof  /  Testimonials  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Section  Heading Text Yes  
+Testimonial  Item Repeatable  Component  (min.  2) 
+Yes Quote  +  Name  +  Title  +  optional  photo 
+Average  Rating  Value Number No For  AggregateRating  schema 
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Review  Count Number No For  AggregateRating  schema  
+Location  /  Areas  Served  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Section  Heading Text No  
+Location  Link  Item Repeatable:  Name  +  URL 
+No Links  to  Flat  Location  pages 
+Map  Embed Embed  Code No   
+Final  CTA  Section  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Section  Heading Text Yes  
+Body  Copy Rich  Text No  
+CTA  Label Text Yes  
+CTA  URL URL Yes   
+Structured  Data  /  Schema  Fields  ★  New  fields  in  this  section:  WebSite  —  hasPart  Array  ·  About  Entities  (uuid[])  ·  Mentions  Entities  (uuid[])  ·  FAQ  Items  
+(optional)
+ 
+·
+ 
+sameAs
+ 
+Social
+ 
+URLs 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Business  Name Text Yes For  LocalBusiness  +  Organization  schema 
+Business  Description Text Yes 150–300  words 
+Logo  URL URL Yes  
+Address  (Full) Structured  Fields Yes Street,  City,  Postcode,  Country 
+Telephone Text Yes Include  country  code 
+Geo  Latitude  /  Longitude 
+Numbers No For  GeoCoordinates 
+Opening  Hours Repeatable:  Day  +  Times 
+No  
+Price  Range Text No e.g.  '££' 
+★  sameAs  Social  URLs 
+Text  Array No All  social  profile  URLs  —  used  in  Organization.sameAs 
+★  WebSite  —  hasPart  Array 
+Auto-generated Yes System  populates  from  all  published  pages  —  links  entire  site  map  into  WebSite  schema 
+★  About  Entities  (uuid[]) 
+UUID  Array No Knowledge  graph  entities  this  page  is  primarily  about 
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+★  Mentions  Entities  (uuid[]) 
+UUID  Array No Knowledge  graph  entities  referenced/mentioned  on  this  page 
+★  FAQ  Items  (optional) 
+JSON  Array  of  Q+A 
+No Triggers  FAQPage  schema  if  present 
+  
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+  Template  2  of  13:  Service  Category    
+Purpose:  Navigational  and  informational  hub  for  a  group  of  related  services.  Routes  users  to  specific  service  sub-pages. Schema:  Service,  CollectionPage,  BreadcrumbList,  Organization  (ref),  FAQPage  (optional) Keyword  Cycling  Component:  ✓  Applicable  —  see  Global  Components  section  
+SEO  &  Meta  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Meta  Title Text  (60  chars  max) 
+Yes Category  name  +  core  benefit  +  brand 
+Meta  Description Text  (155  chars  max) 
+Yes  
+Canonical  URL URL Yes  
+OG  Image Image  (1200×630px) 
+No  
+ 
+Page  Header  /  Hero  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+H1  Headline Text Yes Category  name  with  value  context 
+Hero  Subheadline Text No  
+Hero  Body  Copy Rich  Text  (2–4  sentences) 
+Yes Sets  context;  who  it  is  for 
+Hero  CTA  Label Text No  
+Hero  CTA  URL URL No  
+Breadcrumb  Display Boolean Yes   
+Keyword  Cycling  Block  (see  Global  Components)  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Cycling  Block  —  Prefix  Text 
+Text No e.g.  'Specialists  in' 
+Cycling  Block  —  Keywords  Array 
+Text  Array No Service  name  permutations  for  this  category 
+Cycling  Block  —  Suffix  Text 
+Text No  
+Cycling  Block  —  Static  Fallback 
+Text No Used  in  schema  output 
+Cycling  Block  —  Heading  Level 
+Select:  H1/H2/H3/p 
+No  
+ 
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+Category  Introduction  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Section  Heading Text No  
+Intro  Body  Copy Rich  Text  (200–400  words) 
+Yes  
+Supporting  Image Image No   
+Sub-Service  Cards  (Child  Pages)  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Section  Heading Text Yes  
+Sub-Service  Card Repeatable  Component 
+Yes One  card  per  L2  service  page 
+—  Card  Heading Text Yes  
+—  Card  Description Text  (40–80  words) 
+Yes  
+—  Card  CTA  URL URL Yes   
+FAQ  Section  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+FAQ  Item Repeatable:  Question  +  Answer 
+No Min  3  recommended;  triggers  FAQPage  schema 
+FAQ  Schema  Toggle Boolean No   
+Schema  Fields  ★  New  fields  in  this  section:  About  Entities  (uuid[])  ·  Mentions  Entities  (uuid[])  ·  FAQ  Items  (optional) 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+isPartOf  —  WebSite  ID Auto-reference Yes System  links  this  page  into  WebSite.hasPart 
+Organization  Reference 
+Auto-reference Yes provider  /  publisher  reference  to  business  entity 
+★  About  Entities  (uuid[]) 
+UUID  Array No Knowledge  graph  entities  this  page  is  primarily  about 
+★  Mentions  Entities  (uuid[]) 
+UUID  Array No Other  entities  referenced  on  this  page 
+★  FAQ  Items  (optional) 
+JSON  Array  of  Q+A 
+No Triggers  FAQPage  schema  if  present 
+  
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+  Template  3  of  13:  Service  Specifics    
+Purpose:  Primary  commercial  page  for  an  individual  service.  Covers  all  training  services  and  L2/L1  service  detail  pages. Schema:  Service,  Offer,  WebPage,  BreadcrumbList,  Organization  (ref),  FAQPage  (optional) Keyword  Cycling  Component:  ✓  Applicable  —  see  Global  Components  section  
+SEO  &  Meta  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Meta  Title Text  (60  chars  max) 
+Yes Service  name  +  outcome  +  brand 
+Meta  Description Text  (155  chars  max) 
+Yes  
+Canonical  URL URL Yes  
+Focus  Keyword Text Yes  
+Secondary  Keywords Text  (comma-separated) 
+No Editorial  use 
+ 
+Page  Header  /  Hero  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+H1  Headline Text Yes Service  name  +  core  outcome 
+Hero  Body  Copy Rich  Text  (2–5  sentences) 
+Yes Problem-aware;  who  this  is  for 
+Hero  CTA  Label Text Yes  
+Hero  CTA  URL URL Yes  
+Breadcrumb  Display Boolean Yes   
+Keyword  Cycling  Block  (see  Global  Components)  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Cycling  Block  —  Prefix  Text 
+Text No e.g.  'Our' 
+Cycling  Block  —  Keywords  Array 
+Text  Array No Service  name  permutations  e.g.  ['keyword  research  service','keyword  strategy  service'] 
+Cycling  Block  —  Suffix  Text 
+Text No e.g.  'drives  qualified  traffic  to  your  site' 
+Cycling  Block  —  Static  Fallback 
+Text No Schema-safe  complete  sentence 
+Cycling  Block  —  Heading  Level 
+Select:  H1/H2/H3/p 
+No Typically  H2  on  service  pages  where  H1  is  already  set 
+ 
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+What  is  Included  /  Deliverables  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Section  Heading Text Yes  
+Deliverable  Item Repeatable:  Heading  +  Description 
+Yes  
+Process  Steps Repeatable:  Number  +  Heading  +  Body 
+No  
+ 
+Who  It  Is  For  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Target  Audience  Description 
+Rich  Text  (100–200  words) 
+No  
+Audience  Persona  Tag Repeatable  Tag No   
+Pricing  Section  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Pricing  Model Select:  Fixed/Starting  From/Custom/Package 
+No  
+Price  Display Text  or  Number No  
+Offer  Schema  Toggle Boolean No Enable  Offer  schema  with  price  data  
+Social  Proof  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Testimonial(s) Repeatable  Component 
+Yes At  least  1  service-specific 
+Trust  Badges Repeatable:  Image  +  Alt  Text 
+No  
+ 
+FAQ  Section  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+FAQ  Item Repeatable:  Question  +  Answer 
+No Min  4  recommended 
+FAQ  Schema  Toggle Boolean No   
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+Schema  Fields  ★  New  fields  in  this  section:  FAQ  Items  (optional) 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Service  Name Text Yes For  Service  schema 
+Service  Description Text  (150–300  words) 
+Yes  
+Service  Type Text No e.g.  'ProfessionalService' 
+Area  Served Text  or  Repeatable 
+No  
+Provider  (Business  Name) 
+Auto-reference Yes Links  to  Organization  schema 
+Price  Currency Text No e.g.  'GBP' 
+Price  Value Number  or  Text No  
+★  FAQ  Items  (optional) 
+JSON  Array  of  Q+A 
+No Service-level  FAQs;  rendered  on  service  page 
+  
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+  Template  4  of  13:  Hub    
+Purpose:  Navigational  index  page  for  Blog,  Locations,  Industries,  and  Platforms  collections. Schema:  CollectionPage,  BreadcrumbList,  Organization  (ref) Keyword  Cycling  Component:  ✗  Not  applicable  
+SEO  &  Meta  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Meta  Title Text  (60  chars  max) 
+Yes  
+Meta  Description Text  (155  chars  max) 
+Yes  
+Canonical  URL URL Yes   
+Page  Header  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+H1  Headline Text Yes e.g.  'Our  Locations',  'Industries  We  Serve' 
+Intro  Body  Copy Rich  Text  (1–3  sentences) 
+No  
+Breadcrumb  Display Boolean Yes   
+Item  Cards  (Dynamically  Populated)  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Card  Heading Text Yes Post  title  /  Location  name  /  Industry  name 
+Card  Summary  /  Excerpt 
+Text  (30–60  words) 
+No  
+Card  Meta  (Date  /  Tag) Text No  
+Card  CTA  URL URL Yes   
+Empty  State  (for  unpopulated  hubs  e.g.  Industries  at  launch)  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Empty  State  Heading Text No  
+Empty  State  Body Rich  Text No  
+Empty  State  CTA Text  +  URL No   
+Schema  Fields  
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+isPartOf  —  WebSite  ID Auto-reference Yes  
+Organization  Reference 
+Auto-reference Yes  
+  
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+  Template  5  of  13:  Flat  Location    
+Purpose:  Landing  page  for  a  specific  town,  city,  or  region.  Establishes  local  relevance  and  routes  local  search  traffic. Schema:  LocalBusiness,  Service,  areaServed,  BreadcrumbList,  Organization  (ref),  FAQPage  (optional) Keyword  Cycling  Component:  ✓  Applicable  —  see  Global  Components  section  
+SEO  &  Meta  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Meta  Title Text  (60  chars  max) 
+Yes Primary  service  +  Location  +  Brand 
+Meta  Description Text  (155  chars  max) 
+Yes Mention  location  twice  naturally 
+Canonical  URL URL Yes  
+Focus  Keyword Text Yes e.g.  'SEO  services  London' 
+Geo  Region  Tag Text No ISO  region  code  e.g.  'GB-ENG' 
+Geo  Placename Text No e.g.  'London'  
+Page  Header  /  Hero  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+H1  Headline Text Yes Services  +  Location 
+Hero  Body  Copy Rich  Text  (2–4  sentences) 
+Yes Locally  aware  copy 
+Hero  CTA  Label Text Yes  
+Hero  CTA  URL URL Yes  
+Breadcrumb  Display Boolean Yes   
+Keyword  Cycling  Block  (see  Global  Components)  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Cycling  Block  —  Prefix  Text 
+Text No e.g.  'Your' 
+Cycling  Block  —  Keywords  Array 
+Text  Array No e.g.  ['London  SEO  agency','London  digital  marketing  company'] 
+Cycling  Block  —  Suffix  Text 
+Text No  
+Cycling  Block  —  Static  Fallback 
+Text No  
+Cycling  Block  —  Heading  Level 
+Select:  H1/H2/H3/p 
+No  
+ 
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+Services  Available  in  This  Location  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Section  Heading Text Yes  
+Service  Card Repeatable  Component 
+Yes One  per  locally  available  service 
+—  Service  Name Text Yes  
+—  Service  Description Text  (30–60  words) 
+Yes Localised  where  possible 
+—  Service  URL URL Yes Links  to  L3  Localised  Service  page  
+Local  Social  Proof  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Testimonial  Item Repeatable  Component 
+No Prioritise  local  clients 
+Nearby  Location  Links Repeatable:  Name  +  URL 
+No Internal  linking  to  sibling  locations 
+ 
+FAQ  Section  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+FAQ  Item Repeatable:  Question  +  Answer 
+No Location-specific  questions 
+FAQ  Schema  Toggle Boolean No   
+Schema  Fields  ★  New  fields  in  this  section:  About  Entities  (uuid[])  ·  Mentions  Entities  (uuid[])  ·  FAQ  Items  (optional) 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Area  Served  Name Text Yes e.g.  'London',  'Waltham  Forest' 
+Area  Served  Type Text No e.g.  'City',  'Borough' 
+Geo  Latitude Number No  
+Geo  Longitude Number No  
+★  About  Entities  (uuid[]) 
+UUID  Array No  
+★  Mentions  Entities  (uuid[]) 
+UUID  Array No  
+★  FAQ  Items  (optional) 
+JSON  Array  of  Q+A 
+No  
+  
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+  Template  6  of  13:  Localised  Service    
+Purpose:  Hyper-local  commercial  page  —  specific  service  in  a  specific  location.  Must  feel  genuine,  not  templated. Schema:  Service,  LocalBusiness,  areaServed,  BreadcrumbList,  Organization  (ref),  FAQPage  (optional) Keyword  Cycling  Component:  ✓  Applicable  —  see  Global  Components  section  
+SEO  &  Meta  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Meta  Title Text  (60  chars  max) 
+Yes [Service]  in  [Location]  |  [Brand] 
+Meta  Description Text  (155  chars  max) 
+Yes Hyper-local;  service  +  location  in  first  20  words 
+Canonical  URL URL Yes  
+Focus  Keyword Text Yes e.g.  'keyword  research  London'  
+Page  Header  /  Hero  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+H1  Headline Text Yes [Service]  in  [Location] 
+Hero  Body  Copy Rich  Text  (2–4  sentences) 
+Yes Localised;  references  specific  area  naturally 
+Hero  CTA  Label Text Yes  
+Hero  CTA  URL URL Yes  
+Breadcrumb  Display Boolean Yes Full  path:  Home  >  Locations  >  [Loc]  >  [Service]  
+Keyword  Cycling  Block  (see  Global  Components)  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Cycling  Block  —  Prefix  Text 
+Text No e.g.  'Looking  for  a' 
+Cycling  Block  —  Keywords  Array 
+Text  Array No e.g.  ['London  SEO  specialist','London  SEO  consultant','London  search  optimisation  expert'] 
+Cycling  Block  —  Suffix  Text 
+Text No e.g.  'in  [location]?  You've  found  us.' 
+Cycling  Block  —  Static  Fallback 
+Text No Schema-safe  full  sentence 
+Cycling  Block  —  Heading  Level 
+Select:  H1/H2/H3/p 
+No  
+ 
+Local  Context  Introduction  
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Localised  Intro  Copy Rich  Text  (200–400  words) 
+Yes Combines  service  +  genuine  local  context 
+Local  Market  Insight Text  or  Rich  Text No Shows  knowledge  of  local  business  community  
+Service  Detail  (inherits  from  Service  Specifics)  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Deliverables  /  What's  Included 
+Rich  Text  or  Component 
+Yes  
+Pricing  Section Rich  Text  /  Component 
+No May  omit  and  direct  to  contact 
+ 
+Local  Social  Proof  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Local  Testimonial(s) Repeatable  Component 
+Yes Prioritise  this  location  or  nearby 
+Parent  Location  Page  Link 
+URL Yes Link  back  to  the  Flat  Location  page 
+ 
+FAQ  Section  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+FAQ  Item Repeatable:  Question  +  Answer 
+No Mix  service-level  and  location-level  questions 
+FAQ  Schema  Toggle Boolean No   
+Schema  Fields  ★  New  fields  in  this  section:  About  Entities  (uuid[])  ·  Mentions  Entities  (uuid[])  ·  FAQ  Items  (optional) 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Service  Name Text Yes  
+Area  Served  Name Text Yes  
+Provider  Business  Name 
+Auto-reference Yes  
+Geo  Latitude Number No  
+Geo  Longitude Number No  
+★  About  Entities  (uuid[]) 
+UUID  Array No  
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+★  Mentions  Entities  (uuid[]) 
+UUID  Array No  
+★  FAQ  Items  (optional) 
+JSON  Array  of  Q+A 
+No  
+  
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+  Template  7  of  13:  Industries  Page    
+Purpose:  Vertical-specific  page  demonstrating  industry  knowledge.  Helps  convert  sector-specific  visitors. Schema:  WebPage,  Service,  BreadcrumbList,  Organization  (ref),  FAQPage  (optional) Keyword  Cycling  Component:  ✓  Applicable  —  see  Global  Components  section  
+SEO  &  Meta  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Meta  Title Text  (60  chars  max) 
+Yes [Service]  for  [Industry]  |  [Brand] 
+Meta  Description Text  (155  chars  max) 
+Yes  
+Canonical  URL URL Yes  
+Focus  Keyword Text Yes e.g.  'SEO  for  accountants'  
+Page  Header  /  Hero  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+H1  Headline Text Yes e.g.  'SEO  &  Marketing  for  Accountants' 
+Hero  Body  Copy Rich  Text  (2–4  sentences) 
+Yes Speaks  to  industry  pain  points 
+Industry  Tag Text Yes Used  in  schema  +  filtering 
+Breadcrumb  Display Boolean Yes   
+Keyword  Cycling  Block  (see  Global  Components)  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Cycling  Block  —  Prefix  Text 
+Text No e.g.  'We  are  your' 
+Cycling  Block  —  Keywords  Array 
+Text  Array No Industry-specific  variants  e.g.  ['accountancy  SEO  specialists','accounting  firm  marketing  experts'] 
+Cycling  Block  —  Static  Fallback 
+Text No  
+Cycling  Block  —  Heading  Level 
+Select:  H1/H2/H3/p 
+No  
+ 
+Industry  Context  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Industry  Context  Copy Rich  Text  (250–500  words) 
+Yes Demonstrates  sector  knowledge;  addresses  real  pain  points 
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Industry  Stat  or  Insight 
+Text No  
+ 
+Services  for  This  Industry  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Service  Card Repeatable  Component 
+Yes Curated  services  reframed  in  industry  language 
+ 
+Results  /  Case  Studies  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Case  Study  Item Repeatable:  Business  Type  +  Challenge  +  Result 
+No  
+ 
+FAQ  Section  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+FAQ  Item Repeatable:  Question  +  Answer 
+No Industry-specific  questions 
+FAQ  Schema  Toggle Boolean No   
+Schema  Fields  ★  New  fields  in  this  section:  FAQ  Items  (optional) 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Organization  Reference 
+Auto-reference Yes  
+★  FAQ  Items  (optional) 
+JSON  Array  of  Q+A 
+No  
+  
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+  Template  8  of  13:  Individual  Blog  Post    
+Purpose:  Long-form  content  to  attract  organic  search  traffic  and  demonstrate  expertise. Schema:  BlogPosting,  Article,  WebPage,  BreadcrumbList,  Organization  (ref),  FAQPage  (optional) Keyword  Cycling  Component:  ✗  Not  applicable  
+SEO  &  Meta  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Meta  Title Text  (60  chars  max) 
+Yes  
+Meta  Description Text  (155  chars  max) 
+Yes  
+Canonical  URL URL Yes  
+Focus  Keyword Text Yes  
+OG  Image Image  (1200×630px) 
+Yes Featured  image  for  social 
+No-Index  Toggle Boolean No For  thin  or  navigational  posts  
+Post  Header  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Post  H1  Title Text Yes  
+Featured  Image Image Yes Min  1200px  wide 
+Featured  Image  Alt  Text 
+Text Yes  
+Author  Name Text Yes  
+Publish  Date Date Yes  
+Last  Updated  Date Date No Important  for  freshness  signals 
+Category  /  Tag(s) Repeatable  Taxonomy  Term 
+Yes  
+Breadcrumb  Display Boolean Yes   
+Post  Body  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Body  Content Rich  Text  (Full  WYSIWYG) 
+Yes  
+Table  of  Contents Auto  or  Manual No Recommended  1500+  words 
+Inline  CTA Component No 1–2  mid-content  CTAs 
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+FAQ  Section Repeatable:  Q  +  A 
+No Triggers  FAQPage  schema  if  present 
+FAQ  Schema  Toggle Boolean No   
+Schema  Fields  ★  New  fields  in  this  section:  About  Entities  (uuid[])  ·  Mentions  Entities  (uuid[])  ·  FAQ  Items  (optional) 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Article  Headline Text Yes Matches  H1 
+Author  Name Text Yes  
+Publish  Date  (ISO  8601) 
+Date Yes  
+Modified  Date  (ISO  8601) 
+Date No  
+Publisher  Name Auto-reference Yes Organisation  name 
+Publisher  Logo  URL Auto-reference Yes  
+★  About  Entities  (uuid[]) 
+UUID  Array No Primary  topic  entities 
+★  Mentions  Entities  (uuid[]) 
+UUID  Array No All  referenced  entities  in  body 
+★  FAQ  Items  (optional) 
+JSON  Array  of  Q+A 
+No  
+  
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+  Template  9  of  13:  Downloads    
+Purpose:  Hub  for  downloadable  resources.  Gated  or  ungated.  Builds  list  and  demonstrates  expertise. Schema:  CollectionPage  /  CreativeWork,  Organization  (ref) Keyword  Cycling  Component:  ✗  Not  applicable  
+SEO  &  Meta  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Meta  Title Text  (60  chars  max) 
+Yes  
+Meta  Description Text  (155  chars  max) 
+Yes  
+Canonical  URL URL Yes  
+Index  Toggle Boolean Yes Gated  pages  behind  a  form  may  warrant  no-index  
+Page  Header  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+H1  Headline Text Yes  
+Intro  Body  Copy Rich  Text No  
+Breadcrumb  Display Boolean Yes   
+Download  Item  (Repeatable)  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Resource  Title Text Yes  
+Resource  Type Select:  Guide/Template/Checklist/Report/Worksheet 
+Yes  
+Resource  Description Rich  Text  (50–150  words) 
+Yes  
+Cover  /  Preview  Image Image Yes  
+Access  Type Select:  Free/Gated/Member  Only 
+Yes  
+Download  URL  (if  ungated) 
+URL No  
+Form  Embed  (if  gated) Form  Component 
+No  
+Privacy  Assurance  Statement 
+Text No 'We  never  spam.  Unsubscribe  any  time.' 
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+ 
+Schema  Fields  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Organization  Reference 
+Auto-reference Yes  
+  
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+  Template  10  of  13:  Free  Tools    
+Purpose:  Interactive  browser-based  tools  delivering  immediate  value.  High  SEO  traffic  potential. Schema:  WebPage,  SoftwareApplication,  BreadcrumbList,  Organization  (ref) Keyword  Cycling  Component:  ✓  Applicable  —  see  Global  Components  section  
+SEO  &  Meta  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Meta  Title Text  (60  chars  max) 
+Yes Tool  name  +  'Free'  +  context 
+Meta  Description Text  (155  chars  max) 
+Yes  
+Canonical  URL URL Yes   
+Page  Header  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+H1  Headline Text Yes  
+Tool  Tagline Text No  
+Breadcrumb  Display Boolean Yes   
+Keyword  Cycling  Block  (see  Global  Components)  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Cycling  Block  —  Keywords  Array 
+Text  Array No Tool  name  permutations  e.g.  ['free  SEO  audit  tool','website  checker','SEO  health  checker'] 
+Cycling  Block  —  Static  Fallback 
+Text No  
+Cycling  Block  —  Heading  Level 
+Select:  H1/H2/H3/p 
+No  
+ 
+Tool  Interface  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Tool  Embed  /  Component 
+Interactive  Embed  or  Custom  Component 
+Yes  
+Tool  Output  Display Component Yes Table,  chart,  or  text  output 
+Results  CTA Component:  Heading  +  Body  +  CTA 
+No After  results,  prompt  next  step 
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+ 
+How  to  Use  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Step  Item Repeatable:  Number  +  Heading  +  Body 
+Yes  
+ 
+Schema  Fields  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Application  Name Text Yes  
+Application  Category Text No e.g.  'BusinessApplication' 
+Offers  Price Text Yes Set  to  '0'  for  free  tools 
+Organization  Reference 
+Auto-reference Yes publisher  reference 
+  
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+  Template  11  of  13:  About    
+Purpose:  Builds  human  connection  and  trust.  Key  page  for  E-E-A-T  signals  and  converting  consideration-stage  visitors. Schema:  AboutPage,  Organization,  Person  (team  members) Keyword  Cycling  Component:  ✗  Not  applicable  
+SEO  &  Meta  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Meta  Title Text  (60  chars  max) 
+Yes  
+Meta  Description Text  (155  chars  max) 
+Yes Brief  human  summary 
+Canonical  URL URL Yes   
+Page  Header  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+H1  Headline Text Yes e.g.  'About  Us'  or  emotive  variant 
+Hero  Image  /  Team  Photo 
+Image No  
+ 
+Brand  Story  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Story  Body  Copy Rich  Text  (300–600  words) 
+Yes Origin,  mission,  personality 
+Mission  Statement Text  (1–2  sentences) 
+No Pull-quote  style  callout 
+Founding  Year Text No   
+Team  Section  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Team  Member  Card Repeatable  Component 
+No Name  +  Role  +  Photo  +  Bio  +  LinkedIn 
+—  Bio Rich  Text  (50–150  words) 
+Yes  
+—  Expertise  Tags Repeatable  Text No   
+Values  /  Credentials  
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Value  Item Repeatable:  Heading  +  Body 
+No 3–5  values;  concrete  not  generic 
+Stat  Item Repeatable:  Number  +  Label 
+No e.g.  '200+  Clients  Served' 
+Accreditation  /  Badge Repeatable:  Image  +  Name 
+No  
+ 
+Schema  Fields  ★  New  fields  in  this  section:  About  Entities  (uuid[])  ·  Mentions  Entities  (uuid[]) 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Business  Name Text Yes  
+Founding  Date Date No  
+Team  Member:  Name Text No Generates  Person  schema 
+Team  Member:  Job  Title 
+Text No  
+Team  Member:  Image  URL 
+URL No  
+Team  Member:  sameAs  (LinkedIn) 
+URL No  
+★  About  Entities  (uuid[]) 
+UUID  Array No The  Organization  entity  is  always  the  about  entity  on  this  page 
+★  Mentions  Entities  (uuid[]) 
+UUID  Array No People,  certifications,  partners  mentioned 
+  
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+  Template  12  of  13:  Contact    
+Purpose:  Primary  conversion  page.  Reduces  friction  and  offers  multiple  contact  methods. Schema:  ContactPage,  LocalBusiness,  BreadcrumbList,  Organization  (ref) Keyword  Cycling  Component:  ✗  Not  applicable  
+SEO  &  Meta  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Meta  Title Text  (60  chars  max) 
+Yes  
+Meta  Description Text  (155  chars  max) 
+Yes  
+Canonical  URL URL Yes   
+Page  Header  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+H1  Headline Text Yes e.g.  'Get  in  Touch' 
+Subheadline Text No e.g.  'We  typically  respond  within  one  business  day' 
+Intro  Body  Copy Rich  Text No Low-pressure,  welcoming  
+Contact  Form  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Form  Field:  Full  Name Text  Input Yes  
+Form  Field:  Email  Address 
+Email  Input Yes  
+Form  Field:  Message Textarea Yes  
+Form  Field:  Subject  /  Service  Interest 
+Select  or  Text No Helps  triage  enquiries 
+Consent  /  GDPR  Checkbox 
+Checkbox  +  Label 
+Yes Links  to  Privacy  Policy 
+Submit  Button  Label Text Yes  
+Success  Message Rich  Text Yes Shown  after  submission 
+Redirect  on  Submit  URL 
+URL No For  conversion  tracking 
+ 
+Contact  Details  
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Phone  Number Text No  
+Email  Address Text No  
+Office  Hours Rich  Text No  
+Response  Time  Promise 
+Text No  
+ 
+Schema  Fields  ★  New  fields  in  this  section:  About  Entities  (uuid[])  ·  Mentions  Entities  (uuid[]) 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Organization  Reference 
+Auto-reference Yes  
+★  About  Entities  (uuid[]) 
+UUID  Array No The  Organization  is  the  primary  about  entity 
+★  Mentions  Entities  (uuid[]) 
+UUID  Array No  
+  
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+  Template  13  of  13:  Legal  /  Utility    
+Purpose:  Privacy  Policy  and  Terms  of  Service.  Accurate,  readable,  up  to  date.  Basic  schema  only. Schema:  WebPage,  Organization  (ref)  —  no  FAQPage,  about,  or  mentions  required Keyword  Cycling  Component:  ✗  Not  applicable  
+SEO  &  Meta  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Meta  Title Text  (60  chars  max) 
+Yes Document  name  +  Brand 
+Canonical  URL URL Yes  
+No-Index  Toggle Boolean No Some  businesses  prefer  to  no-index  legal  pages  
+Page  Header  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+H1  Headline Text Yes e.g.  'Privacy  Policy' 
+Last  Updated  Date Date Yes Critical  for  compliance  —  always  keep  current 
+Intro  Paragraph Rich  Text No Plain-English  summary  
+Document  Body  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Section  Heading  (H2) Text Yes Repeatable 
+Section  Body Rich  Text Yes Repeatable  —  supports  lists,  sub-headings,  links 
+Table  of  Contents  /  Jump  Links 
+Auto  or  Manual No Recommended  for  longer  documents 
+ 
+Contact  /  Queries  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Contact  Email Email Yes Dedicated  privacy/legal  email 
+Data  Controller  Name Text Yes GDPR  compliance 
+Data  Controller  Address 
+Text Yes GDPR  compliance 
+ICO  Registration  Number 
+Text No UK-specific 
+ 
+Schema  Fields  
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+WebPage  —  isPartOf  WebSite 
+Auto-reference Yes Still  linked  into  WebSite.hasPart 
+Organization  Reference 
+Auto-reference Yes publisher  reference 
+No-Index  Flag Boolean No If  true,  exclude  from  WebSite.hasPart   
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+  A.   GLOBAL  COMPONENT:  Keyword  Cycling  Block    Applicable  to  any  optimisable  page  with  a  heading  area.  Defined  once,  referenced  in  each  template. 
+What  It  Is  A  heading-level  text  block  where  a  portion  of  the  text  cycles  through  an  array  of  keyword  permutations.  The  static  
+parts
+ 
+(prefix
+ 
+and
+ 
+suffix)
+ 
+remain
+ 
+fixed
+ 
+while
+ 
+the
+ 
+middle
+ 
+term
+ 
+animates
+ 
+through
+ 
+the
+ 
+keyword
+ 
+list.
+ 
+Example
+ 
+output:    Prefix:    "We  are  a" 
+  Keywords:  ["SEO  agency",  "search  engine  optimisation  company", 
+             "digital  marketing  agency",  "SEO  consultancy"] 
+  Suffix:    "helping  businesses  grow  online."    Rendered:  "We  are  a  [cycling  term]  helping  businesses  grow  online."  
+SEO  Considerations  Google's  crawler  typically  sees  either  the  first  keyword  in  the  array  or  the  static  fallback  text,  depending  on  
+rendering
+ 
+method.
+ 
+The
+ 
+cycling
+ 
+effect
+ 
+is
+ 
+a
+ 
+UX
+ 
+device
+ 
+for
+ 
+human
+ 
+visitors,
+ 
+not
+ 
+a
+ 
+keyword-stuffing
+ 
+mechanism.
+ 
+Rules: Rule  1:  The  Static  Fallback  Text  field  is  used  in  schema  markup,  Open  Graph  tags,  and  any  server-rendered  HTML.  It  
+must
+ 
+be
+ 
+a
+ 
+coherent,
+ 
+complete
+ 
+sentence
+ 
+using
+ 
+your
+ 
+most
+ 
+important
+ 
+keyword
+ 
+variant. Rule  2:  All  keywords  in  the  array  should  be  genuine,  natural-language  variations  of  the  same  concept  —  not  unrelated  
+keyword
+ 
+spam.
+ 
+Google
+ 
+can
+ 
+and
+ 
+does
+ 
+evaluate
+ 
+the
+ 
+full
+ 
+keyword
+ 
+list
+ 
+over
+ 
+multiple
+ 
+crawls. Rule  3:  The  H  tag  level  matters.  Only  one  H1  per  page.  If  the  cycling  block  is  your  H1,  ensure  the  static  fallback  contains  
+your
+ 
+primary
+ 
+keyword.
+ 
+If
+ 
+it
+ 
+is
+ 
+an
+ 
+H2,
+ 
+the
+ 
+H1
+ 
+elsewhere
+ 
+should
+ 
+carry
+ 
+the
+ 
+primary
+ 
+keyword.  
+Content  Model  Fields  These  fields  are  stored  as  a  JSON  object  in  keyword_cycling_blocks  (jsonb)  on  the  relevant  page  table.  Multiple  
+cycling
+ 
+blocks
+ 
+can
+ 
+exist
+ 
+on
+ 
+one
+ 
+page. 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+block_id Text  /  UUID Yes Unique  identifier  —  used  when  multiple  blocks  exist  on  same  page 
+prefix_text Text No Static  text  displayed  before  the  cycling  term  e.g.  'We  are  a' 
+keywords Text  Array Yes The  full  list  of  cycling  terms  —  minimum  2,  no  practical  maximum 
+suffix_text Text No Static  text  after  the  cycling  term  e.g.  'helping  businesses  grow' 
+static_fallback Text Yes The  complete  sentence  used  in  schema,  OG  tags,  and  no-JS  rendering.  Must  include  most  important  keyword. 
+heading_level Select:  h1/h2/h3/h4/p 
+Yes HTML  element  to  render.  One  H1  per  page  maximum. 
+animation_style Select:  typewriter/fade/slide-up/none 
+No Default:  typewriter.  'none'  disables  animation  but  still  cycles  on  interval. 
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+cycle_interval_ms Integer No Time  each  keyword  is  displayed  in  milliseconds.  Default:  3000  (3  seconds) 
+transition_duration_ms 
+Integer No Length  of  the  transition  animation  itself.  Default:  400ms 
+loop Boolean No Whether  cycling  repeats  indefinitely.  Default:  true 
+autostart Boolean No Whether  cycling  begins  on  page  load.  Default:  true 
+aria_live Select:  off/polite/assertive 
+No Accessibility.  Default:  'polite'.  Set  to  'off'  if  purely  decorative. 
+aria_label Text No Screen  reader  label  for  the  cycling  region  —  defaults  to  static_fallback  if  omitted 
+enabled Boolean Yes Master  toggle.  False  renders  static_fallback  only  —  no  animation.  
+Implementation  Notes  The  block  is  rendered  as  a  component.  The  static_fallback  is  output  as  the  initial  innerHTML  of  the  element.  
+JavaScript
+ 
+then
+ 
+replaces
+ 
+and
+ 
+cycles
+ 
+the
+ 
+keyword
+ 
+span.
+ 
+This
+ 
+means: 
+<!--  Server-rendered  HTML  (what  Google  sees  on  first  crawl)  --> 
+<h2  class="keyword-cycler"  data-keywords='["SEO  agency","digital  marketing  agency"]'> 
+  We  are  a  <span  class="cycler-term">SEO  agency</span>  helping  businesses  grow. 
+</h2>  <!--  JavaScript  enhances  this  in-browser  for  human  visitors  --> 
+<!--  Googlebot  sees:  'We  are  a  SEO  agency  helping  businesses  grow.'  -->  
+Database  Storage  Stored  as  a  JSONB  column  keyword_cycling_blocks  on  pages,  pseo_page_instances,  and  blog_posts.  Supports  
+an
+ 
+array
+ 
+of
+ 
+blocks
+ 
+per
+ 
+page
+ 
+(e.g.
+ 
+one
+ 
+in
+ 
+the
+ 
+hero,
+ 
+one
+ 
+mid-page). 
+--  Example  JSONB  value  for  keyword_cycling_blocks  column: 
+[ 
+  { 
+    "block_id":  "hero-cycler", 
+    "prefix_text":  "We  are  a", 
+    "keywords":  ["SEO  agency",  "search  engine  optimisation  company", 
+                 "digital  marketing  agency",  "SEO  consultancy"], 
+    "suffix_text":  "helping  UK  businesses  grow.", 
+    "static_fallback":  "We  are  a  leading  SEO  agency  helping  UK  businesses  grow.", 
+    "heading_level":  "h1", 
+    "animation_style":  "typewriter", 
+    "cycle_interval_ms":  3000, 
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+    "transition_duration_ms":  400, 
+    "loop":  true, 
+    "aria_live":  "polite", 
+    "enabled":  true 
+  } 
+]    
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+  B.   GLOBAL:  Schema  Architecture  —  Full  Hierarchy    Every  optimisable  page  participates  in  this  hierarchy.  Schema  is  assembled  at  render  time  from  DB  fields. 
+Architecture  Overview  The  schema  output  on  every  page  is  a  JSON-LD  script  block  assembled  from  multiple  layers.  These  layers  
+always
+ 
+appear
+ 
+together:  Layer  1:   WebSite            —  emitted  on  every  page;  hasPart[]  lists  all  published  pages 
+Layer  2:   Organization       —  emitted  on  every  page  as  publisher/provider  reference 
+Layer  3:   WebPage  subtype    —  the  page-specific  type  (WebPage,  BlogPosting,  FAQPage  etc.) 
+Layer  4:   Service  /  Entity   —  where  the  page  mainEntity  is  a  Service  object 
+Layer  5:   FAQPage            —  conditional;  emitted  only  when  FAQ  items  are  present 
+Layer  6:   about              —  property  on  WebPage  pointing  to  knowledge  graph  entities 
+Layer  7:   mentions           —  property  on  WebPage  listing  referenced  entities 
+Layer  8:   BreadcrumbList     —  on  all  pages  except  Homepage  and  Legal  
+Layer  1  —  WebSite  Schema  Defined  once  on  the  business  record.  The  hasPart  array  is  auto-populated  at  build/render  time  from  all  published  
+pages
+ 
+across
+ 
+the
+ 
+pages,
+ 
+pseo_page_instances,
+ 
+and
+ 
+blog_posts
+ 
+tables. 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+@type Fixed:  'WebSite' Yes  
+@id URL  +  '#website' Yes e.g.  'https://example.com/#website' 
+url Text Yes Homepage  URL 
+name Text Yes Site/Business  name 
+description Text Yes From  businesses.description 
+inLanguage Text Yes Default:  'en-GB' 
+publisher @id  reference Yes Points  to  #organization 
+potentialAction SearchAction  object 
+No Site  search  —  if  site  has  search  functionality 
+hasPart Auto-generated  Array 
+Yes ALL  published  WebPage  @id  values  —  assembled  at  render  time  
+Layer  2  —  Organization  /  LocalBusiness  Schema  Present  on  every  page  as  a  publisher  or  provider  reference.  Full  object  only  emitted  on  Homepage  and  About  
+page;
+ 
+all
+ 
+other
+ 
+pages
+ 
+reference
+ 
+it
+ 
+by
+ 
+@id. 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+@type 'LocalBusiness'  or  subtype 
+Yes e.g.  'ProfessionalService' 
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+@id URL  +  '#organization' 
+Yes  
+name Text Yes businesses.name 
+legalName Text No businesses.legal_name 
+description Text Yes businesses.description 
+url URL Yes businesses.website_url 
+logo ImageObject Yes businesses.logo_url 
+telephone Text Yes businesses.telephone 
+email Text No businesses.email 
+address PostalAddress Yes From  businesses  address  fields 
+geo GeoCoordinates No businesses.latitude/longitude 
+priceRange Text No businesses.price_range 
+sameAs Text  Array No All  social  profile  URLs  —  businesses.social_links  (mapped  to  sameAs) 
+aggregateRating AggregateRating No businesses.aggregate_rating  jsonb 
+openingHoursSpecification 
+Array No businesses.opening_hours_specification 
+foundingDate Date No businesses.founding_date 
+areaServed Array No businesses.area_served  jsonb 
+slogan Text No businesses.slogan  
+Layer  3  —  WebPage  Schema  by  Template  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+Homepage WebPage  +  WebSite  +  LocalBusiness 
+Full  object  emitted  here 
+isPartOf:  #website 
+Service  Category CollectionPage hasPart:  child  service  page  @ids 
+isPartOf:  #website 
+Service  Specifics WebPage  /  ItemPage 
+mainEntity:  #service 
+isPartOf:  #website 
+Hub CollectionPage blogPost  /  hasPart  array 
+isPartOf:  #website 
+Flat  Location WebPage mainEntity:  LocalBus
+isPartOf:  #website 
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+iness  +  areaServed 
+Localised  Service WebPage mainEntity:  Service  with  areaServed 
+isPartOf:  #website 
+Industries  Page WebPage mainEntity:  ItemList  of  services 
+isPartOf:  #website 
+Blog  Post BlogPosting headline,  author,  datePublished,  dateModified 
+isPartOf:  #website 
+Downloads CollectionPage  or  CreativeWork 
+ isPartOf:  #website 
+Free  Tools WebPage  +  SoftwareApplication 
+applicationCategory,  offers.price:  '0' 
+isPartOf:  #website 
+About AboutPage about:  #organization,  mainEntity:  #organization 
+isPartOf:  #website 
+Contact ContactPage mainEntity:  ContactPoint 
+isPartOf:  #website 
+Legal WebPage Minimal  —  isPartOf  only 
+isPartOf:  #website 
+ 
+Layer  5  —  FAQPage  Schema  (conditional)  Emitted  on  any  page  where  FAQ  items  are  present.  FAQPage  schema  is  structured  as  a  @graph  alongside  the  
+primary
+ 
+WebPage
+ 
+schema
+ 
+—
+ 
+not
+ 
+replacing
+ 
+it. 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+@type 'FAQPage' Yes  
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+@id URL  +  '#faqpage' 
+Yes  
+isPartOf WebSite  @id  reference 
+Yes  
+mainEntity Array  of  Question  objects 
+Yes Each  from  pages.faqs  /  blog_posts.FAQs  /  pseo_page_instances.unique_faqs 
+Question  @type 'Question' Yes  
+Question  name Text Yes The  question  text 
+acceptedAnswer  @type 
+'Answer' Yes  
+acceptedAnswer  text Rich  Text  (HTML  stripped) 
+Yes The  answer  text 
+ 
+Layer  6  —  about  Property  The  about  property  on  a  WebPage  identifies  the  primary  entity/topic  the  page  is  about.  This  is  sourced  from  the  
+about_entities
+ 
+uuid[]
+ 
+column,
+ 
+which
+ 
+references
+ 
+knowledge_graph_entities. 
+"about":  [ 
+  { 
+    "@type":  "Thing", 
+    "@id":  "https://www.wikidata.org/wiki/Q180711",   //  from  knowledge_graph_entities.wikidata_url 
+    "name":  "Search  engine  optimisation", 
+    "url":  "https://en.wikipedia.org/wiki/Search_engine_optimization" 
+  } 
+]  
+Layer  7  —  mentions  Property  Lists  all  secondary  entities  referenced  on  the  page.  Sourced  from  mentions_entities  uuid[].  The  distinction  from  
+about
+ 
+is
+ 
+one
+ 
+of
+ 
+primacy
+ 
+—
+ 
+about
+ 
+is
+ 
+what
+ 
+the
+ 
+page
+ 
+is
+ 
+fundamentally
+ 
+about;
+ 
+mentions
+ 
+is
+ 
+everything
+ 
+else
+ 
+referenced. 
+"mentions":  [ 
+  {  "@type":  "Thing",  "name":  "Google  Search  Console",  "@id":  "https://wikidata.org/wiki/..."  }, 
+  {  "@type":  "Thing",  "name":  "Keyword  research",  "@id":  "https://wikidata.org/wiki/..."  }, 
+  {  "@type":  "Organization",  "name":  "Google",  "sameAs":  "https://wikidata.org/wiki/Q95"  } 
+]    
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+  C.   DATABASE:  Supabase  Migration    Changes  required  to  support  keyword  cycling,  full  schema  hierarchy,  and  about/mentions  on  all  content  types. 
+Migration  Overview  The  existing  schema  is  largely  well-structured.  The  migration  adds:  (1)  keyword  cycling  blocks  to  all  content  
+tables,
+ 
+(2)
+ 
+about/mentions
+ 
+arrays
+ 
+to
+ 
+the
+ 
+services
+ 
+table
+ 
+(currently
+ 
+missing),
+ 
+(3)
+ 
+sameAs
+ 
+as
+ 
+a
+ 
+first-class
+ 
+field
+ 
+on
+ 
+businesses,
+ 
+(4)
+ 
+canonical_url
+ 
+to
+ 
+page
+ 
+tables,
+ 
+and
+ 
+(5)
+ 
+a
+ 
+website_schema_config
+ 
+block
+ 
+on
+ 
+businesses.  
+Summary  of  Changes  
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+businesses ADD  website_schema_config 
+New  column 
+JSONB  config  for  WebSite  schema  +  SearchAction 
+businesses ADD  sameAs_urls 
+New  column 
+text[]  —  maps  to  Organization.sameAs  in  schema  (social_links  exists  but  conflates  platform  metadata  with  URLs) 
+pages ADD  keyword_cycling_blocks 
+New  column 
+jsonb  —  array  of  cycling  block  objects;  see  Section  A 
+pages ADD  canonical_url 
+New  column 
+text  —  explicit  canonical;  defaults  to  derived  URL  if  null 
+pages RENAME  breadcrumb_json  →  breadcrumbs 
+Rename  (already  exists  as  both) 
+Normalise  to  single  column;  breadcrumb_json  is  a  duplicate  of  breadcrumbs 
+blog_posts ADD  keyword_cycling_blocks 
+New  column 
+jsonb 
+blog_posts ADD  canonical_url 
+New  column 
+text 
+pseo_page_instances ADD  keyword_cycling_blocks 
+New  column 
+jsonb 
+pseo_page_instances ADD  canonical_url 
+New  column 
+text 
+services ADD  long_description 
+New  column 
+text  —  services  only  has  short_description;  needed  for  Service.description  in  schema 
+services ADD  seo_title New  column 
+text  —  for  service  page  meta  title 
+services ADD  seo_meta_desc 
+New  column 
+text 
+services ADD  canonical_url 
+New  column 
+text 
+services ADD  keyword_cycling_blocks 
+New  column 
+jsonb 
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+industries ADD  faq_list New  column 
+jsonb  DEFAULT  '[]'  —  consistent  with  services.faq_list 
+industries ADD  keyword_cycling_blocks 
+New  column 
+jsonb 
+industries ADD  canonical_url 
+New  column 
+text 
+free_tools ADD  keyword_cycling_blocks 
+New  column 
+jsonb 
+free_tools ADD  seo_title New  column 
+text 
+free_tools ADD  seo_meta_desc 
+New  column 
+text 
+free_tools ADD  canonical_url 
+New  column 
+text 
+free_tools ADD  faq_list New  column 
+jsonb  DEFAULT  '[]' 
+knowledge_graph_entities 
+ADD  wikidata_qid 
+New  column 
+text  —  nullable  unique  index;  Wikidata  dedup  key 
+knowledge_graph_entities 
+ADD  wikipedia_slug 
+New  column 
+text  —  nullable  unique  index;  Wikipedia-only  dedup  key  
+Migration  SQL  Usage:  Run  in  Supabase  SQL  editor.  Safe  to  run  incrementally  —  all  statements  use  IF  NOT  EXISTS  or  ALTER  TABLE  
+ADD
+ 
+COLUMN
+ 
+which
+ 
+skip
+ 
+if
+ 
+already
+ 
+present.  --  ============================================================ 
+--  MIGRATION:  Content  Model  v2  —  Keyword  Cycling  +  Schema  Layer 
+--  ============================================================  --  1.  businesses:  website  schema  config  +  sameAs 
+ALTER  TABLE  public.businesses 
+  ADD  COLUMN  IF  NOT  EXISTS  website_schema_config  jsonb  DEFAULT  '{}'::jsonb, 
+  ADD  COLUMN  IF  NOT  EXISTS  sameas_urls  text[]  DEFAULT  '{}'::text[];  COMMENT  ON  COLUMN  public.businesses.website_schema_config  IS 
+  'WebSite  schema  config:  @id,  potentialAction  (SearchAction),  inLanguage'; 
+COMMENT  ON  COLUMN  public.businesses.sameas_urls  IS 
+  'Organization.sameAs:  array  of  social/profile  URLs  for  schema  output';  --  2.  pages:  cycling  blocks  +  canonical 
+ALTER  TABLE  public.pages 
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+  ADD  COLUMN  IF  NOT  EXISTS  keyword_cycling_blocks  jsonb  DEFAULT  '[]'::jsonb, 
+  ADD  COLUMN  IF  NOT  EXISTS  canonical_url  text;  --  Remove  duplicate  breadcrumb  column  (breadcrumbs  is  the  live  one) 
+--  Run  only  after  confirming  breadcrumb_json  data  is  migrated  to  breadcrumbs: 
+--  ALTER  TABLE  public.pages  DROP  COLUMN  IF  EXISTS  breadcrumb_json;  COMMENT  ON  COLUMN  public.pages.keyword_cycling_blocks  IS 
+  'Array  of  keyword  cycling  block  configs;  see  content  model  Section  A';  --  3.  blog_posts:  cycling  blocks  +  canonical 
+ALTER  TABLE  public.blog_posts 
+  ADD  COLUMN  IF  NOT  EXISTS  keyword_cycling_blocks  jsonb  DEFAULT  '[]'::jsonb, 
+  ADD  COLUMN  IF  NOT  EXISTS  canonical_url  text;  --  4.  pseo_page_instances:  cycling  blocks  +  canonical 
+ALTER  TABLE  public.pseo_page_instances 
+  ADD  COLUMN  IF  NOT  EXISTS  keyword_cycling_blocks  jsonb  DEFAULT  '[]'::jsonb, 
+  ADD  COLUMN  IF  NOT  EXISTS  canonical_url  text;  --  5.  services:  long  description,  SEO  fields,  cycling 
+ALTER  TABLE  public.services 
+  ADD  COLUMN  IF  NOT  EXISTS  long_description  text, 
+  ADD  COLUMN  IF  NOT  EXISTS  seo_title  text, 
+  ADD  COLUMN  IF  NOT  EXISTS  seo_meta_desc  text, 
+  ADD  COLUMN  IF  NOT  EXISTS  canonical_url  text, 
+  ADD  COLUMN  IF  NOT  EXISTS  keyword_cycling_blocks  jsonb  DEFAULT  '[]'::jsonb;  --  6.  industries:  FAQ,  cycling,  canonical 
+ALTER  TABLE  public.industries 
+  ADD  COLUMN  IF  NOT  EXISTS  faq_list  jsonb  DEFAULT  '[]'::jsonb, 
+  ADD  COLUMN  IF  NOT  EXISTS  keyword_cycling_blocks  jsonb  DEFAULT  '[]'::jsonb, 
+  ADD  COLUMN  IF  NOT  EXISTS  canonical_url  text;  --  7.  free_tools:  cycling,  SEO  fields,  FAQ 
+ALTER  TABLE  public.free_tools 
+  ADD  COLUMN  IF  NOT  EXISTS  faq_list  jsonb  DEFAULT  '[]'::jsonb, 
+  ADD  COLUMN  IF  NOT  EXISTS  keyword_cycling_blocks  jsonb  DEFAULT  '[]'::jsonb, 
+  ADD  COLUMN  IF  NOT  EXISTS  seo_title  text, 
+  ADD  COLUMN  IF  NOT  EXISTS  seo_meta_desc  text, 
+  ADD  COLUMN  IF  NOT  EXISTS  canonical_url  text;  
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+--  8.  knowledge_graph_entities:  deduplication  keys 
+ALTER  TABLE  public.knowledge_graph_entities 
+  ADD  COLUMN  IF  NOT  EXISTS  wikidata_qid  text, 
+  ADD  COLUMN  IF  NOT  EXISTS  wikipedia_slug  text;  --  Partial  unique  indexes:  enforce  uniqueness  only  when  value  is  present 
+CREATE  UNIQUE  INDEX  IF  NOT  EXISTS  idx_kg_wikidata_qid 
+  ON  public.knowledge_graph_entities  (wikidata_qid) 
+  WHERE  wikidata_qid  IS  NOT  NULL;  CREATE  UNIQUE  INDEX  IF  NOT  EXISTS  idx_kg_wikipedia_slug 
+  ON  public.knowledge_graph_entities  (wikipedia_slug) 
+  WHERE  wikipedia_slug  IS  NOT  NULL;  --  9.  GIN  indexes  on  about/mentions  arrays  (pages,  blog_posts,  pseo  only) 
+CREATE  INDEX  IF  NOT  EXISTS  idx_pages_about_entities 
+  ON  public.pages  USING  GIN  (about_entities); 
+CREATE  INDEX  IF  NOT  EXISTS  idx_pages_mentions_entities 
+  ON  public.pages  USING  GIN  (mentions_entities); 
+CREATE  INDEX  IF  NOT  EXISTS  idx_blog_posts_about_entities 
+  ON  public.blog_posts  USING  GIN  (about_entities); 
+CREATE  INDEX  IF  NOT  EXISTS  idx_blog_posts_mentions_entities 
+  ON  public.blog_posts  USING  GIN  (mentions_entities); 
+CREATE  INDEX  IF  NOT  EXISTS  idx_pseo_about_entities 
+  ON  public.pseo_page_instances  USING  GIN  (about_entities); 
+CREATE  INDEX  IF  NOT  EXISTS  idx_pseo_mentions_entities 
+  ON  public.pseo_page_instances  USING  GIN  (mentions_entities);  --  End  of  migration  
+What  Is  NOT  Changed  The  following  existing  columns  already  handle  the  new  requirements  correctly  and  require  no  changes: 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+pages.about_entities Already  exists uuid[] No  change  needed 
+pages.mentions_entities 
+Already  exists uuid[] No  change  needed 
+pages.faqs Already  exists ARRAY Stores  FAQ  Q+A  for  FAQPage  schema 
+pages.keywords Already  exists text[] Keyword  association  —  not  cycling  keywords 
+pages.generated_schema_markup 
+Already  exists ARRAY Final  rendered  schema  output  cache 
+Content  Model  Reference  —  v3
+ 
+Content  Model  Reference   |   Local  Service  Business   |   13  Templates  +  Schema  +  DB  Migration
+ 
+Field  Name Field  Type Required? 
+Notes  /  Guidance 
+blog_posts.about_entities 
+Already  exists uuid[] No  change  needed 
+blog_posts.FAQs Already  exists ARRAY Note:  recommend  normalising  case  to  faqs 
+pseo_page_instances.about_entities 
+Already  exists uuid[] No  change  needed 
+pseo_page_instances.unique_faqs 
+Already  exists jsonb FAQ  storage  for  pSEO  pages 
+businesses.social_links 
+Already  exists jsonb Retain  for  full  platform  metadata;  sameas_urls  is  the  schema-specific  extract   
+Content  Model  Reference  —  v3
+ 

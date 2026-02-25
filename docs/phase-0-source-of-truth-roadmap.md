@@ -5,7 +5,8 @@
 **Last updated:** 25 february 2026  
 **Author:** system pilot (gemini)  
 **Repository:** `pomegranateSEO/Knowledge-Graph-CMS-built-for-service-based-business-pSEO`  
-**Brand compliance:** this document follows `Branding/brand_guidelines_full.md` — British English, lowercase `pomegranate`, plain language, no hype.
+**Brand compliance:** this document follows `Branding/brand_guidelines_full.md` — British English, lowercase `pomegranate`, plain language, no hype.  
+**Legacy documents:** originals in `Legacy_docs/pdf/`, AI-readable text extractions in `Legacy_docs/extracted/`.
 
 ---
 
@@ -30,7 +31,9 @@
 
 ## 1. executive summary
 
-This roadmap consolidates three legacy documents (`content-model-v3`, `content-model-amendments-v3`, `project-roadmap-v3`), one architecture reference (`Headless CMS.txt`), one schema template (`schema_templates/service_page.json`), one live Supabase database, and one CMS codebase into a single, phase-gated execution plan for reaching go-live on `pomegranate.marketing`.
+This roadmap consolidates three legacy documents (`content-model-v3`, `content-model-amendments-v3`, `project-roadmap-v3`), one architecture reference (`headless-cms`), one schema template (`schema_templates/service_page.json`), one live Supabase database, and one CMS codebase into a single, phase-gated execution plan for reaching go-live on `pomegranate.marketing`.
+
+> **File locations:** original PDFs are in `Legacy_docs/pdf/`. AI-readable text extractions are in `Legacy_docs/extracted/`.
 
 ### what exists today
 
@@ -41,7 +44,7 @@ This roadmap consolidates three legacy documents (`content-model-v3`, `content-m
 | **Vercel** | Account active. Three deployments exist: `pomegranate-new-site.vercel.app`, `blogextras.vercel.app`, `branding-guidelines-pdf-generator-c.vercel.app`. |
 | **WordPress** (`pomegranate.marketing`) | Live and receiving traffic. Database exportable. Firecrawl available as fallback for content extraction. |
 | **Brand guidelines** | Locked and comprehensive (`Branding/brand_guidelines_full.md`). |
-| **Content model** | `content-model-v3` + `content-model-amendments-v3` define the target state. **No amendment SQL has been run on the live database yet.** |
+| **Content model** | `Legacy_docs/extracted/content-model-v3.txt` + `Legacy_docs/extracted/content-model-amendments-v3.txt` define the target state. **No amendment SQL has been run on the live database yet.** |
 | **Schema template** | `schema_templates/service_page.json` provides the canonical nested schema structure. |
 
 ---
@@ -50,9 +53,9 @@ This roadmap consolidates three legacy documents (`content-model-v3`, `content-m
 
 1. The CMS codebase in this repository is the single source of truth for the admin panel. We have full source control over it, if the Almighty is willing.
 2. No production traffic depends on the current Supabase database (all tables but 2 have 0 rows).
-3. The domain `pomegranate.marketing` currently runs a WordPress site — the 301/410 redirect map from `Headless CMS.txt` remains valid.
+3. The domain `pomegranate.marketing` currently runs a WordPress site — the 301/410 redirect map from `Legacy_docs/extracted/headless-cms.txt` remains valid.
 4. The `knowledgeGraph` Supabase project is entirely separate and out of scope.
-5. No amendment migration SQL from `content-model-amendments-v3` has been run on the live database. All amendment columns and tables are yet to be created.
+5. No amendment migration SQL from `Legacy_docs/extracted/content-model-amendments-v3.txt` has been run on the live database. All amendment columns and tables are yet to be created.
 6. Google Stitch MCP is the intended tool for building frontend templates (phase 4).
 7. There is no hard deadline — we move at the pace the Almighty permits.
 
@@ -64,7 +67,7 @@ This roadmap consolidates three legacy documents (`content-model-v3`, `content-m
 |---|---|---|
 | Q1 | **Where is the CMS admin panel source code?** | In this repository. `app/admin/` contains 17 panel directories. `components/` has forms and shared UI. `lib/` has database helpers, types, and utilities. |
 | Q2 | **Is the CMS a web application we have source control over?** | Yes — TypeScript/React/Vite application. Full source control. |
-| Q3 | **Has any migration SQL from `content-model-amendments-v3` been run on the live database?** | **No.** None of the amendment SQL has been executed. All amendment columns (`faq_list` standardisation, `schema_json_ld`, `canonical_url`, `keyword_cycling_blocks`, `people` table, `author_person_id`, `reviewer_person_id`, etc.) are yet to be created — except where the original schema already included some of these columns. |
+| Q3 | **Has any migration SQL from `Legacy_docs/extracted/content-model-amendments-v3.txt` been run on the live database?** | **No.** None of the amendment SQL has been executed. All amendment columns (`faq_list` standardisation, `schema_json_ld`, `canonical_url`, `keyword_cycling_blocks`, `people` table, `author_person_id`, `reviewer_person_id`, etc.) are yet to be created — except where the original schema already included some of these columns. |
 | Q4 | **`services.audience` column shape?** | Resolved by `schema_templates/service_page.json`. See [section 6](#6-schema-template-analysis) for the locked shape. |
 | Q5 | **Is the `knowledgeGraph` Supabase project related?** | No — entirely separate. Ignored. |
 | Q6 | **WordPress site state?** | Live and receiving traffic on `pomegranate.marketing`. Database is exportable. Firecrawl is available as a fallback for content extraction. |
@@ -340,7 +343,7 @@ The template demonstrates the full nesting: `FAQPage` → `isPartOf` → `WebPag
 | # | Task | Description | Gate |
 |---|---|---|---|
 | 0.1 | **Write project memory files** | `task_plan.md`, `findings.md`, `progress.md`, `gemini.md` (project constitution) — committed to repository. | Your approval of this roadmap |
-| 0.2 | **Merge content model** | Combine `content-model-v3`, `amendments-v3`, and verified database state into `docs/content-model-v4-final.md`. Mark all superseded assumptions explicitly. | Sign-off from you |
+| 0.2 | **Merge content model** | Combine `Legacy_docs/extracted/content-model-v3.txt`, `Legacy_docs/extracted/content-model-amendments-v3.txt`, and verified database state into `docs/content-model-v4-final.md`. Mark all superseded assumptions explicitly. | Sign-off from you |
 | 0.3 | **Lock JSONB shapes** | Document locked shapes for `audience`, `faq_list`, `area_served`, `opening_hours`, and all other JSONB columns — derived from `service_page.json` and `schema.org` specifications. | Automated (derived from template) |
 
 **Gate 0:** Roadmap signed off. Content model v4 merged. JSONB shapes ratified.
@@ -489,8 +492,8 @@ Schema is generated in the backend and stored in `schema_json_ld`. Frontend read
 | 6.1 | **Export WordPress content** | Database export or Firecrawl crawl + clean. | Phase 5 |
 | 6.2 | **Migrate blog posts** | Transform and insert into `blog_posts`. Map authors to `people` table records. | 6.1 |
 | 6.3 | **Populate all 63 pages** | Enter content for all pages per content model. | Templates working |
-| 6.4 | **Configure 68 × 301 redirects** | Per `Headless CMS.txt` redirect map. | — |
-| 6.5 | **Configure 97 × 410 gone responses** | Per `Headless CMS.txt` gone list. | — |
+| 6.4 | **Configure 68 × 301 redirects** | Per `Legacy_docs/extracted/headless-cms.txt` redirect map. | — |
+| 6.5 | **Configure 97 × 410 gone responses** | Per `Legacy_docs/extracted/headless-cms.txt` gone list. | — |
 | 6.6 | **Validate redirects** | `curl -I` every redirect and 410. | 6.4, 6.5 |
 | 6.7 | **Re-generate all schema** | Trigger schema generation for every content record. | 6.2, 6.3 |
 

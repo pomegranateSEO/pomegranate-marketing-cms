@@ -1,0 +1,550 @@
+High  level  roadmap
+ 
+Our  goal  is  to  build  a  reusable  headless  cms    
+●  We  now  know  the  database  we  will  need,  here  is  a  roadmap  to  rebuilding  -  with  built  
+in
+ 
+wikipedia
+ 
+API
+ 
+this
+ 
+time
+ 
+(for
+ 
+entity
+ 
+mapping)
+ 
+ 
+ 
+High  level  website  architecture  
+ 
+Level  Page  Type  URL  Concept  (High  Level  With  Examples)  
+L0  Homepage  (uk  digital  marketing/seo  &  website  design)  
+/ 
+L1  Service  Category  (uk)  
+/seo-services/  
+Or  
+/web-design-services/  
+L2  Service  Specifics  (UK)  
+/seo-services/keyword-research/  
+Or   
+/web-design-services/landing-page-design/  
+Or  /web-design-services/web-design-training  
+L1  Location  Hub  /locations/ 
+L2  Flat  Location  /locations/london/ 
+L3  Localised  Service  /locations/london/seo-services/   
+Or  
+/locations/london/on-page-seo-services  
+Or  
+/locations/london/web-design-services  
+Or   
+/locations/waltham-forest/seo-services  
+L1  Industries  Hub  /industries/  
+L1  Industries  Pages  /industries/industry-page-title-slug/  such  as   
+/industries/accountants/  
+Or  
+/industries/saas/  
+L1  Blog  Hub  /blog/ 
+L2  Individual  Posts  /blog/post-title-slug/ 
+L1  Downloads  /downloads/ 
+L1  Free  tools  /free-tools/ 
+L1  About  page  /about/ 
+L1  Contact  page  /contact/ 
+L1  Privacy  Policy  /privacy-policy/ 
+L1  Terms  of  service  /terms-of-service/ 
+ 
+Schema.org  Website  Hierarchy  
+Schema.org  Website  Hierarchy  for  
+Service-Based
+ 
+Business
+ 
+Let  me  map  out  the  complete  structured  data  hierarchy  from  top  to  bottom  -  here  are  the  full  list  of  schema  markup  examples:  
+Level  1:  Website  
+Type:  WebSite  
+Key  Properties:  
+●  @type:  "WebSite"  ●  @id:  URL  with  #website  fragment  ●  url:  Homepage  URL  ●  name:  Site  name  ●  description:  Site  description  ●  inLanguage:  Language  code  ●  publisher:  Organization/LocalBusiness  reference  ●  potentialAction:  SearchAction  (for  site  search)  ●  hasPart:  Array  of  WebPage  references  
+ 
+Level  2:  Organization/Business  Entity  
+Type:  LocalBusiness (or  specific  subtype)  
+Common  LocalBusiness  Subtypes  for  Services:  
+●  ProfessionalService  ●  HomeAndConstructionBusiness (with  subtypes  like  Electrician,  Plumber,  etc.)  ●  HealthAndBeautyBusiness  ●  LegalService  ●  FinancialService  ●  AutomotiveBusiness  
+Key  Properties:  
+●  @type:  Specific  business  type  ●  @id:  URL  with  #organization  fragment  
+●  name:  Business  name  ●  legalName:  Legal  business  name  ●  description:  Business  description  ●  url:  Website  URL  ●  logo:  Logo  ImageObject  ●  image:  Array  of  images  ●  telephone:  Phone  number  ●  email:  Contact  email  ●  priceRange:  Price  indicator  (e.g.,  "$$")  ●  address:  PostalAddress  ○  streetAddress  ○  addressLocality  ○  addressRegion  ○  postalCode  ○  addressCountry  ●  areaServed:  Array  of  GeoShape,  City,  State,  or  Country  ●  serviceArea:  Same  as  areaServed  (alternative)  ●  openingHoursSpecification:  Array  of  opening  hours  ○  dayOfWeek  ○  opens  ○  closes  ●  aggregateRating:  AggregateRating  ○  ratingValue  ○  reviewCount  ○  bestRating  ○  worstRating  ●  review:  Array  of  Review  objects  ●  sameAs:  Social  media  URLs  array  ●  foundingDate:  Date  established  ●  founder:  Person  reference  ●  employee:  Array  of  Person  references  ●  numberOfEmployees:  Number  ●  slogan:  Business  tagline  ●  hasOfferCatalog:  OfferCatalog  reference  ●  makesOffer:  Array  of  Service/Offer  references  
+ 
+Level  3:  WebPage  Types  
+3a.  AboutPage  
+Type:  AboutPage  
+Properties:  
+●  @type:  "AboutPage"  ●  @id:  URL  with  #webpage  fragment  ●  url:  Page  URL  ●  name:  Page  title  ●  description:  Page  description  ●  inLanguage:  Language  code  ●  isPartOf:  WebSite  reference  ●  about:  Organization/LocalBusiness  reference  ●  mainEntity:  Organization  reference  ●  breadcrumb:  BreadcrumbList  ●  speakable:  Speakable  sections  (for  voice  search)  
+3b.  ContactPage  
+Type:  ContactPage  
+Properties:  
+●  @type:  "ContactPage"  ●  @id:  URL  with  #webpage  fragment  ●  url:  Page  URL  ●  name:  Page  title  ●  description:  Page  description  ●  inLanguage:  Language  code  ●  isPartOf:  WebSite  reference  ●  mainEntity:  Organization/ContactPoint  ●  breadcrumb:  BreadcrumbList  
+3c.  Service  List  Page  (CollectionPage)  
+Type:  CollectionPage  
+Properties:  
+●  @type:  "CollectionPage"  ●  @id:  URL  with  #webpage  fragment  ●  url:  Page  URL  ●  name:  "Our  Services"  (or  similar)  ●  description:  Page  description  ●  inLanguage:  Language  code  
+●  isPartOf:  WebSite  reference  ●  mainEntity:  ItemList  of  services  ●  breadcrumb:  BreadcrumbList  ●  hasPart:  Array  of  individual  service  page  references  
+3d.  Individual  Service  Page  
+Type:  WebPage or  ItemPage  
+Properties:  
+●  @type:  "WebPage"  ●  @id:  URL  with  #webpage  fragment  ●  url:  Page  URL  ●  name:  Service  name  ●  description:  Service  description  ●  inLanguage:  Language  code  ●  isPartOf:  WebSite  reference  ●  mainEntity:  Service  object  reference  ●  breadcrumb:  BreadcrumbList  ●  about:  Service  reference  ●  mentions:  Related  services/entities  
+3e.  FAQPage  
+Type:  FAQPage  
+Properties:  
+●  @type:  "FAQPage"  ●  @id:  URL  with  #webpage  fragment  ●  url:  Page  URL  ●  name:  Page  title  ●  description:  Page  description  ●  inLanguage:  Language  code  ●  isPartOf:  WebSite  reference  ●  mainEntity:  Array  of  Question  objects  ○  Each  Question  has:  ■  @type:  "Question"  ■  name:  Question  text  ■  acceptedAnswer:  Answer  object  ■  @type:  "Answer"  ■  text:  Answer  text  
+3f.  Blog/BlogPosting  Pages  
+Blog  Landing  (CollectionPage  or  Blog):  
+●  @type:  "Blog"  or  "CollectionPage"  ●  blogPost:  Array  of  BlogPosting  references  ●  All  standard  WebPage  properties  
+Individual  Blog  Post  (BlogPosting):  
+●  @type:  "BlogPosting"  ●  @id:  URL  with  #article  fragment  ●  url:  Article  URL  ●  headline:  Article  title  ●  description:  Article  description  ●  image:  Featured  image  ●  datePublished:  Publication  date  (ISO  8601)  ●  dateModified:  Last  modified  date  (ISO  8601)  ●  author:  Person  or  Organization  ○  @type:  "Person"  ○  name:  Author  name  ○  url:  Author  page  URL  ○  image:  Author  photo  ●  publisher:  Organization  reference  ●  mainEntityOfPage:  URL  or  WebPage  reference  ●  articleBody:  Full  text  (optional)  ●  wordCount:  Number  of  words  ●  keywords:  Array  or  comma-separated  string  ●  articleSection:  Category/section  ●  about:  Thing  the  article  is  about  ●  mentions:  Array  of  Things  mentioned  ●  inLanguage:  Language  code  ●  isPartOf:  Blog/WebSite  reference  ●  speakable:  Speakable  sections  
+ 
+Level  4:  Service  Entity  
+Type:  Service  
+Properties:  
+●  @type:  "Service"  
+●  @id:  URL  with  #service  fragment  ●  name:  Service  name  ●  description:  Service  description  ●  provider:  LocalBusiness  reference  ●  serviceType:  Type  of  service  ●  areaServed:  Geographic  areas  served  (same  options  as  business)  ●  audience:  ServiceAudience  or  PeopleAudience  ○  audienceType:  Description  of  target  customers  ○  geographicArea:  AdministrativeArea  ●  category:  Service  category  ●  offers:  Array  of  Offer  objects  ○  @type:  "Offer"  ○  price:  Price  amount  ○  priceCurrency:  Currency  code  (USD,  GBP,  etc.)  ○  priceSpecification:  UnitPriceSpecification  ○  availability:  Availability  status  ○  url:  Offer  URL  ○  validFrom:  Start  date  ○  validThrough:  End  date  ●  image:  Service  images  ●  hasOfferCatalog:  OfferCatalog  reference  ●  brand:  Brand  if  applicable  ●  aggregateRating:  AggregateRating  ○  ratingValue:  Average  rating  ○  reviewCount:  Number  of  reviews  ○  bestRating:  Maximum  rating  (usually  5)  ○  worstRating:  Minimum  rating  (usually  1)  ●  review:  Array  of  Review  objects  ○  @type:  "Review"  ○  author:  Person  or  Organization  ○  datePublished:  Review  date  ○  reviewBody:  Review  text  ○  reviewRating:  Rating  ■  @type:  "Rating"  ■  ratingValue:  Rating  number  ■  bestRating:  Max  rating  ■  worstRating:  Min  rating  ●  termsOfService:  URL  to  terms  ●  serviceOutput:  Expected  outcome/deliverable  ●  availableChannel:  ServiceChannel  details  ●  providerMobility:  "static"  or  "dynamic"  
+●  broker:  Intermediary  if  applicable  ●  logo:  Service-specific  logo  ●  slogan:  Service  tagline  
+ 
+Supporting  Entities  
+BreadcrumbList  
+Type:  BreadcrumbList  
+Properties:  
+●  @type:  "BreadcrumbList"  ●  itemListElement:  Array  of  ListItem  ○  @type:  "ListItem"  ○  position:  Integer  (1,  2,  3,  etc.)  ○  name:  Breadcrumb  text  ○  item:  URL  
+ItemList  (for  service  collections)  
+Type:  ItemList  
+Properties:  
+●  @type:  "ItemList"  ●  itemListElement:  Array  of  ListItem  ○  @type:  "ListItem"  ○  position:  Integer  ○  item:  Service  reference  ○  name:  Service  name  ○  url:  Service  URL  
+Review  
+Type:  Review  
+Properties:  
+●  @type:  "Review"  ●  @id:  Unique  review  ID  ●  author:  Person  or  Organization  ○  @type:  "Person"  
+○  name:  Reviewer  name  ●  datePublished:  Review  date  (ISO  8601)  ●  reviewBody:  Review  text  ●  reviewRating:  Rating  object  ○  @type:  "Rating"  ○  ratingValue:  Numeric  rating  ○  bestRating:  Maximum  (default  5)  ○  worstRating:  Minimum  (default  1)  ●  itemReviewed:  Service  or  LocalBusiness  reference  ●  publisher:  Platform  where  published  (optional)  
+ImageObject  
+Type:  ImageObject  
+Properties:  
+●  @type:  "ImageObject"  ●  url:  Image  URL  ●  width:  Width  in  pixels  ●  height:  Height  in  pixels  ●  caption:  Image  description  ●  contentUrl:  Direct  image  URL  
+  
+Supabase  table  recommendations  
+Supabase  Database  Structure  Recommendations  
+Based  on  the  above  schema  mapping,  here  are  the  tables  and  fields  you'll  need:  
+Table:  
+Table:  businesses  
+●  id (primary  key,  uuid)  ●  business_type (text  -  LocalBusiness  subtype)  ●  name (text)  ●  legal_name (text)  ●  description (text)  ●  url (text)  ●  logo_url (text)  ●  image_urls (jsonb  array)  ●  telephone (text)  ●  email (text)  ●  price_range (text)  ●  street_address (text)  ●  address_locality (text)  ●  address_region (text)  ●  postal_code (text)  ●  address_country (text)  ●  latitude (float)  ●  longitude (float)  ●  opening_hours (jsonb  array)  ●  founding_date (date)  ●  social_media_urls (jsonb  array)  ●  global_styles (jsonb  -  fonts,  colors,  branding  for  AI  gen)  ●  created_at (timestamptz) ●  slogan  ●  aggregate_rating_value (decimal)  ●  aggregate_rating_count (integer) ●  updated_at  
+Table:  services  
+●  id (primary  key)  ●  business_id (foreign  key)  ●  name  ●  slug  ●  description  ●  service_type  ●  category  ●  image_urls (JSON  array)  
+●  provider_mobility (static/dynamic)  ●  aggregate_rating_value (decimal)  ●  aggregate_rating_count (integer) ●  created_at  ●  Updated_at  ●  ai_editorial_context  (jsonb  -  tone,  pain  points,  trust  signals)  
+Table:  service_areas  
+●  id (primary  key)  ●  business_id (foreign  key)  ●  service_id (foreign  key,  nullable  -  if  null,  applies  to  whole  business)  ●  area_type (city/state/country/radius)  ●  area_name 
+Table:  offers  
+●  id (primary  key)  ●  service_id (foreign  key)  ●  price  ●  price_currency  ●  price_specification (JSON)  ●  availability  ●  valid_from  ●  valid_through  ●  terms_of_service_url  
+Table:  reviews  
+●  id (primary  key)  ●  business_id (foreign  key,  nullable)  ●  service_id (foreign  key,  nullable)  ●  author_name  ●  author_type (person/organization)  ●  date_published  ●  review_body  ●  rating_value  ●  published (boolean)  ●  created_at  
+Table:  pages  
+●  id (primary  key)  ●  business_id (foreign  key)  ●  page_type (AboutPage,  ContactPage,  CollectionPage,  WebPage,  FAQPage,  Blog)  ●  slug  ●  title  ●  description  
+●  seo_title  ●  seo_meta_description  ●  main_entity_type (Service,  Organization,  etc.)  ●  main_entity_id (polymorphic  reference)  ●  content (JSON  or  text)  ●  published (boolean)  ●  created_at  ●  updated_at  
+Table:  blog_posts  
+●  id (primary  key)  ●  business_id (foreign  key)  ●  slug  ●  headline  ●  description  ●  featured_image_url  ●  date_published  ●  date_modified  ●  author_name  ●  author_url  ●  author_image_url  ●  article_body  ●  word_count  ●  keywords (array  or  text)  ●  article_section (category)  ●  seo_title  ●  seo_meta_description  ●  published (boolean)  ●  created_at  ●  updated_at  
+Table:  blog_post_about  
+●  id (primary  key)  ●  blog_post_id (foreign  key)  ●  entity_type (Service,  Organization,  Thing,  etc.)  ●  entity_id  ●  entity_name  ●  entity_wikidata_url  ●  entity_wikipedia_url  
+ 
+Table:  blog_post_mentions  
+●  id (primary  key)  ●  blog_post_id (foreign  key)  
+●  entity_type (Service,  Organization,  etc.)  ●  entity_id  ●  entity_name  ●  entity_wikidata_url  ●  entity_wikipedia_url  
+Table:  faqs  
+●  id (primary  key)  ●  business_id (foreign  key)  ●  page_id (foreign  key,  nullable)  ●  question  ●  answer  ●  position (integer  for  ordering)  ●  published (boolean)  
+Table:  breadcrumbs  
+●  id (primary  key)  ●  page_id (foreign  key)  ●  position  ●  name  ●  Url  
+ 
+Table:  target_locations (New  -  Critical  for  pSEO)  
+●  id (primary  key,  uuid)  ●  business_id (foreign  key)  ●  city_name (text)  ●  parent_city (text  -  e.g.,  "London")  ●  slug (text  -  e.g.,  "camden-town")  ●  nearby_landmarks (jsonb  array  -  for  embedding  local  relevance)  ●  demographics_context (jsonb  -  e.g.,  "student  area",  "high  income")  
+ 
+301  redirect  map  
+#  Homepage  variants  https://pomegranate.marketing/?kubio_recommend_page=77  →  /   #  About/Company  https://pomegranate.marketing/national-seo-company/  →  /about/   #  Contact  consolidation  https://pomegranate.marketing/free-seo-consultation/  →  /contact/  https://pomegranate.marketing/online-seo-quote/  →  /contact/   #  Blog  hub  https://pomegranate.marketing/seo-blog-uk/  →  /blog/   #  Individual  blog  posts  (remove  /seo-blog-uk/  prefix)  https://pomegranate.marketing/seo-blog-uk/ai-and-seo/  →  /blog/ai-and-seo/  https://pomegranate.marketing/seo-blog-uk/best-practices-for-website-development-compan
+y-website/
+ 
+→
+ 
+/blog/best-practices-for-website-development-company-website/
+ https://pomegranate.marketing/seo-blog-uk/best-seo-copywriting-course/  →  
+/blog/best-seo-copywriting-course/
+ https://pomegranate.marketing/seo-blog-uk/best-seo-courses-uk-2025/  →  
+/blog/best-seo-courses-uk-2025/
+ https://pomegranate.marketing/seo-blog-uk/best-seo-services-for-small-business/  →  
+/blog/best-seo-services-for-small-business/
+ https://pomegranate.marketing/seo-blog-uk/can-anyone-tutor-uk-private-tutoring-career-guid
+e/
+ 
+→
+ 
+/blog/can-anyone-tutor-uk-private-tutoring-career-guide/
+ https://pomegranate.marketing/seo-blog-uk/can-i-learn-seo-on-my-own/  →  
+/blog/can-i-learn-seo-on-my-own/
+ https://pomegranate.marketing/seo-blog-uk/guide-to-seo-for-private-tutors/  →  
+/blog/guide-to-seo-for-private-tutors/
+ https://pomegranate.marketing/seo-blog-uk/how-much-do-seo-consultants-charge/  →  
+/blog/how-much-do-seo-consultants-charge/
+ https://pomegranate.marketing/seo-blog-uk/is-seo-certification-worth-it/  →  
+/blog/is-seo-certification-worth-it/
+ https://pomegranate.marketing/seo-blog-uk/keyword-tool-youtube/  →  
+/blog/keyword-tool-youtube/
+ https://pomegranate.marketing/seo-blog-uk/morocco-seo-your-ultimate-market-guide/  →  
+/blog/morocco-seo-your-ultimate-market-guide/
+ https://pomegranate.marketing/seo-blog-uk/pomegranate-marketing-strategy/  →  
+/blog/pomegranate-marketing-strategy/
+ https://pomegranate.marketing/seo-blog-uk/semrush-seo-toolkit-certification-free/  →  
+/blog/semrush-seo-toolkit-certification-free/
+ https://pomegranate.marketing/seo-blog-uk/seo-copywriting-examples/  →  
+/blog/seo-copywriting-examples/
+ https://pomegranate.marketing/seo-blog-uk/seo-for-tailors/  →  /blog/seo-for-tailors/  https://pomegranate.marketing/seo-blog-uk/seo-packages-london/  →  
+/blog/seo-packages-london/
+ https://pomegranate.marketing/seo-blog-uk/seo-quote-template/  →  
+/blog/seo-quote-template/
+ 
+https://pomegranate.marketing/seo-blog-uk/seo-quotes-for-instagram/  →  
+/blog/seo-quotes-for-instagram/
+ https://pomegranate.marketing/seo-blog-uk/seo-training-online-courses-free-guide/  →  
+/blog/seo-training-online-courses-free-guide/
+ https://pomegranate.marketing/seo-blog-uk/seo-training-semrush-the-complete-guide-for-uk-
+marketers/
+ 
+→
+ 
+/blog/seo-training-semrush-the-complete-guide-for-uk-marketers/
+ https://pomegranate.marketing/seo-blog-uk/top-websites-in-the-uk/  →  
+/blog/top-websites-in-the-uk/
+ https://pomegranate.marketing/seo-blog-uk/website-visibility/  →  /blog/website-visibility/  https://pomegranate.marketing/seo-blog-uk/what-is-seo-copywriting-rules/  →  
+/blog/what-is-seo-copywriting-rules/
+ https://pomegranate.marketing/seo-blog-uk/why-digital-marketing-as-a-career-2026-future-pr
+oof-strategies/
+ 
+→
+ 
+/blog/why-digital-marketing-as-a-career-2026-future-proof-strategies/
+ https://pomegranate.marketing/seo-blog-uk/why-keyword-research-is-important-in-seo/  →  
+/blog/why-keyword-research-is-important-in-seo/
+  #  Contact  variants  https://pomegranate.marketing/contact/  →  /contact/   #  Location  pages  (restructure  paths)  https://pomegranate.marketing/small-business-seo-london/keyword-research-agency-london
+/
+ 
+→
+ 
+/locations/london/keyword-research/
+ https://pomegranate.marketing/local-seo-company-in-london/  →  
+/locations/london/local-seo-services/
+ https://pomegranate.marketing/seo-expert-morocco/seo-expert-marrakesh/  →  
+/locations/marrakesh/seo-services/
+ https://pomegranate.marketing/seo-expert-morocco/  →  /locations/morocco/seo-services/  https://pomegranate.marketing/small-business-seo-london/seo-north-london/  →  
+/locations/north-london/seo-services/
+ https://pomegranate.marketing/small-business-seo-london/seo-south-london/  →  
+/locations/south-london/seo-services/
+ https://pomegranate.marketing/small-business-seo-london/search-engine-optimisation-in-wal
+tham-forest/
+ 
+→
+ 
+/locations/waltham-forest/seo-services/
+  #  Platform  pages  https://pomegranate.marketing/wordpress-seo-service/  →  
+/platforms/wordpress-seo-services/
+  #  Service  pages  (consolidations)  https://pomegranate.marketing/seo-blog-uk/affordable-seo-agency-uk/  →  /seo-services/   #  Specific  service  pages  (path  changes)  https://pomegranate.marketing/b2b-seo-service/  →  /seo-services/b2b-seo-service/  https://pomegranate.marketing/google-business-profile-optimisation-service/  →  
+/seo-services/google-business-profile-optimisation-service/
+ https://pomegranate.marketing/national-seo-packages/  →  
+/seo-services/national-seo-packages/
+ https://pomegranate.marketing/on-page-seo-service/  →  /seo-services/on-page-seo-service/  
+https://pomegranate.marketing/schema-markup-service/  →  
+/seo-services/schema-markup-service/
+  #  Training  https://pomegranate.marketing/seo-blog-uk/seo-training-website/  →  
+/web-design-seo-training/
+  #  Web  design  service  https://pomegranate.marketing/landing-page-development-services/  →  
+/web-design-services/landing-page-development-services/
+  
+410  -  Get  rid  map  
+ https://pomegranate.marketing/seo-blog-uk/mastering-seo-organic-top-10-tips/ https://pomegranate.marketing/seo-blog-uk/pay-per-click-marketing-services/ https://pomegranate.marketing/seo-blog-uk/seo-copywriter/ https://pomegranate.marketing/seo-blog-uk/how-to-add-keywords-to-your-website/ https://pomegranate.marketing/seo-blog-uk/ecommerce-web-design-agency/ https://pomegranate.marketing/seo-blog-uk/freelance-search-engine-optimization/ https://pomegranate.marketing/seo-blog-uk/small-business-seo-marketing/ https://pomegranate.marketing/seo-blog-uk/why-should-i-do-keyword-research/ https://pomegranate.marketing/seo-blog-uk/seo-quote/ https://pomegranate.marketing/seo-blog-uk/how-much-do-seo-companies-make/ https://pomegranate.marketing/seo-blog-uk/detailed-seo-extension/ https://pomegranate.marketing/seo-blog-uk/monthly-seo-services/ https://pomegranate.marketing/seo-blog-uk/seo-packages/ https://pomegranate.marketing/seo-blog-uk/best-seo-firms-uk/ https://pomegranate.marketing/seo-blog-uk/why-hire-search-engine-optimisation-consultants/ https://pomegranate.marketing/seo-blog-uk/best-seo-website/ https://pomegranate.marketing/seo-blog-uk/seo-companies-near-me/ https://pomegranate.marketing/seo-blog-uk/seo-ads/ https://pomegranate.marketing/seo-blog-uk/seo-position/ https://pomegranate.marketing/seo-blog-uk/why-is-on-page-seo-important/ https://pomegranate.marketing/seo-blog-uk/why-content-marketing-is-important/ https://pomegranate.marketing/seo-blog-uk/what-is-off-page-seo-in-simple-words/ https://pomegranate.marketing/seo-blog-uk/what-is-link-building-why-is-it-important/ https://pomegranate.marketing/seo-blog-uk/seo-and-blogging/ https://pomegranate.marketing/seo-blog-uk/seo-vs-ads/ 
+https://pomegranate.marketing/seo-blog-uk/small-business-local-seo/ https://pomegranate.marketing/seo-blog-uk/how-does-local-seo-work/ https://pomegranate.marketing/seo-blog-uk/unlock-growth-with-national-seo-services/ https://pomegranate.marketing/seo-blog-uk/local-seo-services-uk/ https://pomegranate.marketing/seo-blog-uk/backlinks-with-high-domain-authority/ https://pomegranate.marketing/seo-blog-uk/choose-the-right-website-design-packages/ https://pomegranate.marketing/seo-blog-uk/boost-traffic-tips-from-wordpress-seo-expert/ https://pomegranate.marketing/seo-blog-uk/search-engine-optimisation-consultancy-near-me-my-2025-guide/ https://pomegranate.marketing/seo-blog-uk/seo-specialist/ https://pomegranate.marketing/seo-blog-uk/hire-freelance-seo-consultant-manchester/ https://pomegranate.marketing/seo-blog-uk/how-to-choose-seo-consultant-london/ https://pomegranate.marketing/seo-blog-uk/7-seo-reporting-tools-for-agencies/ https://pomegranate.marketing/seo-blog-uk/how-to-become-an-seo-professional/ https://pomegranate.marketing/seo-blog-uk/guide-to-building-professional-websites/ https://pomegranate.marketing/seo-blog-uk/guide-to-web-design-for-marketing/ https://pomegranate.marketing/seo-blog-uk/white-label-seo-report-benefits/ https://pomegranate.marketing/seo-blog-uk/seo-content-strategy/ https://pomegranate.marketing/seo-blog-uk/website-designer-pay/ https://pomegranate.marketing/seo-blog-uk/work-of-a-web-designer/ https://pomegranate.marketing/seo-blog-uk/the-future-of-ai-agents-in-digital-marketing/ https://pomegranate.marketing/seo-blog-uk/marketing-automation-and-ai/ https://pomegranate.marketing/seo-blog-uk/technical-seo-training/ 
+https://pomegranate.marketing/seo-blog-uk/seo-specialist-free-certification-guide/ https://pomegranate.marketing/seo-blog-uk/seo-training-london/ https://pomegranate.marketing/seo-blog-uk/seo-vs-local-seo/ https://pomegranate.marketing/seo-blog-uk/seo-training-services/ https://pomegranate.marketing/seo-blog-uk/moz-seo-certification-free/ https://pomegranate.marketing/seo-blog-uk/the-ultimate-guide-to-seo-training-videos-master-search-optimisation-in-2025/ https://pomegranate.marketing/seo-blog-uk/seo-training-london-expert-insights-2025-success/ https://pomegranate.marketing/seo-blog-uk/how-do-you-do-seo-on-youtube/ https://pomegranate.marketing/seo-blog-uk/seo-training-tesda/ https://pomegranate.marketing/seo-blog-uk/mastering-seo-training-in-pune/ https://pomegranate.marketing/seo-blog-uk/seo-practical-training/ https://pomegranate.marketing/seo-blog-uk/seo-content-writing-vs-seo-copywriting/ https://pomegranate.marketing/seo-blog-uk/what-is-seo-copywriting/ https://pomegranate.marketing/seo-blog-uk/seo-copywriter-job-description/ https://pomegranate.marketing/seo-blog-uk/seo-copywriting-with-ai/ https://pomegranate.marketing/seo-blog-uk/the-ultimate-guide-to-seo-copywriting-services/ https://pomegranate.marketing/seo-blog-uk/what-is-a-seo-content-brief/ 
+https://pomegranate.marketing/seo-blog-uk/finding-a-top-seo-copywriter-uk-your-global-guide-to-digital-visibility/ https://pomegranate.marketing/seo-blog-uk/seo-copywriting-for-beginners/ https://pomegranate.marketing/seo-blog-uk/how-to-write-seo-copy/ https://pomegranate.marketing/seo-blog-uk/what-is-seo-copywriting-youtube/ https://pomegranate.marketing/seo-blog-uk/what-is-seo-copywriting-portfolio/ 
+https://pomegranate.marketing/seo-blog-uk/digital-marketing-and-seo/ https://pomegranate.marketing/seo-blog-uk/how-to-choose-a-consultant-digital-marketing-partner-for-2026-growth/ https://pomegranate.marketing/seo-blog-uk/what-is-copywriting-why-it-is-important-in-seo-and-sales/ https://pomegranate.marketing/seo-blog-uk/how-to-write-seo-copy-in-wordpress/ https://pomegranate.marketing/seo-blog-uk/digital-marketing-is-a-it-job/ https://pomegranate.marketing/seo-blog-uk/mastering-yoast-seo-copywriting/ https://pomegranate.marketing/seo-blog-uk/seo-content-writer-salary/ https://pomegranate.marketing/seo-blog-uk/the-business-impact-of-digital-marketing/ https://pomegranate.marketing/html-sitemap-for-seo/ https://pomegranate.marketing/seo-copywriting-service/ https://pomegranate.marketing/internal-linking-service/ https://pomegranate.marketing/seo-downloads/ https://pomegranate.marketing/free-local-seo-consultation/ https://pomegranate.marketing/natural-link-building-service/ https://pomegranate.marketing/seo-tutoring/ https://pomegranate.marketing/seo-website-audit-services/ https://pomegranate.marketing/seo-keyword-research-services/ https://pomegranate.marketing/domain-seo-service/ https://pomegranate.marketing/blog-copywriting-service/ https://pomegranate.marketing/seo-reporting-service/ https://pomegranate.marketing/seo-training-service/ https://pomegranate.marketing/seo-coaching/ https://pomegranate.marketing/shopify-seo-company/ https://pomegranate.marketing/woocommerce-seo-services/ https://pomegranate.marketing/squarespace-seo-specialist/ https://pomegranate.marketing/ecommerce-seo-packages/ https://pomegranate.marketing/seo-services-for-accountants/ https://pomegranate.marketing/small-business-seo-packages/ https://pomegranate.marketing/enterprise-seo-package/ https://pomegranate.marketing/small-business-seo-london/enterprise-seo-london/ 
+https://pomegranate.marketing/small-business-seo-london/london-seo-prices/ https://pomegranate.marketing/small-business-seo-london/seo-packages-for-sme-businesses-london/ https://pomegranate.marketing/small-business-seo-london/seo-packages-for-startup-businesses-london/ https://pomegranate.marketing/small-business-seo-london/on-page-optimisation-london/ https://pomegranate.marketing/seo-expert-morocco/consultant-seo-casablanca/ https://pomegranate.marketing/privacy-policy/ https://pomegranate.marketing/small-business-seo-london/ https://pomegranate.marketing/?kubio_recommend_page=112 https://pomegranate.marketing/?kubio_recommend_page=101 https://pomegranate.marketing/seo-blog-uk/category/ai-llms/ https://pomegranate.marketing/seo-blog-uk/category/analytics-reporting/ https://pomegranate.marketing/seo-blog-uk/category/content-link-building/ https://pomegranate.marketing/seo-blog-uk/category/digital-marketing/ https://pomegranate.marketing/seo-blog-uk/category/local-national-seo/ https://pomegranate.marketing/seo-blog-uk/category/niche-specific-seo/ https://pomegranate.marketing/seo-blog-uk/category/seo-careers-business/ https://pomegranate.marketing/seo-blog-uk/category/seo-copywriting/ https://pomegranate.marketing/seo-blog-uk/category/seo-fundamentals-strategy/  
+launchSitemap  structure  
+<?xml  version="1.0"  encoding="UTF-8"?> <urlset  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"> <!--  Homepage  --> <url> <loc>https://pomegranate.marketing/</loc> <priority>1.0</priority> <changefreq>weekly</changefreq> </url> <!--  Main  Service  Categories  --> <url> <loc>https://pomegranate.marketing/seo-services/</loc> <priority>0.9</priority> </url> <url> <loc>https://pomegranate.marketing/web-design-services/</loc> <priority>0.9</priority> </url> <url> <loc>https://pomegranate.marketing/web-design-seo-training/</loc> <priority>0.9</priority> </url> <!--  Specific  SEO  Services  --> <url> <loc>https://pomegranate.marketing/seo-services/b2b-seo-service/</loc> <priority>0.8</priority> </url> <url> <loc>https://pomegranate.marketing/seo-services/google-business-profile-optimisation-servi
+ce/</loc> <priority>0.8</priority> </url> <url> <loc>https://pomegranate.marketing/seo-services/national-seo-packages/</loc> <priority>0.8</priority> </url> <url> <loc>https://pomegranate.marketing/seo-services/on-page-seo-service/</loc> <priority>0.8</priority> </url> <url> <loc>https://pomegranate.marketing/seo-services/schema-markup-service/</loc> <priority>0.8</priority> </url> <url> <loc>https://pomegranate.marketing/seo-services/keyword-research/</loc> <priority>0.8</priority> </url> <!--  Web  Design  Services  --> <url> <loc>https://pomegranate.marketing/web-design-services/landing-page-development-service
+s/</loc> <priority>0.8</priority> </url> <!--  Platform  Services  --> <url> <loc>https://pomegranate.marketing/platforms/wordpress-seo-services/</loc> <priority>0.8</priority> </url> <!--  Locations  Hub  --> <url> <loc>https://pomegranate.marketing/locations/</loc> <priority>0.7</priority> </url> <!--  
+Location
+ 
+Pages
+ 
+--> <url> <loc>https://pomegranate.marketing/locations/london/</loc> <priority>0.7</priority> </url> <url> <loc>https://pomegranate.marketing/locations/marrakesh/</loc> <priority>0.7</priority> </url> <url> <loc>https://pomegranate.marketing/locations/morocco/</loc> <priority>0.7</priority> </url> <url> <loc>https://pomegranate.marketing/locations/north-london/</loc> <priority>0.7</priority> </url> <url> <loc>https://pomegranate.marketing/locations/south-london/</loc> <priority>0.7</priority> </url> <url> <loc>https://pomegranate.marketing/locations/waltham-forest/</loc> <priority>0.7</priority> </url> <!--  Location  +  Service  Pages  --> <url> <loc>https://pomegranate.marketing/locations/london/keyword-research/</loc> <priority>0.6</priority> </url> <url> <loc>https://pomegranate.marketing/locations/london/local-seo-services/</loc> <priority>0.6</priority> </url> <url> <loc>https://pomegranate.marketing/locations/london/seo-services/</loc> <priority>0.6</priority> </url> <url> <loc>https://pomegranate.marketing/locations/marrakesh/seo-services/</loc> <priority>0.6</priority> </url> <url> <loc>https://pomegranate.marketing/locations/morocco/seo-services/</loc> <priority>0.6</priority> </url> <url> <loc>https://pomegranate.marketing/locations/north-london/seo-services/</loc> <priority>0.6</priority> </url> <url> <loc>https://pomegranate.marketing/locations/south-london/seo-services/</loc> 
+<priority>0.6</priority> </url> <url> <loc>https://pomegranate.marketing/locations/waltham-forest/seo-services/</loc> <priority>0.6</priority> </url> <!--  Blog  Hub  --> <url> <loc>https://pomegranate.marketing/blog/</loc> <priority>0.7</priority> <changefreq>weekly</changefreq> </url> <!--  Blog  Posts  (27  posts)  --> <url> <loc>https://pomegranate.marketing/blog/ai-and-seo/</loc> <priority>0.6</priority> </url> <!--  ...  [all  27  blog  posts  with  same  priority  0.6]  ...  --> <!--  Utility  Pages  --> <url> <loc>https://pomegranate.marketing/about/</loc> <priority>0.8</priority> </url> <url> <loc>https://pomegranate.marketing/contact/</loc> <priority>0.8</priority> </url> <url> <loc>https://pomegranate.marketing/downloads/</loc> <priority>0.5</priority> </url> <url> <loc>https://pomegranate.marketing/free-tools/</loc> <priority>0.5</priority> </url> <!--  
+Industries
+ 
+Hub
+ 
+(placeholder)
+ 
+--> <url> <loc>https://pomegranate.marketing/industries/</loc> <priority>0.7</priority> </url> <!--  Legal  Pages  --> <url> <loc>https://pomegranate.marketing/privacy-policy/</loc> <priority>0.3</priority> </url> <url> <loc>https://pomegranate.marketing/terms-of-service/</loc> <priority>0.3</priority> </url> </urlset> 
+NEW  WEBSITE  STRUCTURE  AT  
+LAUNCH
+ 
+COMPLETE  NEW  WEBSITE  STRUCTURE  
+AT
+ 
+LAUNCH
+ 
+ 
+TOTAL  PAGE  COUNT:  61  PAGES   
+LEVEL  0:  HOMEPAGE  (1  page)  
+/  
+Page  Type:  Homepage  
+ 
+Main
+ 
+Entity:
+ 
+Business
+ 
+ 
+Schema:
+ 
+WebSite,
+ 
+LocalBusiness,
+ 
+Organization
+ 
+ 
+LEVEL  1:  MAIN  NAVIGATION  PAGES  (13  pages)  
+Core  Service  Categories  /seo-services/  /web-design-services/  /web-design-seo-training/  
+Platform  Category  /platforms/  
+Location  Hub  /locations/  
+Industries  Hub  /industries/  
+(Initially  empty/placeholder  -  to  be  populated  later)  
+Content  Hub  /blog/  
+Utility  Pages  /about/  /contact/  /downloads/  /free-tools/  /privacy-policy/  /terms-of-service/  
+Page  Types:  Service  Category  Pages,  Hub  Pages,  Legal  Pages  
+ 
+Main
+ 
+Entities:
+ 
+Business,
+ 
+Service
+ 
+Collections
+ 
+ 
+LEVEL  2:  SPECIFIC  SEO  SERVICES  (6  pages)  /seo-services/b2b-seo-service/  /seo-services/google-business-profile-optimisation-service/  /seo-services/national-seo-packages/  /seo-services/on-page-seo-service/  /seo-services/schema-markup-service/  /seo-services/keyword-research/  
+Page  Type:  Service  Detail  Pages  
+ 
+Main
+ 
+Entity:
+ 
+Service
+ 
+ 
+Schema:
+ 
+Service,
+ 
+Offer,
+ 
+WebPage
+ 
+ 
+LEVEL  2:  WEB  DESIGN  SERVICES  (1  page)  
+/web-design-services/landing-page-development-services/  
+Page  Type:  Service  Detail  Page  
+ 
+Main
+ 
+Entity:
+ 
+Service
+ 
+ 
+Schema:
+ 
+Service,
+ 
+Offer,
+ 
+WebPage
+ 
+ 
+LEVEL  2:  PLATFORM  SERVICES  (1  page)  
+/platforms/wordpress-seo-services/  
+Page  Type:  Service  Detail  Page  (Platform-specific)  
+ 
+Main
+ 
+Entity:
+ 
+Service
+ 
+ 
+Schema:
+ 
+Service,
+ 
+Offer,
+ 
+WebPage
+ 
+ 
+LEVEL  2:  LOCATION  PAGES  (6  pages)  /locations/london/  /locations/marrakesh/  /locations/morocco/  /locations/north-london/  /locations/south-london/  /locations/waltham-forest/  
+Page  Type:  Location  Landing  Pages  
+ 
+Main
+ 
+Entity:
+ 
+Business
+ 
++
+ 
+ServiceArea
+ 
+ 
+Schema:
+ 
+LocalBusiness,
+ 
+Service,
+ 
+areaServed
+ 
+ 
+LEVEL  3:  LOCATION  +  SERVICE  PAGES  (5  pages)  /locations/london/keyword-research/  /locations/london/local-seo-services/  /locations/london/seo-services/  /locations/marrakesh/seo-services/  /locations/morocco/seo-services/  /locations/north-london/seo-services/  /locations/south-london/seo-services/  /locations/waltham-forest/seo-services/  
+Page  Type:  Localized  Service  Pages  
+ 
+Main
+ 
+Entity:
+ 
+Service
+ 
+filtered
+ 
+by
+ 
+Location
+ 
+ 
+Schema:
+ 
+Service,
+ 
+LocalBusiness,
+ 
+areaServed
+ 
+Note:  Correction  -  that's  actually  8  pages  at  L3,  not  5.  
+ 
+LEVEL  2:  BLOG  POSTS  (27  pages)  /blog/ai-and-seo/  /blog/best-practices-for-website-development-company-website/  /blog/best-seo-copywriting-course/  /blog/best-seo-courses-uk-2025/  /blog/best-seo-services-for-small-business/  /blog/can-anyone-tutor-uk-private-tutoring-career-guide/  /blog/can-i-learn-seo-on-my-own/  /blog/guide-to-seo-for-private-tutors/  /blog/how-much-do-seo-consultants-charge/  
+/blog/is-seo-certification-worth-it/  /blog/keyword-tool-youtube/  /blog/morocco-seo-your-ultimate-market-guide/  /blog/pomegranate-marketing-strategy/  /blog/semrush-seo-toolkit-certification-free/  /blog/seo-copywriting-examples/  /blog/seo-for-tailors/  /blog/seo-packages-london/  /blog/seo-quote-template/  /blog/seo-quotes-for-instagram/  /blog/seo-training-online-courses-free-guide/  /blog/seo-training-semrush-the-complete-guide-for-uk-marketers/  /blog/top-websites-in-the-uk/  /blog/website-visibility/  /blog/what-is-seo-copywriting-rules/  /blog/why-digital-marketing-as-a-career-2026-future-proof-strategies/  /blog/why-keyword-research-is-important-in-seo/  
+Page  Type:  Blog  Posts  
+ 
+Main
+ 
+Entity:
+ 
+BlogPosting
+ 
+ 
+Schema:
+ 
+BlogPosting,
+ 
+Article,
+ 
+WebPage
+ 
+ 
+COMPLETE  PAGE  INVENTORY  BY  TYPE  
+By  Level  
+●  L0  (Homepage):  1  page  ●  L1  (Main  Navigation):  13  pages  ●  L2  (Service  Details):  6  pages  (SEO)  +  1  page  (Web  Design)  +  1  page  (Platform)  =  8  
+pages
+ ●  L2  (Locations):  6  pages  ●  L3  (Location  +  Service):  8  pages  ●  L2  (Blog):  27  pages  
+TOTAL:  63  pages  
+(Corrected  from  earlier  count)  
+ 
+By  Page  Type  
+Structural/Navigation  (15  pages)  
+●  Homepage:  1  ●  Service  Category  Pages:  3  (/seo-services/,  /web-design-services/,  
+/web-design-seo-training/)
+ ●  Hub  Pages:  4  (/blog/,  /locations/,  /industries/,  /platforms/)  ●  Utility  Pages:  3  (/contact/,  /downloads/,  /free-tools/)  ●  About/Legal:  3  (/about/,  /privacy-policy/,  /terms-of-service/)  
+Service  Pages  (15  pages)  
+●  SEO  Services  (specific):  6  ●  Web  Design  Services  (specific):  1  ●  Platform  Services:  1  ●  Training:  1  (main  page  at  L1)  ●  Location-based  Services:  8  (L3)  
+Location  Pages  (6  pages)  
+●  Location  landing  pages  (L2)  
+Content  Pages  (27  pages)  
+●  Blog  posts  
+ 
+Pages  by  priority  for  dev  
+PAGES  BY  PRIORITY  FOR  
+DEVELOPMENT
+ 
+ 
+Phase  1:  Essential  Pages  (Must  build  first)  -  17  pages  
+●  / –  Homepage  ●  /seo-services/ –  Main  SEO  category  ●  /web-design-services/ –  Main  web  design  category  ●  /seo-services/seo-training/ –  Training  page  ●  /about/ –  About  page  (Redirected  from  /national-seo-company/)  ●  /contact/ –  Contact/Conversion  page  ●  /blog/ –  Blog  hub  ●  /locations/ –  Locations  hub  ●  /industries/ –  Industries  hub  (placeholder)  ●  /platforms/ –  Platforms  hub  ●  /privacy-policy/ –  Legal  requirement  ●  /terms-of-service/ –  Legal  requirement  ●  /downloads/ –  Lead  magnet  hub  ●  /free-tools/ –  Utility/Tool  hub  ●  15–17.  Top  3  location  pages  (likely:  /locations/london/,  /locations/morocco/,  /locations/waltham-forest/)  
+Phase  2:  Service  Detail  Pages  -  8  pages  
+●  All  L2  service  pages  nested  under  /seo-services/,  /web-design-services/,  
+and
+ /platforms/.  
+Phase  3:  Location  Pages  -  14  pages  
+●  Remaining  3  location  landing  pages.  ●  All  8  location  +  service  combination  pages  (e.g.,  /locations/london/seo-services/).  
+Phase  4:  Blog  Migration  -  27  pages  
+●  All  existing  blog  posts  migrated  to  the  new  /blog/[slug] structure.  
+ 
+TEMPLATES  NEEDED  (Reusable)  
+Based  on  this  structure,  you  need  9  unique  templates :  
+1.  Homepage  Template  (1  page)  2.  Service  Category  Template  (3  pages:  SEO,  Web  Design,  Training)  3.  Service  Detail  Template  (8  pages:  all  L2  national  services)  4.  Location  Landing  Template  (6  pages:  L2  flat  locations)  5.  Location  +  Service  Template  (8  pages:  L3  localized  service  combos)  6.  Blog  Hub  Template  (1  page)  7.  Blog  Post  Template  (27  pages)  8.  Utility  Page  Template  (6  pages:  About,  Contact,  Downloads,  Tools,  Privacy,  Terms)  9.  Hub  Page  Template  (3  pages:  Industries,  Locations  hub,  Platforms)  
+ 
+ENTITIES  REQUIRED  IN  DATABASE  
+To  generate  all  63  pages  via  your  Knowledge  Graph/Supabase,  you  need:  
+Business  Entity  (1  record)  
+●  Pomegranate  Marketing  details  (NAP,  Socials,  Core  Value  Prop).  
+Service  Entities  (~11  records)  
+1.  SEO  Services  (parent)  2.  B2B  SEO  Service  3.  Google  Business  Profile  Optimisation  4.  National  SEO  Packages  5.  On-Page  SEO  Service  6.  Schema  Markup  Service  7.  Keyword  Research  8.  Web  Design  Services  (parent)  9.  Landing  Page  Development  10.  WordPress  SEO  Services  11.  Training  (SEO/Web  Design  focus)  
+Service  Area  Entities  (~6  records)  
+●  London,  Marrakesh,  Morocco,  North  London,  South  London,  Waltham  Forest.  
+Blog  Post  Entities  (27  records)  
+●  Full  historical  archive  data.  
+Page  Entities  (~63  records)  
+●  One  per  URL,  mapping  the  relationship  between  Service ,  Location ,  and  Template .  
+ 
+CONTENT  REQUIREMENTS  
+New  Content  to  Write  
+●  Homepage  hero  and  value  proposition  copy.  ●  3  Main  Service  Categories  (SEO,  Web  Design,  Training)  optimized  for  UK  search.  ●  About  Us  page  content  (emphasizing  Pomegranate’s  "roots").  ●  Location  Landing  descriptions  for  the  6  primary  areas.  ●  Hub  Descriptions  for  Blog,  Locations,  and  Industries.  
+Content  to  Migrate  
+●  27  blog  posts  (copy  from  WordPress,  reformat  for  new  CMS  components).  ●  Existing  Service  Content  where  performance  is  already  high.  ●  Legal  &  Contact  details.  
+Content  to  Generate/Enhance  (Gemini  Workflow)  
+●  Service  Packages  &  Pricing  for  each  specific  vertical.  ●  FAQs  per  service  (Technical  vs.  Creative).  ●  Location  +  Service  Content  (8  pages)  –  Use  Gemini  to  synthesize  local  relevance  
+with
+ 
+service
+ 
+expertise.
+ 
+NAVIGATION  STRUCTURE  
+Primary  Navigation  (Header)  
+Home  |  SEO  |  Web  Design  |  Training  |  About  |  Blog  |  Contact  
+Footer  Navigation  
+Services  
+●  SEO  Services  UK  ●  Web  Design  Services  
+●  Digital  Training  
+Locations  
+●  London  ●  Morocco  ●  Marrakesh  ●  North  London  ●  South  London  ●  Waltham  Forest  
+Resources  
+●  Blog  ●  Downloads  ●  Free  Tools  ●  Industries  (Coming  Soon)  
+Company  
+●  About  Us  ●  SEO  Consultation  ●  Privacy  Policy  ●  Terms  of  Service  
+ 
+Tab  10  
+ 
