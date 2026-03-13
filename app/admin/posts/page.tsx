@@ -25,7 +25,7 @@ export default function PostsPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [rootBusiness, setRootBusiness] = useState<Business | null>(null);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<'content' | 'semantic' | 'settings'>('content');
+  const [activeTab, setActiveTab] = useState<'semantic' | 'settings'>('semantic');
   
   // Media Picker State
   const [showMediaPicker, setShowMediaPicker] = useState(false);
@@ -223,17 +223,8 @@ export default function PostsPage() {
            )}
         </div>
 
-        <div className="flex border-b bg-slate-50 mb-4 rounded-t-lg">
-           <button onClick={() => setActiveTab('content')} className={`px-6 py-3 text-sm font-medium border-b-2 ${activeTab === 'content' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}>Content</button>
-           <button onClick={() => setActiveTab('semantic')} className={`px-6 py-3 text-sm font-medium border-b-2 ${activeTab === 'semantic' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}>Semantic Markup</button>
-           <button onClick={() => setActiveTab('settings')} className={`px-6 py-3 text-sm font-medium border-b-2 ${activeTab === 'settings' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}>Settings & Head</button>
-        </div>
-
-        <form onSubmit={handleSave} className="space-y-6 bg-white p-6 rounded-lg border shadow-sm rounded-tr-none">
+<form onSubmit={handleSave} className="space-y-6 bg-white p-6 rounded-lg border shadow-sm">
           
-          {/* CONTENT TAB */}
-          <div className={activeTab === 'content' ? 'block' : 'hidden'}>
-              
               {/* TOPIC SELECTOR */}
               <div className="space-y-2 mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
                 <Label className="text-yellow-800 flex items-center gap-2">
@@ -272,6 +263,7 @@ export default function PostsPage() {
                   )}
               </div>
 
+              {/* MAIN CONTENT FIELDS - Always visible */}
               <div className="space-y-6">
                   <div className="space-y-2">
                     <div className="flex justify-between">
@@ -363,38 +355,9 @@ export default function PostsPage() {
                     />
                   </div>
               </div>
-          </div>
 
-          {/* SEMANTIC TAB */}
-          <div className={activeTab === 'semantic' ? 'block' : 'hidden'}>
-               {/* FAQ Editor Section */}
-               <FAQEditor 
-                 value={formState.faqs}
-                 onChange={(faqs) => setFormState({...formState, faqs: faqs})}
-                 sourceText={formState.content}
-               />
-               
-               <div className="grid grid-cols-2 gap-6">
-                  <KnowledgeEntitySelector 
-                     label="About Entities"
-                     allEntities={knowledgeEntities}
-                     selectedIds={formState.about_entities}
-                     onChange={(ids) => setFormState({...formState, about_entities: ids})}
-                     contentToScan={getPostContent()}
-                  />
-                  <KnowledgeEntitySelector 
-                     label="Mentioned Entities"
-                     allEntities={knowledgeEntities}
-                     selectedIds={formState.mentions_entities}
-                     onChange={(ids) => setFormState({...formState, mentions_entities: ids})}
-                     contentToScan={getPostContent()}
-                  />
-               </div>
-          </div>
-
-          {/* SETTINGS TAB */}
-          <div className={activeTab === 'settings' ? 'block' : 'hidden'}>
-              <div className="grid grid-cols-2 gap-6 mb-6">
+              {/* STATUS & SLUG - Always visible */}
+              <div className="grid grid-cols-2 gap-6 p-4 bg-slate-50 rounded-lg border">
                   <div className="space-y-2">
                     <Label>Slug (URL)</Label>
                     <Input 
@@ -417,19 +380,56 @@ export default function PostsPage() {
                  </div>
               </div>
 
-              <div className="space-y-2">
-                 <Label className="flex items-center gap-2">
-                    <Code className="h-4 w-4 text-slate-500" />
-                    Custom &lt;head&gt; Code
-                 </Label>
-                 <Textarea 
-                    value={formState.custom_head}
-                    onChange={e => setFormState({...formState, custom_head: e.target.value})}
-                    placeholder="<script>...</script> or <meta name='...'>" 
-                    className="font-mono text-xs h-32 bg-slate-50"
-                 />
-                 <p className="text-xs text-amber-600">Note: This code is currently UI-only and may not persist without database schema updates.</p>
-              </div>
+          {/* SECONDARY TABS - Semantic & Advanced Settings */}
+          <div className="border-t pt-6 mt-6">
+            <div className="flex border-b bg-slate-50 mb-4 rounded-t-lg">
+               <button type="button" onClick={() => setActiveTab('semantic')} className={`px-6 py-3 text-sm font-medium border-b-2 ${activeTab === 'semantic' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}>Semantic Markup</button>
+               <button type="button" onClick={() => setActiveTab('settings')} className={`px-6 py-3 text-sm font-medium border-b-2 ${activeTab === 'settings' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}>Advanced Settings</button>
+            </div>
+
+            {/* SEMANTIC TAB */}
+            <div className={activeTab === 'semantic' ? 'block' : 'hidden'}>
+                {/* FAQ Editor Section */}
+                <FAQEditor 
+                  value={formState.faqs}
+                  onChange={(faqs) => setFormState({...formState, faqs: faqs})}
+                  sourceText={formState.content}
+                />
+                
+                <div className="grid grid-cols-2 gap-6">
+                   <KnowledgeEntitySelector 
+                      label="About Entities"
+                      allEntities={knowledgeEntities}
+                      selectedIds={formState.about_entities}
+                      onChange={(ids) => setFormState({...formState, about_entities: ids})}
+                      contentToScan={getPostContent()}
+                   />
+                   <KnowledgeEntitySelector 
+                      label="Mentioned Entities"
+                      allEntities={knowledgeEntities}
+                      selectedIds={formState.mentions_entities}
+                      onChange={(ids) => setFormState({...formState, mentions_entities: ids})}
+                      contentToScan={getPostContent()}
+                   />
+                </div>
+            </div>
+
+            {/* SETTINGS TAB */}
+            <div className={activeTab === 'settings' ? 'block' : 'hidden'}>
+                <div className="space-y-2">
+                   <Label className="flex items-center gap-2">
+                      <Code className="h-4 w-4 text-slate-500" />
+                      Custom &lt;head&gt; Code
+                   </Label>
+                   <Textarea 
+                      value={formState.custom_head}
+                      onChange={e => setFormState({...formState, custom_head: e.target.value})}
+                      placeholder="<script>...</script> or <meta name='...'>" 
+                      className="font-mono text-xs h-32 bg-slate-50"
+                   />
+                   <p className="text-xs text-slate-500">Note: This code is currently UI-only and may not persist without database schema updates.</p>
+                </div>
+            </div>
           </div>
           
           <div className="flex justify-end gap-3 pt-4 border-t">

@@ -113,9 +113,8 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, onSubmit
       .map((item) => item.trim())
       .filter(Boolean);
 
-    if (keywordTerms.length < 2) {
-      alert('Please enter at least 2 keyword cycling terms for national and local service pages.');
-      return;
+if (keywordTerms.length < 2) {
+      console.warn('Keyword cycling: fewer than 2 terms provided. Consider adding more terms for better SEO coverage.');
     }
 
     const prefixText = (values.keyword_prefix_text || '').trim() || 'We are a';
