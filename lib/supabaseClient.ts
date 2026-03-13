@@ -1,8 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Configuration with your live Supabase credentials
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yyiwfosejjirnfjnohgu.supabase.co';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_sSTHrhmHjI_90aSPpybyKg_OX0wuFB1';
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error(
+    'Missing Supabase environment variables. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.',
+  );
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 

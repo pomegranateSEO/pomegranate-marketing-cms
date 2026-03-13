@@ -2,10 +2,10 @@
 
 **Status:** draft — awaiting sign-off  
 **Date created:** 25 february 2026  
-**Last updated:** 25 february 2026  
+**Last updated:** 26 february 2026  
 **Author:** system pilot (gemini)  
 **Repository:** `pomegranateSEO/Knowledge-Graph-CMS-built-for-service-based-business-pSEO`  
-**Brand compliance:** this document follows `Branding/brand_guidelines_full.md` — British English, lowercase `pomegranate`, plain language, no hype.  
+**Brand compliance:** this document follows `Branding/brand_guidelines_full.md` — British English, lowercase `pomegranate`, plain language, no hype, audience continuity from secondary placements to leadership/governance roles, and preserve-first handling of existing user content during generation and editing.  
 **Legacy documents:** originals in `Legacy_docs/pdf/`, AI-readable text extractions in `Legacy_docs/extracted/`.
 
 ---
@@ -465,7 +465,7 @@ Schema is generated in the backend and stored in `schema_json_ld`. Frontend read
 | 4C.1–13 | **Build all 13 page templates** | Homepage, Service Category Hub, Specific Service, Location (pSEO), Blog Hub, Blog Post, About, Contact, Industries Hub, Industry, Case Studies Hub, Legal/Utility, Free Tools. | 4B complete |
 | 4D.1–6 | **QA** | Field coverage, cycling component, schema rendering, author block, mobile responsiveness, cross-browser, accessibility. | All templates built |
 
-**Brand check point:** Every template must be visually vetted against `brand_guidelines_full.md` — darkness → light flow, colour tokens, typography pair (Manrope + Inter), contrast ≥ 7:1, 44×44 touch targets, mobile-first.
+**Brand check point:** Every template must be visually vetted against `brand_guidelines_full.md` — darkness → light flow for flagship narrative assets (or readability-first steady-light for utility assets), section 6.2 colour tokens, section 6.3 typography system (Fraunces + Public Sans by default), contrast ≥ 7:1, 44×44 touch targets, mobile-first, and preserve-first handling of existing user content.
 
 **Gate 4:** All 13 templates QA'd. Schema verified in page source. Brand compliance confirmed.
 
@@ -538,13 +538,14 @@ These checkpoints are embedded at specific gates. Each references `Branding/bran
 | Checkpoint | Gate | What to verify |
 |---|---|---|
 | Language standard | Gate 1 | All column names, help text, and UI labels use British English and plain language. |
-| Typography | Gate 4 | Manrope (headings) + Inter (body). No system fonts. |
-| Colour tokens | Gate 4 | Primary (#C0392B pomegranate red), secondary (#2C3E50 midnight navy), accent (#27AE60 seed green). No ad-hoc colours. |
+| Typography | Gate 4 | Fraunces (headings) + Public Sans (body) as default, or an approved alternate pair from section 6.3. |
+| Colour tokens | Gate 4 | Use section 6.2 token set (`#FAF8F5`, `#000000`, `#4F0010`, `#7A0016`, `#B2C2AD`, and dark-start transition tokens). No ad-hoc colours. |
 | Contrast ratio | Gate 4 | ≥ 7:1 for all text. |
 | Touch targets | Gate 4 | ≥ 44×44px for all interactive elements. |
-| Darkness → light pattern | Gate 4 | Page flow follows the pomegranate growth metaphor. |
+| Darkness → light pattern | Gate 4 | Flagship narrative pages follow the darkness → light metaphor; utility pages may use readability-first steady-light layouts. |
 | Mobile-first | Gate 5 | All templates verified on mobile viewports. |
 | Content tone | Gate 6 | All migrated content reviewed for tone alignment. |
+| Content preservation | Gates 4 and 6 | Existing user content is preserved by default; no unsolicited text injection or scope overreach beyond approved brand boundaries. |
 
 ---
 
@@ -656,7 +657,10 @@ All work proceeds one step at a time, with your review between each step.
 | Date | Version | Change | Author |
 |---|---|---|---|
 | 25 feb 2026 | 0.1.0 | Initial draft — consolidates all legacy documents, live DB audit, CMS audit, schema template analysis, and answered discovery questions. | system pilot (gemini) |
+| 26 feb 2026 | 0.1.1 | Synced brand checkpoint references to current tokens and typography, and added preserve-first content handling controls for generation/editing. | OpenCode |
+| 26 feb 2026 | 0.1.2 | Synced wording to audience continuity from placement level through leadership/governance roles and aligned closing signature text. | OpenCode |
+| 26 feb 2026 | 0.1.3 | Updated darkness → light checkpoint wording to allow readability-first utility layouts while keeping flagship narrative flow. | OpenCode |
 
 ---
 
-*serving small businesses as their digital seeds go from darkness to light, if God Almighty is willing.*
+*serving learners and organisations from placement level to leadership level as their digital seeds go from darkness to light, if God Almighty is willing.*
