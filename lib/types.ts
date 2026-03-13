@@ -131,6 +131,10 @@ export interface Business {
   // V2 Additions
   robots_txt_rules?: string;
   llms_txt_rules?: string;
+
+  // Phase 2A additions
+  website_schema_config?: Json | null;
+  sameas_urls?: string[] | null;
 }
 
 export interface Service {
@@ -165,7 +169,18 @@ export interface Service {
   logo_url?: string;
   slogan?: string;
   aggregate_rating?: Json;
+
+  // Legacy (keep during transition)
   faqs?: Json;
+
+  // Phase 2A additions
+  long_description?: string;
+  seo_title?: string;
+  seo_meta_desc?: string;
+  canonical_url?: string;
+  keyword_cycling_blocks?: Json;
+  faq_list?: Json;
+  schema_json_ld?: Json;
 }
 
 export interface TargetLocation {
@@ -196,7 +211,40 @@ export interface KnowledgeEntity {
   entity_type: string; // 'Wikipedia', 'Wikidata', 'Custom'
   wikipedia_url?: string;
   wikidata_url?: string;
+  wikidata_qid?: string;
+  wikipedia_slug?: string;
   created_at: string;
+  last_updated?: string;
+}
+
+export interface Person {
+  id: string;
+  business_id: string;
+  full_name: string;
+  slug: string;
+  job_title?: string | null;
+  bio?: string | null;
+  short_bio?: string | null;
+  profile_image_url?: string | null;
+  profile_image_alt?: string | null;
+  email?: string | null;
+  website_url?: string | null;
+  linkedin_url?: string | null;
+  sameas_urls?: Json | null;
+  social_links?: Json | null;
+  expertise_areas?: string[] | null;
+  credentials?: string[] | null;
+  works_for_business_id?: string | null;
+  is_author?: boolean;
+  is_reviewer?: boolean;
+  is_team_member?: boolean;
+  published?: boolean;
+  seo_title?: string | null;
+  seo_meta_desc?: string | null;
+  canonical_url?: string | null;
+  in_language?: string;
+  schema_json_ld?: Json | null;
+  created_at?: string;
   last_updated?: string;
 }
 
@@ -246,6 +294,14 @@ export interface BlogPost {
   generated_schema_markup?: string[];
   translation_group_id?: string;
   main_entity_id?: string;
+
+  // Phase 2A additions
+  canonical_url?: string;
+  keyword_cycling_blocks?: Json;
+  faq_list?: Json;
+  schema_json_ld?: Json;
+  author_person_id?: string | null;
+  reviewer_person_id?: string | null;
   
   // Design Studio
   design_template_id?: string;
@@ -283,6 +339,12 @@ export interface StaticPage {
   translation_group_id?: string;
   scheduled_at?: string;
 
+  // Phase 2A additions
+  canonical_url?: string;
+  keyword_cycling_blocks?: Json;
+  faq_list?: Json;
+  schema_json_ld?: Json;
+
   // Design Studio
   design_template_id?: string;
   rendered_blocks?: RenderedBlock[];
@@ -304,6 +366,12 @@ export interface PseoPageInstance {
   last_updated?: string;
   unique_process_content?: Json;
   unique_faqs?: Json;
+
+  // Phase 2A additions
+  canonical_url?: string;
+  keyword_cycling_blocks?: Json;
+  faq_list?: Json;
+  landmarks?: string[] | Json;
   
   // Standardized Entity References
   about_entities?: string[]; // uuid array
@@ -340,6 +408,12 @@ export interface FreeTool {
   tags?: string[];
   screenshot_urls?: Json;
   metadata?: Json;
+  seo_title?: string;
+  seo_meta_desc?: string;
+  canonical_url?: string;
+  keyword_cycling_blocks?: Json;
+  faq_list?: Json;
+  schema_json_ld?: Json;
   published: boolean;
   featured: boolean;
   created_at?: string;
@@ -358,6 +432,10 @@ export interface Industry {
   keywords?: string[];
   seo_title?: string;
   seo_meta_desc?: string;
+  canonical_url?: string;
+  keyword_cycling_blocks?: Json;
+  faq_list?: Json;
+  schema_json_ld?: Json;
   created_at?: string;
   last_updated?: string;
 }
@@ -386,7 +464,7 @@ export interface Associate {
   id: string;
   business_id: string;
   name: string;
-  type: 'person' | 'organization';
+  type: 'organisation' | 'partner' | 'software_platform' | 'organization' | 'person';
   role?: string;
   bio?: string;
   profile_image_url?: string;

@@ -55,7 +55,7 @@ This roadmap consolidates three legacy documents (`content-model-v3`, `content-m
 2. No production traffic depends on the current Supabase database (all tables but 2 have 0 rows).
 3. The domain `pomegranate.marketing` currently runs a WordPress site — the 301/410 redirect map from `Legacy_docs/extracted/headless-cms.txt` remains valid.
 4. The `knowledgeGraph` Supabase project is entirely separate and out of scope.
-5. No amendment migration SQL from `Legacy_docs/extracted/content-model-amendments-v3.txt` has been run on the live database. All amendment columns and tables are yet to be created.
+5. Core additive phase 2A migration SQL has now been run on the live database (including `people`, `faq_list`, `schema_json_ld`, `canonical_url`, `keyword_cycling_blocks`, and `pseo_page_instances.landmarks`). Legacy drop statements remain deferred.
 6. Google Stitch MCP is the intended tool for building frontend templates (phase 4).
 7. There is no hard deadline — we move at the pace the Almighty permits.
 
@@ -67,7 +67,7 @@ This roadmap consolidates three legacy documents (`content-model-v3`, `content-m
 |---|---|---|
 | Q1 | **Where is the CMS admin panel source code?** | In this repository. `app/admin/` contains 17 panel directories. `components/` has forms and shared UI. `lib/` has database helpers, types, and utilities. |
 | Q2 | **Is the CMS a web application we have source control over?** | Yes — TypeScript/React/Vite application. Full source control. |
-| Q3 | **Has any migration SQL from `Legacy_docs/extracted/content-model-amendments-v3.txt` been run on the live database?** | **No.** None of the amendment SQL has been executed. All amendment columns (`faq_list` standardisation, `schema_json_ld`, `canonical_url`, `keyword_cycling_blocks`, `people` table, `author_person_id`, `reviewer_person_id`, etc.) are yet to be created — except where the original schema already included some of these columns. |
+| Q3 | **Has any migration SQL from `Legacy_docs/extracted/content-model-amendments-v3.txt` been run on the live database?** | **Yes (core additive phase 2A).** The additive migration has been executed, including `people` table creation and the major standard columns. Legacy drop statements are still intentionally deferred. |
 | Q4 | **`services.audience` column shape?** | Resolved by `schema_templates/service_page.json`. See [section 6](#6-schema-template-analysis) for the locked shape. |
 | Q5 | **Is the `knowledgeGraph` Supabase project related?** | No — entirely separate. Ignored. |
 | Q6 | **WordPress site state?** | Live and receiving traffic on `pomegranate.marketing`. Database is exportable. Firecrawl is available as a fallback for content extraction. |
@@ -81,6 +81,8 @@ This roadmap consolidates three legacy documents (`content-model-v3`, `content-m
 **Supabase project:** `pomegranateWebsite` (`yyiwfosejjirnfjnohgu`)  
 **Audit date:** 25 february 2026  
 **Method:** Supabase MCP `list_tables` against `public` schema.
+
+> Note: this section is the initial snapshot. A subsequent additive migration was executed on 26 february 2026 (`docs/sql/phase-2a-additive-migration-v4.sql`). Treat this section as historical context unless refreshed.
 
 ### 4.1 tables that exist (18 total)
 
@@ -424,6 +426,8 @@ These tasks update the CMS codebase in this repository to support all new and am
 | 2B.13 | **Add `schema_json_ld` read-only viewer** | Display panel showing the generated schema for any content record. Allow manual override with warning. | 2B.1 |
 | 2B.14 | **Update `ServiceForm.tsx`** | Add all missing fields: `long_description`, `seo_title`, `seo_meta_desc`, `canonical_url`, `keyword_cycling_blocks`, `schema_json_ld` viewer. Wire existing `audience` field to new locked shape. | 2B.3, 2B.4, 2B.5, 2B.9 |
 | 2B.15 | **QA all CMS panels** | Full walkthrough of every admin panel. Every field exposed. Every save tested. Every new column verified. | All panels updated |
+| 2B.16 | **Enforce local-service landmarks rule** | On local service (`pseo_page_instances`) editing flow, require exactly 3 dedicated landmarks fields and persist to `pseo_page_instances.landmarks` jsonb. | 2A migration complete |
+| 2B.17 | **Enforce keyword cycling on service templates** | National service and local service editing flows must expose and save `keyword_cycling_blocks`; local flow order is landmarks hero first, keyword cycling section second. | 2A migration complete |
 
 **Gate 2B:** All CMS panels QA'd. Every content model field is accessible from the admin panel.
 

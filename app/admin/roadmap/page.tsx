@@ -25,12 +25,18 @@ export default function RoadmapPage() {
 -- 3. LOCATIONS (Multipliers)
 -- Table: target_locations
 -- Columns: id, business_id, name, slug, address_region, landmarks_list (text[]), geo_data (jsonb: lat, lng).
+-- Rule: keep at least 3 landmarks per location for local service hero text.
 
 -- 4. GENERATED PAGES (pSEO Instances)
 -- Table: pseo_page_instances
 -- Columns: id, service_id, location_id, url_slug, seo_title, seo_meta_desc, 
---          unique_hero (jsonb: headline, subheadline), unique_local_context (jsonb: content),
+--          unique_hero (jsonb: headline, subheadline), unique_local_context (jsonb: content), landmarks (jsonb),
+--          keyword_cycling_blocks (jsonb array),
 --          published (boolean).
+
+-- 4A. KEYWORD CYCLING RULE
+-- National service pages + local service pages both render keyword cycling.
+-- Local service pages render landmarks hero animation first, then keyword cycling.
 
 -- 5. BLOG POSTS
 -- Table: blog_posts
@@ -159,7 +165,7 @@ Please guide me step-by-step, starting with the Supabase client setup.`;
                  <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded font-bold">CRITICAL</span>
               </div>
               <p className="text-sm text-slate-600 mt-3">
-                 This is your money maker. It needs to fetch data from the <code>pseo_page_instances</code> table.
+                 This is your money maker. It needs to fetch data from the <code>pseo_page_instances</code> table, render landmarks hero content (3 landmarks), then keyword cycling.
               </p>
               <div className="mt-4 bg-slate-50 p-3 rounded text-xs font-mono text-slate-500">
                  const &#123; data &#125; = await supabase<br/>

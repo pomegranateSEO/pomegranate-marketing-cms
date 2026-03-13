@@ -259,7 +259,7 @@ export default function LocationsPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Target Locations</h1>
           <p className="text-slate-500 mt-2">
-            The "20%" of your pSEO content. Unique landmarks, demographics, and geo-coordinates.
+            The "20%" of your pSEO content. Enter at least 3 landmarks per location for local service hero text, plus demographics and geo-coordinates.
           </p>
         </div>
         <div className="flex gap-2">

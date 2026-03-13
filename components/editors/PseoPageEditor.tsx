@@ -30,6 +30,20 @@ export const PseoPageEditor: React.FC<Props> = ({ page, business, service, locat
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<EditorTab>('content');
 
+  const parseLandmarks = (value: unknown): string[] => {
+    if (!Array.isArray(value)) return [];
+    return value
+      .map((item) => (typeof item === 'string' ? item.trim() : ''))
+      .filter(Boolean)
+      .slice(0, 3);
+  };
+
+  const pageLandmarks = parseLandmarks(page.landmarks);
+  const locationLandmarks = parseLandmarks(location.landmarks_list);
+  const primaryKeywordBlock = Array.isArray(page.keyword_cycling_blocks)
+    ? (page.keyword_cycling_blocks[0] as any)
+    : null;
+
   const { register, handleSubmit, control, getValues, setValue, watch } = useForm({
     defaultValues: {
       url_slug: page.url_slug || '',
@@ -46,6 +60,14 @@ export const PseoPageEditor: React.FC<Props> = ({ page, business, service, locat
       mentions_entities: page.mentions_entities || [],
       keywords: (page.keywords || []).join(', '),
       schema_json_ld: page.schema_json_ld ? JSON.stringify(page.schema_json_ld, null, 2) : '',
+      landmark_one: pageLandmarks[0] || locationLandmarks[0] || '',
+      landmark_two: pageLandmarks[1] || locationLandmarks[1] || '',
+      landmark_three: pageLandmarks[2] || locationLandmarks[2] || '',
+      keyword_prefix_text: primaryKeywordBlock?.prefix_text || 'We are a',
+      keyword_terms: Array.isArray(primaryKeywordBlock?.keywords) ? primaryKeywordBlock.keywords.join(', ') : '',
+      keyword_suffix_text: primaryKeywordBlock?.suffix_text || '',
+      keyword_static_fallback: primaryKeywordBlock?.static_fallback || '',
+      keyword_heading_level: primaryKeywordBlock?.heading_level || 'h2',
     }
   });
 
@@ -54,6 +76,49 @@ export const PseoPageEditor: React.FC<Props> = ({ page, business, service, locat
   const brandTheme = business.global_theme as GlobalTheme;
 
   const onSubmit = async (data: any) => {
+    const landmarks = [data.landmark_one, data.landmark_two, data.landmark_three]
+      .map((item: string) => item?.trim() || '');
+
+    if (landmarks.some((item) => item.length === 0)) {
+      alert('Please enter all 3 landmarks before saving this local service page.');
+      return;
+    }
+
+    const keywordTerms = (data.keyword_terms || '')
+      .split(',')
+      .map((item: string) => item.trim())
+      .filter(Boolean);
+
+    if (keywordTerms.length < 2) {
+      alert('Please add at least 2 keyword cycling terms for this local service page.');
+      return;
+    }
+
+    const prefixText = (data.keyword_prefix_text || '').trim() || 'We are a';
+    const suffixText = (data.keyword_suffix_text || '').trim();
+    const staticFallback = (data.keyword_static_fallback || '').trim() || `${prefixText} ${keywordTerms[0]}${suffixText ? ` ${suffixText}` : ''}`;
+    const keywordBlock = {
+      block_id: primaryKeywordBlock?.block_id || 'local-service-cycler',
+      prefix_text: prefixText,
+      keywords: keywordTerms,
+      suffix_text: suffixText,
+      static_fallback: staticFallback,
+      heading_level: data.keyword_heading_level || 'h2',
+      animation_style: primaryKeywordBlock?.animation_style || 'typewriter',
+      cycle_interval_ms: primaryKeywordBlock?.cycle_interval_ms || 3000,
+      transition_duration_ms: primaryKeywordBlock?.transition_duration_ms || 400,
+      loop: typeof primaryKeywordBlock?.loop === 'boolean' ? primaryKeywordBlock.loop : true,
+      autostart: typeof primaryKeywordBlock?.autostart === 'boolean' ? primaryKeywordBlock.autostart : true,
+      aria_live: primaryKeywordBlock?.aria_live || 'polite',
+      enabled: typeof primaryKeywordBlock?.enabled === 'boolean' ? primaryKeywordBlock.enabled : true,
+    };
+
+    const keywordList = data.keywords
+      .split(',')
+      .map((k: string) => k.trim())
+      .filter(Boolean);
+    const mergedKeywords = Array.from(new Set([...keywordList, ...keywordTerms]));
+
     setSaving(true);
     try {
       const payload: Partial<PseoPageInstance> = {
@@ -74,9 +139,11 @@ export const PseoPageEditor: React.FC<Props> = ({ page, business, service, locat
           content: data.unique_process_content
         },
         unique_faqs: data.unique_faqs,
+        landmarks,
+        keyword_cycling_blocks: [keywordBlock],
         about_entities: data.about_entities,
         mentions_entities: data.mentions_entities,
-        keywords: data.keywords.split(',').map((k: string) => k.trim()).filter(Boolean),
+        keywords: mergedKeywords,
         schema_json_ld: data.schema_json_ld ? JSON.parse(data.schema_json_ld) : null,
       };
 
@@ -96,6 +163,8 @@ export const PseoPageEditor: React.FC<Props> = ({ page, business, service, locat
         Title: ${data.seo_title}
         Description: ${data.seo_meta_desc}
         Hero: ${data.hero_headline} - ${data.hero_subheadline}
+        Landmarks: ${[data.landmark_one, data.landmark_two, data.landmark_three].filter(Boolean).join(', ')}
+        Keyword Cycling Terms: ${data.keyword_terms}
         Local Context: ${data.local_context_content}
         Process: ${data.unique_process_content}
       `;
@@ -108,6 +177,22 @@ export const PseoPageEditor: React.FC<Props> = ({ page, business, service, locat
         ...page,
         seo_title: formData.seo_title,
         seo_meta_desc: formData.seo_meta_desc,
+        landmarks: [formData.landmark_one, formData.landmark_two, formData.landmark_three].filter(Boolean),
+        keyword_cycling_blocks: [{
+          block_id: primaryKeywordBlock?.block_id || 'local-service-cycler',
+          prefix_text: formData.keyword_prefix_text || 'We are a',
+          keywords: (formData.keyword_terms || '').split(',').map((item: string) => item.trim()).filter(Boolean),
+          suffix_text: formData.keyword_suffix_text || '',
+          static_fallback: formData.keyword_static_fallback || '',
+          heading_level: formData.keyword_heading_level || 'h2',
+          animation_style: primaryKeywordBlock?.animation_style || 'typewriter',
+          cycle_interval_ms: primaryKeywordBlock?.cycle_interval_ms || 3000,
+          transition_duration_ms: primaryKeywordBlock?.transition_duration_ms || 400,
+          loop: typeof primaryKeywordBlock?.loop === 'boolean' ? primaryKeywordBlock.loop : true,
+          autostart: typeof primaryKeywordBlock?.autostart === 'boolean' ? primaryKeywordBlock.autostart : true,
+          aria_live: primaryKeywordBlock?.aria_live || 'polite',
+          enabled: typeof primaryKeywordBlock?.enabled === 'boolean' ? primaryKeywordBlock.enabled : true,
+        }],
         about_entities: formData.about_entities,
         mentions_entities: formData.mentions_entities
       };
@@ -242,6 +327,40 @@ export const PseoPageEditor: React.FC<Props> = ({ page, business, service, locat
                         />
                       </div>
                       <Input {...register('hero_subheadline')} placeholder="Local services near {Landmark}..." />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Local Landmarks (3 required)</Label>
+                      <p className="text-xs text-slate-500">Add exactly 3 landmarks used for this local service page.</p>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <Input {...register('landmark_one')} placeholder="Landmark 1" required />
+                        <Input {...register('landmark_two')} placeholder="Landmark 2" required />
+                        <Input {...register('landmark_three')} placeholder="Landmark 3" required />
+                      </div>
+                    </div>
+                    <div className="space-y-3 p-4 bg-slate-50 rounded border border-slate-200">
+                      <Label>Keyword Cycling (Required on Local Service Pages)</Label>
+                      <p className="text-xs text-slate-500">
+                        Local service pages must include a keyword cycling block. The hero landmarks animation appears first, then this keyword cycling section.
+                      </p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <Input {...register('keyword_prefix_text')} placeholder="Prefix text (e.g. We are a)" />
+                        <Input {...register('keyword_suffix_text')} placeholder="Suffix text (optional)" />
+                        <div className="md:col-span-2">
+                          <Input {...register('keyword_terms')} placeholder="Comma-separated terms (minimum 2)" />
+                        </div>
+                        <div className="md:col-span-2">
+                          <Input {...register('keyword_static_fallback')} placeholder="Static fallback sentence for no-JS and schema contexts" />
+                        </div>
+                        <div>
+                          <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" {...register('keyword_heading_level')}>
+                            <option value="h1">h1</option>
+                            <option value="h2">h2</option>
+                            <option value="h3">h3</option>
+                            <option value="h4">h4</option>
+                            <option value="p">p</option>
+                          </select>
+                        </div>
+                      </div>
                     </div>
                     <div className="space-y-2">
                       <div className="flex justify-between">

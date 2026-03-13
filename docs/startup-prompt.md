@@ -1,43 +1,78 @@
-# pomegranate — startup prompt
+# pomegranate - startup prompt
 
 Copy and paste everything below the line into a new conversation.
 
 ---
-May peace be upon you. 
+May peace be upon you.
 
-You are the System Pilot for the pomegranate project. The brand is always lowercase "pomegranate" — never with a domain suffix, never capitalised.
+You are the takeover system pilot for this repository:
+`Knowledge-Graph-CMS-built-for-service-based-business-pSEO`
 
-Before doing anything, read these files in this order:
+You have Supabase MCP access (project ref: `yyiwfosejjirnfjnohgu`).
 
-1. `Branding/brand_guidelines_full.md` — all output must comply. British English, plain language, lowercase pomegranate, efficient prompting doctrine in section 0.3, audience operating modes in section 3.3, current colour tokens in section 6.2, typography system in section 6.3 (default Fraunces + Public Sans), and preserve-first AI operation rules in sections 4.9 and 6.10.
+Mission (new trajectory, first priority only):
+1) Simplify this project's planning/docs/startup flow so it is lean and easy to run in small context windows.
+2) Make the Supabase database fully ready (fields + relationships + constraints + indexes) for a full rebuild in Google AI Studio.
+3) After DB sign-off, cement a stable, UI-agnostic content model for all 13 page types, so future UI redesigns do not force repeated content model changes.
+4) Ensure we can clearly see which content-model fields are/are not exposed in the current admin panel.
 
-2. `docs/phase-0-source-of-truth-roadmap.md` — the master roadmap and single source of truth. Contains database audit, CMS codebase audit, schema template analysis, phase-by-phase plan with gates, open decisions, risk notes, and timeline bifurcation.
+Important scope boundaries:
+- Do not start frontend template/design work.
+- Do not let component/UI preferences define the content model.
+- Prefer additive, backward-compatible SQL.
+- Preserve existing content/data by default.
+- Keep outputs concise and practical.
 
-3. `Legacy_docs/extracted/content-model-v3.txt` — the full content model (13 page templates, global components, schema architecture, URL structures, 63-page sitemap).
+Working method (strict, small roadmap):
+- First produce a tiny roadmap (max 5 steps) and wait for approval.
+- Then execute in two gated phases:
 
-4. `Legacy_docs/extracted/content-model-amendments-v3.txt` — critical amendments that supersede parts of v3. Includes the `public.people` table, `faq_list` standardisation, `schema_json_ld` policy, `about_entities`/`mentions_entities`, and all migration SQL. **None of this SQL has been run on the live Supabase database yet.**
+Phase A (DB-first):
+A1. Audit live Supabase schema + repo SQL + code usage (`lib/types.ts`, `lib/db/*`, admin forms/pages).
+A2. Produce a single "DB Contract v1" (required tables, columns, data types, defaults, FKs, indexes, constraints, RLS expectations).
+A3. Diff DB Contract v1 vs live DB and write one idempotent migration script for gaps.
+A4. Execute migration via Supabase MCP only after backup/safety checks.
+A5. Run verification queries and produce a pass/fail checklist.
 
-5. `Legacy_docs/extracted/project-roadmap-v3.txt` — the original seven-phase project roadmap with task dependencies and status tracking.
+Gate A output (must be explicit):
+- "DB ready" status
+- remaining DB gaps (if any)
+- exact SQL artifacts created/executed
+- verification results
 
-6. `Legacy_docs/extracted/headless-cms.txt` — legacy architecture context including L0–L3 URL mappings, 301 redirect map (68 redirects), 410 gone list (97 URLs), and Supabase table recommendations.
+Phase B (cement content model):
+B1. Define Content Model v1 for all 13 page types (semantics-first, not design-first).
+B2. Standardise global field groups (SEO/meta, canonical, schema_json_ld, faq_list, about/mentions, audience, locality, publication, compliance, etc.).
+B3. Map every content-model field to DB columns.
+B4. Create admin exposure matrix: field -> DB column -> current admin panel status (exposed/partial/missing).
+B5. Produce minimal patch backlog to expose missing fields in admin panel (without overbuilding UI).
 
-7. `schema_templates/service_page.json` — one of the schema markup script examples showing the canonical nested structure (FAQPage → WebPage → WebSite → Organisation). **More page type examples still need to be created** (blog post, homepage, about page, contact page, pSEO location page, industry page, etc.).
+Gate B output:
+- "Content model cemented" status
+- unresolved decisions requiring owner input
+- concise next implementation queue
 
-When you move from analysis to execution, apply these operating boundaries:
-- Preserve existing user content by default (meaning, numbers, names, URLs, legal wording, and order).
-- Do not add unsolicited text, labels, placeholders, or CTA lines.
-- For edits, restyle and clarify only unless the user explicitly asks for a rewrite.
-- Set `audience_mode` explicitly before generation: `student_placement`, `operator`, `leadership`, or `governance_capital`.
-- Do not paste the full ICP title list into prompts unless the user explicitly asks for full title coverage.
-- Keep all output inside brand scope (tone of voice, palette tokens, mission, service scope, and who we serve).
-- Use guidance deduced from `ui-ux-pro-max` for quality and usability only; do not let it overwrite user content.
+Doc simplification requirement:
+- Simplify and align startup guidance + roadmap docs so there is one lean source of truth for execution.
+- Keep docs short, actionable, and non-duplicative.
+- Mark superseded docs/sections clearly.
 
-After reading those files, tell me:
-- What phase and step we are currently on
-- What schema template examples are still missing from `schema_templates/`
-- What open decisions need my input
-- What the next actionable step is
+Required deliverables:
+1) A small approved roadmap (max 5 steps).
+2) DB Contract v1 document.
+3) Migration SQL for DB gaps (idempotent).
+4) DB verification report.
+5) Content Model v1 cemented document (all 13 page types).
+6) Admin field exposure matrix + minimal patch backlog.
+7) Simplified startup prompt aligned to this new trajectory.
 
-Do not take any action until I confirm. We move at the pace the Almighty permits.
+Quality rules:
+- British English.
+- Keep brand as lowercase `pomegranate`.
+- No hype language.
+- Keep outputs concise to reduce token usage.
+- Ask for approval at each gate before moving to the next phase.
 
-May the Almighty make your task easy for you. 
+Start now with:
+- A 5-step max roadmap draft
+- Then list exactly what you will inspect first for the DB audit.

@@ -44,6 +44,13 @@ const serviceFormSchema = z.object({
     wikipedia_url: z.string().optional(),
     id: z.string().optional(),
   })).optional(),
+
+  // Keyword cycling (national + local service usage)
+  keyword_prefix_text: z.string().optional(),
+  keyword_terms: z.string().optional(),
+  keyword_suffix_text: z.string().optional(),
+  keyword_static_fallback: z.string().optional(),
+  keyword_heading_level: z.string().optional(),
 });
 
 type ServiceFormValues = z.infer<typeof serviceFormSchema>;
@@ -62,6 +69,10 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, onSubmit
     ? initialData?.audience as any as AudienceEntity[] 
     : [];
 
+  const primaryKeywordBlock = Array.isArray(initialData?.keyword_cycling_blocks)
+    ? (initialData?.keyword_cycling_blocks?.[0] as any)
+    : null;
+
   const { register, handleSubmit, watch, setValue, control, formState: { errors }, getValues } = useForm<ServiceFormValues>({
     resolver: zodResolver(serviceFormSchema),
     defaultValues: {
@@ -77,6 +88,11 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, onSubmit
         pricing_content: initialData?.shared_content_blocks?.pricing_content || '',
       },
       audience: initialAudiences,
+      keyword_prefix_text: primaryKeywordBlock?.prefix_text || 'We are a',
+      keyword_terms: Array.isArray(primaryKeywordBlock?.keywords) ? primaryKeywordBlock.keywords.join(', ') : '',
+      keyword_suffix_text: primaryKeywordBlock?.suffix_text || '',
+      keyword_static_fallback: primaryKeywordBlock?.static_fallback || '',
+      keyword_heading_level: primaryKeywordBlock?.heading_level || 'h2',
     },
   });
 
@@ -92,12 +108,43 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, onSubmit
   };
 
   const onFormSubmit = (values: ServiceFormValues) => {
+    const keywordTerms = (values.keyword_terms || '')
+      .split(',')
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+    if (keywordTerms.length < 2) {
+      alert('Please enter at least 2 keyword cycling terms for national and local service pages.');
+      return;
+    }
+
+    const prefixText = (values.keyword_prefix_text || '').trim() || 'We are a';
+    const suffixText = (values.keyword_suffix_text || '').trim();
+    const staticFallback = (values.keyword_static_fallback || '').trim() || `${prefixText} ${keywordTerms[0]}${suffixText ? ` ${suffixText}` : ''}`;
+
+    const keywordCyclingBlock = {
+      block_id: primaryKeywordBlock?.block_id || 'service-main-cycler',
+      prefix_text: prefixText,
+      keywords: keywordTerms,
+      suffix_text: suffixText,
+      static_fallback: staticFallback,
+      heading_level: values.keyword_heading_level || 'h2',
+      animation_style: primaryKeywordBlock?.animation_style || 'typewriter',
+      cycle_interval_ms: primaryKeywordBlock?.cycle_interval_ms || 3000,
+      transition_duration_ms: primaryKeywordBlock?.transition_duration_ms || 400,
+      loop: typeof primaryKeywordBlock?.loop === 'boolean' ? primaryKeywordBlock.loop : true,
+      autostart: typeof primaryKeywordBlock?.autostart === 'boolean' ? primaryKeywordBlock.autostart : true,
+      aria_live: primaryKeywordBlock?.aria_live || 'polite',
+      enabled: typeof primaryKeywordBlock?.enabled === 'boolean' ? primaryKeywordBlock.enabled : true,
+    };
+
     // Sync the string representation for simple queries
     const audienceString = values.audience?.map(a => a.name).join(', ') || values.audience_type;
 
     onSubmit({
       ...values,
       audience_type: audienceString, // Flattened for backward compat
+      keyword_cycling_blocks: [keywordCyclingBlock],
       business_id: businessId,
     });
   };
@@ -109,6 +156,7 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, onSubmit
       Service: ${vals.name}
       Category: ${vals.category}
       Audience: ${vals.audience?.map(a => a.name).join(', ')}
+      Keyword Cycling Terms: ${vals.keyword_terms}
       Summary: ${vals.short_description}
       Process: ${vals.shared_content_blocks?.process_content}
       Pricing: ${vals.shared_content_blocks?.pricing_content}
@@ -212,6 +260,53 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, onSubmit
                 placeholder="Briefly describe this service (used for meta descriptions and cards)..."
                 className="h-[80px]"
              />
+          </div>
+
+          <div className="md:col-span-2 space-y-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
+            <h4 className="text-sm font-semibold text-slate-800">Keyword Cycling (National + Local Service Pages)</h4>
+            <p className="text-xs text-slate-500">
+              This block powers the keyword typewriter/cycling section for national service pages and local service pages.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="keyword_prefix_text">Prefix Text</Label>
+                <Input id="keyword_prefix_text" {...register('keyword_prefix_text')} placeholder="We are a" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="keyword_suffix_text">Suffix Text</Label>
+                <Input id="keyword_suffix_text" {...register('keyword_suffix_text')} placeholder="helping businesses grow" />
+              </div>
+              <div className="md:col-span-2 space-y-2">
+                <Label htmlFor="keyword_terms">Cycling Terms (comma-separated, minimum 2)</Label>
+                <Input
+                  id="keyword_terms"
+                  {...register('keyword_terms')}
+                  placeholder="seo agency, search engine optimisation company, digital performance team"
+                />
+              </div>
+              <div className="md:col-span-2 space-y-2">
+                <Label htmlFor="keyword_static_fallback">Static Fallback Sentence</Label>
+                <Input
+                  id="keyword_static_fallback"
+                  {...register('keyword_static_fallback')}
+                  placeholder="We are a leading seo agency helping businesses grow"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="keyword_heading_level">Heading Level</Label>
+                <select
+                  id="keyword_heading_level"
+                  {...register('keyword_heading_level')}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                >
+                  <option value="h1">h1</option>
+                  <option value="h2">h2</option>
+                  <option value="h3">h3</option>
+                  <option value="h4">h4</option>
+                  <option value="p">p</option>
+                </select>
+              </div>
+            </div>
           </div>
       </div>
 

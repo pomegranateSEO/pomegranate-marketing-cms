@@ -128,7 +128,7 @@ export default function ServicesPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Services</h1>
           <p className="text-slate-500 mt-2">
-            The "80%" of your pSEO content. These services are combined with locations to generate pages.
+            The "80%" of your pSEO content. Define service keyword cycling here for both national service pages and generated local service pages.
           </p>
         </div>
         <div className="flex gap-2">

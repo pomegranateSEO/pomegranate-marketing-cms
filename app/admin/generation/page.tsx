@@ -37,6 +37,14 @@ export default function GenerationPage() {
   // Editing
   const [editingPage, setEditingPage] = useState<PseoPageInstance | null>(null);
 
+  const toLandmarkArray = (value: unknown): string[] => {
+    if (!Array.isArray(value)) return [];
+    return value
+      .map((item) => (typeof item === 'string' ? item.trim() : ''))
+      .filter(Boolean)
+      .slice(0, 3);
+  };
+
   useEffect(() => {
     loadInitialData();
   }, []);
@@ -92,11 +100,36 @@ export default function GenerationPage() {
     const service = services.find(s => s.id === serviceId);
     if (!service || locationIds.length === 0) return;
 
+    const validLocationIds = locationIds.filter((locId) => {
+      const loc = locations.find((item) => item.id === locId);
+      return toLandmarkArray(loc?.landmarks_list).length >= 3;
+    });
+
+    const skippedLocationNames = locationIds
+      .map((locId) => locations.find((item) => item.id === locId))
+      .filter((loc): loc is TargetLocation => !!loc)
+      .filter((loc) => toLandmarkArray(loc.landmarks_list).length < 3)
+      .map((loc) => loc.name);
+
+    if (skippedLocationNames.length > 0) {
+      alert(`Skipped ${skippedLocationNames.length} location(s) because they do not have 3 landmarks set: ${skippedLocationNames.join(', ')}`);
+    }
+
+    if (validLocationIds.length === 0) {
+      return;
+    }
+
     setActionLoading(serviceId);
     try {
-      const payloads = locationIds.map(locId => {
+      const payloads = validLocationIds.map(locId => {
         const loc = locations.find(l => l.id === locId);
         if (!loc) return null;
+
+        const locationLandmarks = toLandmarkArray(loc.landmarks_list);
+        const primaryLandmark = locationLandmarks[0] || loc.name;
+        const serviceKeywordBlocks = Array.isArray(service.keyword_cycling_blocks)
+          ? service.keyword_cycling_blocks
+          : [];
 
         const lowerLoc = loc.name.toLowerCase().trim();
         const isNationwide = ['uk', 'united kingdom', 'nationwide', 'england'].includes(lowerLoc);
@@ -112,16 +145,18 @@ export default function GenerationPage() {
           location_id: loc.id,
           url_slug: slug,
           seo_title: title,
-          seo_meta_desc: `${service.short_description || service.name} available in ${loc.name}. Professional services near ${loc.landmarks_list?.[0] || loc.name}.`,
+          seo_meta_desc: `${service.short_description || service.name} available in ${loc.name}. Professional services near ${primaryLandmark}.`,
           status: 'draft',
           unique_hero: {
              headline: title,
              subheadline: `Expert ${service.name} services for ${loc.demographics_tag || 'residents'} in ${loc.name}.`
           },
           unique_local_context: {
-             content: `Serving the ${loc.name} area near ${loc.landmarks_list?.[0] || 'the city center'}.`
+             content: `Serving the ${loc.name} area near ${primaryLandmark || 'the city center'}.`
           },
-          unique_process_content: service.shared_content_blocks?.process_content ? { content: service.shared_content_blocks.process_content } : null
+          unique_process_content: service.shared_content_blocks?.process_content ? { content: service.shared_content_blocks.process_content } : null,
+          landmarks: locationLandmarks,
+          keyword_cycling_blocks: serviceKeywordBlocks
         };
       }).filter(Boolean) as any[];
 

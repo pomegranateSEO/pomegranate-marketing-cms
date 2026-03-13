@@ -32,6 +32,30 @@ export const validatePublicationRequirements = (page: PseoPageInstance): Validat
     errors.push("Local Context section is incomplete.");
   }
 
+  // 5. Local Landmarks Check
+  const landmarks = Array.isArray(page.landmarks)
+    ? page.landmarks.filter((item): item is string => typeof item === 'string' && item.trim().length > 0)
+    : [];
+  if (landmarks.length < 3) {
+    errors.push("Exactly 3 local landmarks are required.");
+  }
+
+  // 6. Keyword Cycling Check
+  const keywordBlocks = Array.isArray(page.keyword_cycling_blocks)
+    ? page.keyword_cycling_blocks
+    : [];
+  if (keywordBlocks.length === 0) {
+    errors.push("At least 1 keyword cycling block is required.");
+  } else {
+    const firstBlock = keywordBlocks[0] as any;
+    const cyclingTerms = Array.isArray(firstBlock?.keywords)
+      ? firstBlock.keywords.filter((item: unknown): item is string => typeof item === 'string' && item.trim().length > 0)
+      : [];
+    if (cyclingTerms.length < 2) {
+      errors.push("Keyword cycling must include at least 2 terms.");
+    }
+  }
+
   return {
     canPublish: errors.length === 0,
     errors

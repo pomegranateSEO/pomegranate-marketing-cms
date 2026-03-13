@@ -120,6 +120,11 @@ export const LocationForm: React.FC<Props> = ({ initialData, businessId, onSubmi
       ? values.landmarks_text.split('\n').map(s => s.trim()).filter(s => s.length > 0)
       : [];
 
+    if (landmarksList.length < 3) {
+      alert('Please enter at least 3 landmarks. Local service pages require 3 landmarks for hero text.');
+      return;
+    }
+
     const submissionData = {
       business_id: businessId,
       name: values.name,
@@ -219,11 +224,11 @@ export const LocationForm: React.FC<Props> = ({ initialData, businessId, onSubmi
            <Textarea 
              id="landmarks" 
              {...register('landmarks_text')} 
-             placeholder="Brixton Market&#10;O2 Academy Brixton&#10;Brockwell Park" 
-             className="min-h-[150px] rounded-t-none"
-           />
-           <p className="text-xs text-slate-500">These will be rotated into content to prove local relevance. Use Gemini 3 Flash to generate suggestions.</p>
-        </div>
+              placeholder="Brixton Market&#10;O2 Academy Brixton&#10;Brockwell Park" 
+              className="min-h-[150px] rounded-t-none"
+            />
+            <p className="text-xs text-slate-500">Minimum 3 landmarks required. These power local service hero text and local relevance proof. Use Gemini 3 Flash to generate suggestions.</p>
+         </div>
 
       </div>
 
