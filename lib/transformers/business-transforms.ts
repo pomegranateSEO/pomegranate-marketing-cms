@@ -18,7 +18,7 @@ export const mapBusinessToFormValues = (data: Partial<Business>): BusinessFormVa
     slogan: data.slogan || '',
     description: data.description || '',
     website_url: data.website_url || '',
-    logo_url: data.logo_url || '',
+    logo_url: data.logo_url || 'code:pomegranate-logo',
     email: data.email || '',
     telephone: data.telephone || '',
     street_address: data.street_address || '',

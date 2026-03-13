@@ -1,10 +1,9 @@
-
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
   LayoutDashboard, Building2, MapPin, Briefcase, BookOpen, Settings,
   FileText, PenTool, Star, Download, Wrench, Layers, LogOut,
-  Factory, Users, Award, Megaphone, Image as ImageIcon, Lightbulb, FileCode
+  Factory, Users, Award, Megaphone, Image as ImageIcon, Lightbulb
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { supabase } from '../../lib/supabaseClient';
@@ -28,10 +27,11 @@ export const Sidebar = () => {
     { href: "/admin/services", label: "Services", icon: Briefcase },
     { href: "/admin/locations", label: "Locations", icon: MapPin },
     { href: "/admin/knowledge-entities", label: "Knowledge Graph", icon: BookOpen },
+    { href: "/admin/people", label: "People / Authors", icon: Users },
   ];
 
   const contentNavItems = [
-    { href: "/admin/blog-topics", label: "Blog Topic Hub", icon: Lightbulb },
+    { href: "/admin/blog-topics", label: "Blog Topic Hubs", icon: Lightbulb },
     { href: "/admin/media", label: "Media Library", icon: ImageIcon },
     { href: "/admin/pages", label: "Pages", icon: Layers },
     { href: "/admin/posts", label: "Blog Posts", icon: PenTool },
@@ -46,10 +46,6 @@ export const Sidebar = () => {
 
   const generationNavItems = [
     { href: "/admin/generation", label: "Batch Generation", icon: Settings },
-  ];
-
-  const integrationNavItems = [
-    { href: "/admin/roadmap", label: "Frontend Roadmap", icon: FileCode },
   ];
 
   const NavGroup = ({ title, items }: { title: string, items: any[] }) => (
@@ -92,7 +88,6 @@ export const Sidebar = () => {
         <NavGroup title="Core Data" items={coreNavItems} />
         <NavGroup title="Content Management" items={contentNavItems} />
         <NavGroup title="Content Building" items={generationNavItems} />
-        <NavGroup title="Integration" items={integrationNavItems} />
       </div>
 
       <div className="p-4 border-t border-slate-800 mt-auto bg-slate-950">

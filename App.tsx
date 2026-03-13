@@ -21,7 +21,7 @@ import MediaPage from './app/admin/media/page';
 import LoginPage from './app/auth/page';
 import GenerationPage from './app/admin/generation/page';
 import BlogTopicsPage from './app/admin/blog-topics/page';
-import RoadmapPage from './app/admin/roadmap/page';
+import PeoplePage from './app/admin/people/page';
 import { Loader2 } from 'lucide-react';
 
 // Placeholder components for routes not yet implemented in Phase 1
@@ -97,7 +97,7 @@ function App() {
             <Route path="/admin/tools" element={<ToolsPage />} />
             
             <Route path="/admin/generation" element={<GenerationPage />} />
-            <Route path="/admin/roadmap" element={<RoadmapPage />} />
+            <Route path="/admin/people" element={<PeoplePage />} />
           </Routes>
         </main>
       </div>
