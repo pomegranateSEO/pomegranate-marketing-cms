@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { 
   LayoutDashboard, Building2, MapPin, Briefcase, BookOpen, Settings,
   FileText, PenTool, Star, Download, Wrench, Layers, LogOut,
-  Factory, Users, Award, Megaphone, Image as ImageIcon, Lightbulb
+  Factory, Users, Award, Image as ImageIcon, Lightbulb
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { supabase } from '../../lib/supabaseClient';
@@ -38,8 +38,7 @@ export const Sidebar = () => {
     { href: "/admin/industries", label: "Industries", icon: Factory },
     { href: "/admin/case-studies", label: "Case Studies", icon: Award },
     { href: "/admin/reviews", label: "Reviews", icon: Star },
-    { href: "/admin/associates", label: "Associates / Team", icon: Users },
-    { href: "/admin/cta-blocks", label: "CTA Blocks", icon: Megaphone },
+    { href: "/admin/associates", label: "Partner Orgs", icon: Users },
     { href: "/admin/downloads", label: "Downloads", icon: Download },
     { href: "/admin/tools", label: "Free Tools", icon: Wrench },
   ];

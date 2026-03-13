@@ -15,23 +15,30 @@ export const fetchPosts = async () => {
 };
 
 export const createPost = async (post: any) => {
-  // Map UI fields to DB schema
   const status = post.status || 'draft';
+  
+  // Ensure headline and slug are present (required fields)
+  if (!post.title && !post.headline) {
+    throw new Error('Headline is required');
+  }
+  if (!post.slug) {
+    throw new Error('Slug is required');
+  }
+  
   const payload = {
     business_id: post.business_id,
-    headline: post.title || post.headline, // Map title to headline
+    headline: post.title || post.headline,
     slug: post.slug,
     status: status,
-    // Auto-set published=true when status is 'published'
     published: status === 'published',
-    // Store content in content_body AND article_body_raw (for markdown)
-    content_body: post.content || post.content_body, 
-    article_body_raw: post.content || post.article_body_raw,
-    // Map excerpt to seo_meta_desc
-    seo_meta_desc: post.excerpt || post.seo_meta_desc,
-    featured_image_url: post.featured_image_url,
-    // Map faqs (JSONB), ensure defaults
-    faqs: post.faqs || []
+    content_body: post.content || post.content_body || null,
+    article_body_raw: post.content || post.article_body_raw || null,
+    seo_meta_desc: post.excerpt || post.seo_meta_desc || null,
+    featured_image_url: post.featured_image_url || null,
+    faq_list: post.faqs || [],
+    keywords: post.keywords || [],
+    about_entities: post.about_entities || [],
+    mentions_entities: post.mentions_entities || [],
   };
 
   const { data, error } = await supabase
@@ -40,7 +47,10 @@ export const createPost = async (post: any) => {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    console.error('createPost error:', error);
+    throw new Error(`Failed to create post: ${error.message}`);
+  }
   return data as BlogPost;
 };
 
@@ -53,18 +63,17 @@ export const updatePost = async (id: string, post: any) => {
   if (post.slug) payload.slug = post.slug;
   if (post.status) {
     payload.status = post.status;
-    // Auto-set published=true when status is 'published'
     if (post.status === 'published') {
       payload.published = true;
     }
   }
   if (post.content || post.content_body) {
-     payload.content_body = post.content || post.content_body;
-     payload.article_body_raw = post.content || post.content_body;
+    payload.content_body = post.content || post.content_body;
+    payload.article_body_raw = post.content || post.content_body;
   }
   if (post.excerpt || post.seo_meta_desc) payload.seo_meta_desc = post.excerpt || post.seo_meta_desc;
   if (post.featured_image_url) payload.featured_image_url = post.featured_image_url;
-  if (post.faqs !== undefined) payload.faqs = post.faqs;
+  if (post.faqs !== undefined) payload.faq_list = post.faqs;
 
   const { data, error } = await supabase
     .from('blog_posts')
@@ -73,7 +82,10 @@ export const updatePost = async (id: string, post: any) => {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    console.error('updatePost error:', error);
+    throw new Error(`Failed to update post: ${error.message}`);
+  }
   return data as BlogPost;
 };
 
@@ -84,7 +96,10 @@ export const deletePost = async (id: string) => {
     .eq('id', id)
     .select();
 
-  if (error) throw error;
+  if (error) {
+    console.error('deletePost error:', error);
+    throw new Error(`Failed to delete post: ${error.message}`);
+  }
   if (!data || data.length === 0) {
     throw new Error(`Delete failed: Record not found (ID: ${id}) or permissions denied.`);
   }

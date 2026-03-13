@@ -173,7 +173,7 @@ export interface Service {
   // Legacy (keep during transition)
   faqs?: Json;
 
-  // Phase 2A additions
+// Phase 2A additions
   long_description?: string;
   seo_title?: string;
   seo_meta_desc?: string;
@@ -181,6 +181,7 @@ export interface Service {
   keyword_cycling_blocks?: Json;
   faq_list?: Json;
   schema_json_ld?: Json;
+  pricing_data?: Json;
 }
 
 export interface TargetLocation {

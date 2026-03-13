@@ -16,7 +16,6 @@ import ToolsPage from './app/admin/tools/page';
 import IndustriesPage from './app/admin/industries/page';
 import CaseStudiesPage from './app/admin/case-studies/page';
 import AssociatesPage from './app/admin/associates/page';
-import CTABlocksPage from './app/admin/cta-blocks/page';
 import MediaPage from './app/admin/media/page';
 import LoginPage from './app/auth/page';
 import GenerationPage from './app/admin/generation/page';
@@ -92,7 +91,6 @@ function App() {
             <Route path="/admin/case-studies" element={<CaseStudiesPage />} />
             <Route path="/admin/reviews" element={<ReviewsPage />} />
             <Route path="/admin/associates" element={<AssociatesPage />} />
-            <Route path="/admin/cta-blocks" element={<CTABlocksPage />} />
             <Route path="/admin/downloads" element={<DownloadsPage />} />
             <Route path="/admin/tools" element={<ToolsPage />} />
             
