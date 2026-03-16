@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Sparkles, Loader2, RefreshCw, PenTool, AlertCircle } from 'lucide-react';
 import { Button } from '../ui/button';
 import { generateDraftContent, improveContent } from '../../lib/ai/gemini';
+import { toast } from '../../lib/toast';
 import type { GlobalTheme } from '../../lib/types';
 
 interface Props {
@@ -36,7 +37,7 @@ export const AITextGenerator: React.FC<Props> = ({
       onGenerate(text);
       setIsOpen(false);
     } catch (e: any) {
-      alert(e.message);
+      toast.error("AI generation failed", e.message);
     } finally {
       setLoading(false);
     }
@@ -55,7 +56,7 @@ export const AITextGenerator: React.FC<Props> = ({
       onGenerate(text);
       setIsOpen(false);
     } catch (e: any) {
-      alert(e.message);
+      toast.error("AI generation failed", e.message);
     } finally {
       setLoading(false);
     }

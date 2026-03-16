@@ -5,6 +5,7 @@ import { Textarea } from '../ui/textarea';
 import { Label } from '../ui/label';
 import { Plus, Trash2, Sparkles, Loader2, HelpCircle } from 'lucide-react';
 import { generateFAQs } from '../../lib/ai/gemini';
+import { toast } from '../../lib/toast';
 
 interface FAQItem {
   question: string;
@@ -38,7 +39,7 @@ export const FAQEditor: React.FC<Props> = ({ value = [], onChange, sourceText })
 
   const handleAutoGenerate = async () => {
     if (!sourceText || sourceText.length < 50) {
-      alert("Please add some content to the page/post body first so the AI can analyze it.");
+      toast.warning("Please add some content to the page/post body first so the AI can analyze it.");
       return;
     }
 
@@ -49,10 +50,10 @@ export const FAQEditor: React.FC<Props> = ({ value = [], onChange, sourceText })
         // Append new FAQs to existing ones
         onChange([...value, ...newFaqs]);
       } else {
-        alert("AI couldn't generate any FAQs from the content.");
+        toast.info("AI couldn't generate any FAQs from this content.");
       }
     } catch (e) {
-      alert("Failed to generate FAQs.");
+      toast.error("Failed to generate FAQs.");
       console.error(e);
     } finally {
       setGenerating(false);

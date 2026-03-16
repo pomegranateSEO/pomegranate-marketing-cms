@@ -13,6 +13,7 @@ import { fetchKnowledgeEntities } from '../../../lib/db/knowledge';
 import { fetchPageInstances, bulkCreatePageInstances, deletePageInstance, updatePageInstance } from '../../../lib/db/generation';
 import type { Service, TargetLocation, PseoPageInstance, Business, KnowledgeEntity } from '../../../lib/types';
 import { PseoPageEditor } from '../../../components/editors/PseoPageEditor';
+import { toast } from '../../../lib/toast';
 
 export default function GenerationPage() {
   const [services, setServices] = useState<Service[]>([]);
@@ -112,7 +113,7 @@ export default function GenerationPage() {
       .map((loc) => loc.name);
 
     if (skippedLocationNames.length > 0) {
-      alert(`Skipped ${skippedLocationNames.length} location(s) because they do not have 3 landmarks set: ${skippedLocationNames.join(', ')}`);
+      toast.warning(`Skipped ${skippedLocationNames.length} location(s) — missing 3 landmarks: ${skippedLocationNames.join(', ')}`);
     }
 
     if (validLocationIds.length === 0) {
@@ -166,7 +167,7 @@ export default function GenerationPage() {
       setAllPages(freshPages);
       
     } catch (e: any) {
-      alert("Generation failed: " + e.message);
+      toast.error("Generation failed", e.message);
     } finally {
       setActionLoading(null);
     }
@@ -193,7 +194,7 @@ export default function GenerationPage() {
       const freshPages = await fetchPageInstances();
       setAllPages(freshPages);
     } catch (e: any) {
-      alert("Delete failed: " + e.message);
+      toast.error("Delete failed", e.message);
     }
   };
 
@@ -207,7 +208,7 @@ export default function GenerationPage() {
       const updated = allPages.map(p => p.id === page.id ? { ...p, status: newStatus, published: newStatus === 'published' } : p);
       setAllPages(updated as PseoPageInstance[]);
     } catch (e: any) {
-      alert("Status update failed: " + e.message);
+      toast.error("Status update failed", e.message);
     }
   };
 

@@ -11,6 +11,7 @@ import type { Industry, Business, GlobalTheme } from '../../../lib/types';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 import { VisualContentEditor } from '../../../components/shared/VisualContentEditor';
 import { AITextGenerator } from '../../../components/shared/AITextGenerator';
+import { toast } from '../../../lib/toast';
 
 export default function IndustriesPage() {
   const [industries, setIndustries] = useState<Industry[]>([]);
@@ -60,7 +61,7 @@ export default function IndustriesPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!rootBusiness) return alert("No Root Business found.");
+    if (!rootBusiness) { toast.error("No Root Business found."); return; }
 
     setSaving(true);
     try {
@@ -74,7 +75,7 @@ export default function IndustriesPage() {
       setFormState({ name: '', slug: '', description: '', overview_html: '' });
       loadData();
     } catch (err: any) {
-      alert("Failed to save industry: " + err.message);
+      toast.error("Failed to save industry", err.message);
     } finally {
       setSaving(false);
     }
@@ -86,7 +87,7 @@ export default function IndustriesPage() {
         await deleteIndustry(id);
         loadData();
       } catch (err: any) {
-        alert(`Failed to delete industry.\n\nDatabase Error: ${err.message || JSON.stringify(err)}`);
+        toast.error("Failed to delete industry", err.message);
         console.error("Delete Industry Error:", err);
       }
     }

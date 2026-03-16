@@ -16,6 +16,7 @@ import { MediaManager } from '../../../components/shared/MediaManager';
 import { FAQEditor } from '../../../components/shared/FAQEditor';
 import { AITextGenerator } from '../../../components/shared/AITextGenerator';
 import { KnowledgeEntitySelector } from '../../../components/shared/KnowledgeEntitySelector';
+import { toast } from '../../../lib/toast';
 
 export default function PostsPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -75,7 +76,7 @@ export default function PostsPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!rootBusiness) return alert("No Root Business found. Please create one first.");
+    if (!rootBusiness) { toast.error("No Root Business found. Please create one first."); return; }
 
     setSaving(true);
     try {
@@ -103,7 +104,7 @@ export default function PostsPage() {
       resetForm();
       loadData();
     } catch (err: any) {
-      alert("Failed to save post: " + err.message);
+      toast.error("Failed to save post", err.message);
     } finally {
       setSaving(false);
     }
@@ -115,7 +116,7 @@ export default function PostsPage() {
         await deletePost(id);
         loadData();
       } catch (e: any) {
-        alert(`Failed to delete post.\n\nDatabase Error: ${e.message || JSON.stringify(e)}`);
+        toast.error("Failed to delete post", e.message);
       }
     }
   };

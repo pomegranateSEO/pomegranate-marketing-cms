@@ -16,6 +16,7 @@ import { fetchIndustries } from '../../../lib/db/industries';
 import { fetchBlogTopics, bulkCreateBlogTopics, clearAllTopics, updateBlogTopic, createBlogTopic, deleteBlogTopic } from '../../../lib/db/blog-topics';
 import { generateTopicRoadmap, generateSubTopics, generateParentTopic } from '../../../lib/ai/topic-generator';
 import type { BlogTopic, Business, KnowledgeEntity } from '../../../lib/types';
+import { toast } from '../../../lib/toast';
 
 // --- MINDMAP NODE COMPONENT ---
 
@@ -176,7 +177,7 @@ export default function BlogTopicsPage() {
   };
 
   const handleGenerate = async (refinementMode = false) => {
-    if (!rootBusiness) return alert("No root business found.");
+    if (!rootBusiness) { toast.error("No root business found."); return; }
     
     // If refining, confirm with user
     if (refinementMode && topics.length > 0) {
@@ -243,7 +244,7 @@ export default function BlogTopicsPage() {
       if (refinementMode) setInstructions(""); // Clear after success
 
     } catch (e: any) {
-      alert("Generation failed: " + e.message);
+      toast.error("Generation failed", e.message);
     } finally {
       setGenerating(false);
       setIsRefining(false);
@@ -281,10 +282,10 @@ export default function BlogTopicsPage() {
 
       await bulkCreateBlogTopics(payloads);
       await loadData();
-      alert(`Added ${payloads.length} sub-topics to "${parent.name}"`);
+      toast.success(`Added ${payloads.length} sub-topics to "${parent.name}"`);
 
     } catch (e: any) {
-      alert("Failed: " + e.message);
+      toast.error("Failed", e.message);
     } finally {
       setActionLoading(false);
     }
@@ -323,10 +324,10 @@ export default function BlogTopicsPage() {
       });
 
       await loadData();
-      alert(`Created parent "${savedParent.name}" and moved "${child.name}" inside.`);
+      toast.success(`Created parent "${savedParent.name}" and moved "${child.name}" inside.`);
 
     } catch (e: any) {
-      alert("Failed: " + e.message);
+      toast.error("Failed", e.message);
     } finally {
       setActionLoading(false);
     }
@@ -340,7 +341,7 @@ export default function BlogTopicsPage() {
          setSelectedTopicId(null);
          loadData();
        } catch (e: any) {
-         alert("Delete failed: " + e.message);
+         toast.error("Delete failed", e.message);
        }
     }
   };

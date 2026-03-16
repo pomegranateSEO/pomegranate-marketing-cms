@@ -6,6 +6,7 @@ import { Label } from '../../ui/label';
 import { Button } from '../../ui/button';
 import { LinkIcon, Loader2, Search, Plus, Trash2, Globe } from 'lucide-react';
 import { findSocialLinks } from '../../../lib/ai/gemini';
+import { toast } from '../../../lib/toast';
 
 export const ContactSection: React.FC = () => {
   const { register, getValues, setValue, watch } = useFormContext();
@@ -17,7 +18,7 @@ export const ContactSection: React.FC = () => {
   const handleFindSocials = async () => {
     const name = getValues('name');
     const location = getValues('address_locality');
-    if (!name) return alert("Please enter a business name first.");
+    if (!name) { toast.warning("Please enter a business name first."); return; }
 
     setIsSearchingSocials(true);
     try {
@@ -25,10 +26,10 @@ export const ContactSection: React.FC = () => {
       // Merge new links without duplicates
       const uniqueLinks = [...new Set([...socialLinks, ...links])];
       setValue('social_links', uniqueLinks);
-      if (links.length > 0) alert(`Success! Found ${links.length} social profiles.`);
-      else alert("No social links found using Google Search.");
+      if (links.length > 0) toast.success(`Found ${links.length} social profiles.`);
+      else toast.info("No social links found using Google Search.");
     } catch (e) {
-      alert("AI Search failed to find links.");
+      toast.error("AI Search failed to find links.");
     } finally {
       setIsSearchingSocials(false);
     }

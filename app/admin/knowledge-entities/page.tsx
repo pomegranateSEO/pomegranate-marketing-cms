@@ -7,6 +7,7 @@ import { fetchKnowledgeEntities, createKnowledgeEntity, deleteKnowledgeEntity, u
 import type { KnowledgeEntity } from '../../../lib/types';
 import { fetchBusinesses } from '../../../lib/db/businesses';
 import { searchWikipedia, getWikidataIdFromWikipediaUrl, type WikiEntity } from '../../../lib/wikipedia/api';
+import { toast } from '../../../lib/toast';
 
 export default function KnowledgeEntitiesPage() {
   const [entities, setEntities] = useState<KnowledgeEntity[]>([]);
@@ -55,7 +56,7 @@ export default function KnowledgeEntitiesPage() {
       setSearchResults(results);
     } catch (err) {
       console.error(err);
-      alert("Search failed. Check console.");
+      toast.error("Search failed. Please try again.");
     } finally {
       setIsSearching(false);
     }
@@ -63,7 +64,7 @@ export default function KnowledgeEntitiesPage() {
 
   const handleSaveEntity = async (wikiResult: WikiEntity) => {
     if (!rootBusinessId) {
-      alert("Error: No Root Business found. Please create a business in the 'Businesses' tab first.");
+      toast.error("No Root Business found. Please create a business first.");
       return;
     }
 
@@ -71,7 +72,7 @@ export default function KnowledgeEntitiesPage() {
     try {
       // Check for duplicates locally by Wikipedia URL
       if (entities.some(e => e.wikipedia_url === wikiResult.url)) {
-        alert("This entity is already in your Knowledge Graph (matched by Wikipedia URL).");
+        toast.info("This entity is already in your Knowledge Graph.");
         setIsSaving(false);
         return;
       }
@@ -117,7 +118,7 @@ export default function KnowledgeEntitiesPage() {
       
     } catch (err: any) {
       console.error("Save Error:", err);
-      alert(`Failed to save entity: ${err.message || JSON.stringify(err)}`);
+      toast.error("Failed to save entity", err.message);
     } finally {
       setIsSaving(false);
     }
@@ -132,7 +133,7 @@ export default function KnowledgeEntitiesPage() {
         await loadData(); // Reload immediately
       } catch (err: any) {
         console.error(err);
-        alert(`Failed to delete entity.\n\nError: ${err.message || JSON.stringify(err)}`);
+        toast.error("Failed to delete entity", err.message);
       }
     }
   };
@@ -146,7 +147,7 @@ export default function KnowledgeEntitiesPage() {
         const targets = entities.filter(e => e.wikipedia_url && !e.wikidata_url);
 
         if (targets.length === 0) {
-            alert("No entities found needing Wikidata URLs.");
+            toast.info("No entities found needing Wikidata URLs.");
             setIsSyncingWikidata(false);
             return;
         }
@@ -167,11 +168,11 @@ export default function KnowledgeEntitiesPage() {
         }
 
         await loadData();
-        alert(`Sync Complete!\nUpdated: ${updatedCount} entities.\nErrors: ${errors}`);
+        toast.success(`Sync complete! Updated ${updatedCount} entities.`, errors > 0 ? `${errors} errors — check console.` : undefined);
 
     } catch (err) {
         console.error(err);
-        alert("Mass sync failed unexpectedly.");
+        toast.error("Mass sync failed unexpectedly.");
     } finally {
         setIsSyncingWikidata(false);
     }

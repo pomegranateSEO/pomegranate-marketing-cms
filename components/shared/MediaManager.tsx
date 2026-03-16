@@ -6,6 +6,7 @@ import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { fetchMediaMetadata, upsertMediaMetadata, MediaMetadata } from '../../lib/db/media';
+import { toast } from '../../lib/toast';
 
 interface FileObject {
   name: string;
@@ -93,7 +94,7 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
     if (!file) return;
 
     if (file.size > 10 * 1024* 1024) {
-      alert("Image is too large. Please upload an image under 10MB.");
+      toast.error("Image is too large. Please upload an image under 10MB.");
       return;
     }
 
@@ -117,7 +118,7 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
       
       await loadImages();
     } catch (err: any) {
-      alert("Upload failed: " + err.message);
+      toast.error("Upload failed", err.message);
     } finally {
       setUploading(false);
     }
@@ -165,7 +166,7 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
       }
     } catch (err) {
       console.error('Error saving metadata:', err);
-      alert('Failed to save metadata');
+      toast.error("Failed to save metadata");
     } finally {
       setSaving(false);
     }
@@ -194,7 +195,7 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
       setSelectedMetadata(null);
       await loadImages();
     } catch (err: any) {
-      alert('Delete failed: ' + err.message);
+      toast.error("Delete failed", err.message);
     }
   };
 

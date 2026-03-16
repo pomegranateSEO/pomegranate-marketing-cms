@@ -6,6 +6,7 @@ import { Label } from '../../../components/ui/label';
 import { supabase, uploadFile } from '../../../lib/supabaseClient';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 import { fetchBusinesses } from '../../../lib/db/businesses';
+import { toast } from '../../../lib/toast';
 
 // Simple interface for file objects from Storage
 interface FileObject {
@@ -59,9 +60,9 @@ export default function DownloadsPage() {
     try {
       await uploadFile('downloads', file.name, file);
       await loadFiles();
-      alert("File uploaded successfully!");
+      toast.success("File uploaded successfully!");
     } catch (err: any) {
-      alert("Upload failed: " + err.message);
+      toast.error("Upload failed", err.message);
     } finally {
       setUploading(false);
     }
@@ -75,7 +76,7 @@ export default function DownloadsPage() {
       if (error) throw error;
       loadFiles();
     } catch (err: any) {
-      alert("Delete failed: " + err.message);
+      toast.error("Delete failed", err.message);
     }
   };
 

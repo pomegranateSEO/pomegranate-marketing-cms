@@ -4,6 +4,7 @@ import { Input } from '../../ui/input';
 import { Label } from '../../ui/label';
 import { Button } from '../../ui/button';
 import { MapPin, Loader2 } from 'lucide-react';
+import { toast } from '../../../lib/toast';
 
 export const LocationSection: React.FC = () => {
   const { register, setValue, getValues } = useFormContext();
@@ -11,7 +12,7 @@ export const LocationSection: React.FC = () => {
 
   const handleGeocode = async () => {
     const address = `${getValues('street_address') || ''}, ${getValues('address_locality') || ''}, ${getValues('address_country') || ''}`;
-    if (address.length < 10) return alert("Please enter a valid address first.");
+    if (address.length < 10) { toast.warning("Please enter a valid address first."); return; }
 
     setGeocoding(true);
     try {
@@ -21,11 +22,11 @@ export const LocationSection: React.FC = () => {
         setValue('latitude', parseFloat(data[0].lat));
         setValue('longitude', parseFloat(data[0].lon));
       } else {
-        alert("Could not find coordinates for this address.");
+        toast.warning("Could not find coordinates for this address.");
       }
     } catch (e) {
       console.error(e);
-      alert("Geocoding service unavailable.");
+      toast.error("Geocoding service unavailable.");
     } finally {
       setGeocoding(false);
     }

@@ -6,6 +6,7 @@ import { Label } from '../../ui/label';
 import { Upload, Sparkles, FileText, CheckCircle2, Loader2, AlertTriangle } from 'lucide-react';
 import { analyzeBrandGuidelines } from '../../../lib/ai/gemini';
 import { uploadFile } from '../../../lib/supabaseClient';
+import { toast } from '../../../lib/toast';
 
 export const BrandSection: React.FC = () => {
   const { register, setValue, watch } = useFormContext();
@@ -50,7 +51,7 @@ export const BrandSection: React.FC = () => {
             // Don't alert success if there's a visible UI state, it disrupts flow.
         } catch (apiError: any) {
             console.error(apiError);
-            alert(`AI Analysis Failed: ${apiError.message}`);
+            toast.error("AI Analysis Failed", apiError.message);
             setAnalyzedFileName(null);
         } finally {
             setAnalyzingBrand(false);
@@ -59,7 +60,7 @@ export const BrandSection: React.FC = () => {
       reader.readAsDataURL(file);
     } catch (err: any) {
       console.error(err);
-      alert("Failed to read file: " + err.message);
+      toast.error("Failed to read file", err.message);
       setAnalyzingBrand(false);
     }
   };

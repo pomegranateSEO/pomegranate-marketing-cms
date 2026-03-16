@@ -1,0 +1,580 @@
+# Pomegranate CMS - UI/UX Implementation Plan
+
+**Project:** Pomegranate v2 CMS Admin Panel UI/UX Improvements
+**Created:** March 16, 2026
+**Last Updated:** March 16, 2026 (v2.0 - Post-Audit Revision)
+**Status:** Ready for Implementation
+**Priority:** CRITICAL > HIGH > MEDIUM > LOW
+
+**Companion Docs:**
+- `CODE-EXAMPLES.md` - Working code examples for each task
+- `DESIGN-MOCKUPS.md` - ASCII visual references for target UI
+
+---
+
+## How to Use This Plan
+
+**For Agents:**
+1. Read `CLAUDE.md` first for project context and conventions
+2. Pick a task - respect dependency order (tasks within a phase can be parallel, but Phase 1 before Phase 2)
+3. Create a feature branch: `git checkout -b feature/[task-name]`
+4. Mark the task as **IN PROGRESS** below
+5. Complete implementation
+6. Run `npm run build` to verify TypeScript compiles
+7. Mark task as **COMPLETED** with date
+8. Commit with descriptive message
+
+**Important:** Tasks 1.1 and 1.5 should be done together or 1.1 first - the toast system is needed before confirm dialogs can show success/error feedback.
+
+**Status Legend:**
+- [ ] **NOT STARTED** - Ready to pick up
+- [~] **IN PROGRESS** - Currently being worked on
+- [x] **COMPLETED** - Done and tested
+- [!] **BLOCKED** - Waiting on dependency
+- [?] **VERIFY ONLY** - May already work, just needs confirmation
+
+---
+
+## PHASE 1: CRITICAL (Must Complete First)
+
+### Task 1.1: Install Toast Notification System
+**Priority:** CRITICAL
+**Effort:** 2-3 hours
+**Dependencies:** None (do this first)
+
+**Description:**
+Replace all native `alert()` calls with Sonner toast notifications. There are 30+ `alert()` instances across the codebase. See `CODE-EXAMPLES.md` Example 1 for full implementation.
+
+**Steps:**
+- [ ] `npm install sonner`
+- [ ] Create `lib/toast.ts` with success/error/info/warning/loading/dismiss helpers
+- [ ] Add `<Toaster position="top-right" richColors closeButton />` to `App.tsx`
+- [ ] Replace every `alert()` call with `toast.success()` or `toast.error()`
+- [ ] All toasts auto-dismiss (4s success, 6s error)
+
+**Files with `alert()` calls (audit-confirmed):**
+- [x] `app/admin/businesses/page.tsx` - alert on save success + delete error
+- [x] `app/admin/services/page.tsx` - alert on save/delete errors
+- [x] `app/admin/locations/page.tsx` - 6 alert calls (save, delete, scan, expand errors)
+- [x] `app/admin/posts/page.tsx` - alert on save/delete errors
+- [x] `app/admin/pages/page.tsx` - 5 alert calls (save, delete, core page generation)
+- [x] `app/admin/reviews/page.tsx` - alert on save/delete
+- [x] `app/admin/tools/page.tsx` - alert on save error
+- [x] `app/admin/industries/page.tsx` - alert on save/delete
+- [x] `app/admin/case-studies/page.tsx` - alert on save/delete
+- [x] `app/admin/downloads/page.tsx` - 3 alert calls
+- [x] `app/admin/associates/page.tsx` - alert on save/delete
+- [x] `app/admin/knowledge-entities/page.tsx` - 7 alert calls
+- [x] `app/admin/people/page.tsx` - alert on save error
+- [x] `components/shared/MediaManager.tsx` - alert on upload/delete
+- [x] `components/shared/EntityGenerator.tsx` - 4 alert calls
+- [x] `components/shared/FAQEditor.tsx` - 3 alert calls
+
+**Status:** [x] COMPLETED — 2026-03-16
+
+---
+
+### Task 1.2: Fix Button Disabled States
+**Priority:** CRITICAL
+**Effort:** 30 minutes
+**Dependencies:** None
+
+**Description:**
+The Button component (`components/ui/button.tsx`) already has `disabled:pointer-events-none disabled:opacity-50` in its className. **This task is a verification** - confirm it works across all variants and that no page is overriding it.
+
+**Steps:**
+- [ ] Verify `disabled` prop works on all Button variants (default, destructive, outline, secondary, ghost, link)
+- [ ] Verify loading buttons across pages use `disabled={saving}` pattern
+- [ ] If already working, mark complete
+
+**Status:** [?] VERIFY ONLY
+
+---
+
+### Task 1.3: Add Focus Rings to Non-Component Elements
+**Priority:** CRITICAL
+**Effort:** 2 hours (reduced - Button/Input already have focus rings)
+**Dependencies:** None
+
+**Description:**
+Button and Input components already have `focus-visible:ring-2` styles. The gap is in **sidebar nav links, table rows, clickable cards, and custom interactive elements** that bypass the Button component.
+
+**Scope (narrowed from original):**
+- [ ] Sidebar nav items (`components/layout/Sidebar.tsx`) - add focus-visible ring
+- [ ] Table rows with click handlers - add `tabIndex={0}` and `focus-within:bg-slate-50`
+- [ ] Clickable cards in dashboard - add focus-visible ring
+- [ ] Any `<a>` or `<div onClick>` elements that aren't using Button component
+
+**Do NOT touch:**
+- `components/ui/button.tsx` - already has focus styles
+- `components/ui/input.tsx` - already has focus styles
+- `components/ui/textarea.tsx` - already has focus styles
+
+**Status:** [ ] NOT STARTED
+
+---
+
+### Task 1.4: Add ARIA Labels to Icon-Only Buttons
+**Priority:** CRITICAL
+**Effort:** 2 hours
+**Dependencies:** None
+
+**Description:**
+Every icon-only button needs `aria-label`. Icons should get `aria-hidden="true"`. There are ~50+ instances. See `CODE-EXAMPLES.md` Example 4.
+
+**Pattern:**
+```tsx
+<Button variant="ghost" size="icon" aria-label={`Edit ${item.name}`}>
+  <Pencil className="h-4 w-4" aria-hidden="true" />
+</Button>
+```
+
+**Pages to update (all admin pages with table action buttons):**
+- [ ] businesses, services, locations, posts, pages
+- [ ] reviews, tools, industries, case-studies
+- [ ] downloads, associates, knowledge-entities, people
+- [ ] `components/layout/Sidebar.tsx` - sign out button
+- [ ] `components/shared/FAQEditor.tsx` - delete FAQ item buttons
+- [ ] `components/shared/MediaManager.tsx` - file action buttons
+
+**Status:** [ ] NOT STARTED
+
+---
+
+### Task 1.5: Create Confirmation Modal Component
+**Priority:** CRITICAL
+**Effort:** 2-3 hours
+**Dependencies:** Task 1.1 (toast system needed for post-action feedback)
+
+**Description:**
+Replace all `window.confirm()` calls with a styled modal dialog. There are 15+ `confirm()` instances. See `CODE-EXAMPLES.md` Example 2 for full implementation.
+
+**Prefer the `useConfirm` hook pattern** over the standalone `confirmDialog` function (the CustomEvent-based approach in CODE-EXAMPLES.md is fragile). Use the hook in components directly.
+
+**Steps:**
+- [ ] Create `components/ui/dialog.tsx` - base Dialog with overlay, focus trap, escape key, aria-modal
+- [ ] Create `lib/confirm-dialog.tsx` - `useConfirm` hook returning `{ confirm, ConfirmDialog }`
+- [ ] Replace all `window.confirm()` calls across admin pages
+- [ ] Destructive actions use red button variant
+- [ ] All modals have: focus trap, click-outside-to-close, Escape to close, `aria-modal="true"`, `aria-labelledby`
+
+**Files with `confirm()` calls (audit-confirmed):**
+- [ ] businesses, services, locations, pages, posts
+- [ ] reviews, industries, case-studies, downloads, associates
+- [ ] knowledge-entities
+
+**Status:** [ ] NOT STARTED
+
+---
+
+### Task 1.6: Retrofit Existing Modals (NEW - from audit)
+**Priority:** CRITICAL
+**Effort:** 2-3 hours
+**Dependencies:** Task 1.5 (use the same Dialog component)
+
+**Description:**
+The codebase has 3+ inline modals built as bare `<div>` overlays without accessibility. These need to be converted to use the Dialog component from Task 1.5.
+
+**Existing modals to retrofit:**
+- [ ] `app/admin/locations/page.tsx` - Location expansion modal (scan geography)
+- [ ] `app/admin/posts/page.tsx` - Media picker modal
+- [ ] `components/shared/MediaManager.tsx` - Media picker/browser modal
+- [ ] Any other inline modal patterns found
+
+**Each modal must have:**
+- [ ] `aria-modal="true"`
+- [ ] `aria-labelledby` pointing to modal title
+- [ ] Focus trap (focus stays inside modal)
+- [ ] Escape key closes modal
+- [ ] Click outside closes modal
+- [ ] Scroll lock on body when open
+
+**Status:** [ ] NOT STARTED
+
+---
+
+### Task 1.7: Fix Hover-Only Action Buttons (NEW - from audit)
+**Priority:** CRITICAL
+**Effort:** 1 hour
+**Dependencies:** None
+
+**Description:**
+Some pages hide action buttons behind `opacity-0 group-hover:opacity-100`. These are invisible to keyboard users and non-functional on touch devices. Make them always visible.
+
+**Files to fix:**
+- [ ] `app/admin/knowledge-entities/page.tsx` - entity card delete buttons
+- [ ] Any other `opacity-0 group-hover:opacity-100` patterns on interactive elements
+
+**Fix:** Remove `opacity-0`, keep hover enhancement as a subtle background change instead.
+
+**Status:** [ ] NOT STARTED
+
+---
+
+## PHASE 2: HIGH PRIORITY
+
+### Task 2.1: Create Skeleton Screen Components
+**Priority:** HIGH
+**Effort:** 4-5 hours
+**Dependencies:** None
+
+**Description:**
+Every admin page shows a centered `Loader2` spinner during loading. Replace with skeleton screens that match the page layout. See `CODE-EXAMPLES.md` Example 3.
+
+**Components to create in `components/ui/skeleton.tsx` and `components/shared/skeletons.tsx`:**
+- [ ] Base `Skeleton` component (pulse animation bar)
+- [ ] `TableSkeleton` - header + rows matching table layout
+- [ ] `CardSkeleton` - matching entity card layout
+- [ ] `FormSkeleton` - matching form field layout
+- [ ] `PageHeaderSkeleton` - title + description + action button
+- [ ] `DashboardStatsSkeleton` - matching dashboard cards
+
+**Pages to update (replace `Loader2` spinner with appropriate skeleton):**
+- [ ] Dashboard, businesses, services, locations
+- [ ] posts, pages, reviews, tools
+- [ ] industries, case-studies, downloads, associates
+- [ ] knowledge-entities, people, blog-topics
+
+**Status:** [ ] NOT STARTED
+
+---
+
+### Task 2.2: Implement Form Validation with Inline Errors
+**Priority:** HIGH
+**Effort:** 6-8 hours
+**Dependencies:** Task 1.1 (toast for submit-time error summary)
+
+**Description:**
+Zero inline validation exists. Forms fail silently. Add Zod schemas (already installed) with real-time validation on blur. See `CODE-EXAMPLES.md` Example 6.
+
+**Steps:**
+- [ ] Create `lib/validation/business.ts` - Zod schema for business form
+- [ ] Create `lib/validation/service.ts` - Zod schema for service form
+- [ ] Create `lib/validation/location.ts` - Zod schema for location form
+- [ ] Create `components/forms/ValidatedInput.tsx` - input with error display, `aria-invalid`, `aria-describedby`
+- [ ] Add required field indicators (`*`) to all required fields
+- [ ] Validate on blur, show inline errors below fields
+- [ ] Error summary toast on submit if invalid
+- [ ] Red border on invalid fields, green on valid
+
+**Status:** [ ] NOT STARTED
+
+---
+
+### Task 2.3: Add Form Progress Indicator
+**Priority:** LOW (downgraded from HIGH - forms aren't complex enough to justify)
+**Effort:** 3-4 hours
+**Dependencies:** Task 2.2
+
+**Description:**
+Add step indicators to long forms. **Deprioritized** because current forms are single-page and not long enough to warrant multi-step UX. Revisit if forms grow.
+
+**Status:** [ ] NOT STARTED (deprioritized)
+
+---
+
+### Task 2.4: Improve Table Functionality
+**Priority:** HIGH
+**Effort:** 5-6 hours
+**Dependencies:** None
+
+**Description:**
+Add sorting, filtering, and pagination to data tables.
+
+**Steps:**
+- [ ] Create `components/ui/data-table.tsx` with sort/filter/pagination
+- [ ] Column sorting with chevron indicators
+- [ ] Client-side search filter
+- [ ] Pagination with items-per-page selector
+- [ ] Empty search state message
+
+**Tables to update:**
+- [ ] Services, Locations, Pages, Posts, People, Downloads
+
+**Status:** [ ] NOT STARTED
+
+---
+
+### Task 2.5: Create Reusable Modal/Dialog Component
+**Priority:** HIGH
+**Effort:** 3-4 hours
+**Dependencies:** Task 1.5 (may already be created there - extend if needed)
+
+**Description:**
+If Task 1.5 creates a basic Dialog, this task extends it with size variants, scroll lock, and animations. If Task 1.5 already covers everything, merge into 1.5.
+
+**Additional features beyond Task 1.5:**
+- [ ] Size variants (sm, md, lg, xl)
+- [ ] Scroll lock when open
+- [ ] Enter/exit animations
+- [ ] Nested dialog support (modal over modal)
+
+**Status:** [ ] NOT STARTED
+
+---
+
+### Task 2.6: Standardize Error Display (NEW - from audit)
+**Priority:** HIGH
+**Effort:** 2-3 hours
+**Dependencies:** Task 1.1
+
+**Description:**
+Error handling is inconsistent: some pages use `alert()`, some use state, some just `console.error()`. The businesses page shows raw SQL errors to users. Standardize.
+
+**Steps:**
+- [ ] Create error display utility that sanitizes technical errors into user-friendly messages
+- [ ] Never show raw SQL/database errors to users
+- [ ] Create `components/shared/ErrorBanner.tsx` for page-level errors
+- [ ] Pattern: try/catch > toast.error(user-friendly message) > console.error(technical details)
+- [ ] Remove `setDetailedError` patterns that expose internals
+
+**Status:** [ ] NOT STARTED
+
+---
+
+### Task 2.7: Tab Component Accessibility (NEW - from audit)
+**Priority:** HIGH
+**Effort:** 2 hours
+**Dependencies:** None
+
+**Description:**
+Posts and Pages use tab interfaces (`activeTab` state) with conditional CSS visibility. These need proper ARIA roles.
+
+**Steps:**
+- [ ] Add `role="tablist"` to tab container
+- [ ] Add `role="tab"`, `aria-selected`, `aria-controls` to each tab button
+- [ ] Add `role="tabpanel"`, `aria-labelledby`, `id` to each panel
+- [ ] Replace `display:none` / visibility toggling with `aria-hidden` where appropriate
+
+**Files to update:**
+- [ ] `app/admin/posts/page.tsx` - content/SEO/FAQ tabs
+- [ ] `app/admin/pages/page.tsx` - content/SEO tabs
+- [ ] Any other tab interfaces
+
+**Status:** [ ] NOT STARTED
+
+---
+
+## PHASE 3: MEDIUM PRIORITY
+
+### Task 3.1: Implement Dark Mode
+**Priority:** MEDIUM
+**Effort:** 6-8 hours
+**Dependencies:** All Phase 1 tasks (UI must be stable first)
+
+**Description:**
+Add dark mode toggle. See `DESIGN-MOCKUPS.md` Design 9 for color palette.
+
+**Steps:**
+- [ ] Dark mode toggle in sidebar header
+- [ ] System preference detection
+- [ ] Persist choice in localStorage
+- [ ] Update all components with `dark:` Tailwind variants
+- [ ] Colors: bg slate-900/800, text slate-100/300, borders slate-700
+
+**Status:** [ ] NOT STARTED
+
+---
+
+### Task 3.2: Create Tooltip Component
+**Priority:** MEDIUM
+**Effort:** 2-3 hours
+**Dependencies:** None
+
+**Description:**
+Add tooltips to icon buttons and status indicators for additional context.
+
+**Status:** [ ] NOT STARTED
+
+---
+
+### Task 3.3: Add Keyboard Shortcuts
+**Priority:** MEDIUM
+**Effort:** 3-4 hours
+**Dependencies:** None
+
+**Description:**
+Add keyboard shortcuts for power users. See `CODE-EXAMPLES.md` Example 8.
+
+**Shortcuts:** Ctrl/Cmd+S (save), ? (help), Ctrl/Cmd+K (command palette), Escape (close modals)
+
+**Status:** [ ] NOT STARTED
+
+---
+
+### Task 3.4: Create Command Palette
+**Priority:** MEDIUM
+**Effort:** 5-6 hours
+**Dependencies:** Task 3.3
+
+**Description:**
+Ctrl/Cmd+K command palette for quick navigation and actions.
+
+**Status:** [ ] NOT STARTED
+
+---
+
+### Task 3.5: Improve Empty States
+**Priority:** MEDIUM
+**Effort:** 3-4 hours
+**Dependencies:** None
+
+**Description:**
+Enhance empty states with better messaging and CTAs. See `DESIGN-MOCKUPS.md` Design 6.
+
+**Status:** [ ] NOT STARTED
+
+---
+
+## PHASE 4: LOW PRIORITY
+
+### Task 4.1: Basic Responsive Layout
+**Priority:** LOW
+**Effort:** 4-6 hours
+
+**Description:**
+Sidebar hamburger menu, horizontal table scroll, stacked forms on mobile. May not be needed for admin-only CMS.
+
+**Decision:** Pending
+
+**Status:** [ ] NOT STARTED
+
+---
+
+## Quality Assurance Checklist
+
+Before marking any task complete, verify:
+
+**Code Quality:**
+- [ ] `npm run build` passes (TypeScript compiles)
+- [ ] No console errors in browser
+- [ ] Follows existing code patterns (Tailwind, React hooks, Supabase client)
+
+**Accessibility:**
+- [ ] Tab through all interactive elements - focus visible
+- [ ] Screen reader: all buttons/inputs have labels
+- [ ] Color contrast meets WCAG AA (4.5:1 text, 3:1 large text)
+
+**UX:**
+- [ ] Loading states show skeleton or spinner (never blank)
+- [ ] Errors show user-friendly toast (never raw SQL)
+- [ ] Success actions show confirmation toast
+- [ ] No layout shifts during loading
+
+---
+
+## Progress Tracker
+
+| Phase | Tasks | Completed | Progress |
+|-------|-------|-----------|----------|
+| Phase 1: Critical | 7 | 1 | 14% |
+| Phase 2: High | 7 | 0 | 0% |
+| Phase 3: Medium | 5 | 0 | 0% |
+| Phase 4: Low | 1 | 0 | 0% |
+| **TOTAL** | **20** | **1** | **5%** |
+
+---
+
+## Recommended Execution Order
+
+This is the optimal order accounting for dependencies:
+
+1. **Task 1.1** - Toast system (unblocks everything else)
+2. **Task 1.5** - Confirm dialog (paired with toast, replaces confirm())
+3. **Task 1.7** - Fix hover-only buttons (quick win)
+4. **Task 1.2** - Verify button disabled states (quick win)
+5. **Task 1.4** - ARIA labels (high impact, no dependencies)
+6. **Task 1.6** - Retrofit existing modals (uses Dialog from 1.5)
+7. **Task 1.3** - Focus rings on non-component elements
+8. **Task 2.1** - Skeleton screens
+9. **Task 2.7** - Tab accessibility
+10. **Task 2.6** - Standardize error display
+11. **Task 2.2** - Form validation
+12. **Task 2.4** - Table functionality
+13. **Task 2.5** - Extended dialog features
+14. Phase 3 tasks in any order
+15. Phase 4 if needed
+
+---
+
+## Resources
+
+**Already Installed:** Tailwind CSS, Lucide React (icons), Zod (validation), React Hook Form
+**To Install:** Sonner (`npm install sonner`)
+**Optional:** Radix UI (for Tooltip/advanced components)
+
+**Reference Docs:**
+- `CODE-EXAMPLES.md` - Implementation patterns for each task
+- `DESIGN-MOCKUPS.md` - Visual targets for UI components
+
+---
+
+## Front-End Website Alignment
+
+> **IMPORTANT:** This CMS shares a Supabase backend with the pomegranate public website at `C:\Users\k_che\Documents\TEST NEW POMEGRANATE WEBSITE 13-03-2026`. Both projects write to/read from the same database. Coordinate carefully.
+
+### Shared Supabase Tables (DO NOT change schemas without coordinating)
+
+The front-end reads from these tables via `@supabase/supabase-js` anon key (read-only, RLS enforced):
+- `blog_posts` — Blog hub + individual post pages
+- `services` — SEO Services, Web Design, SEO Training pages (inc. `keyword_cycling_blocks`, `pricing_data` JSONB)
+- `industries` — 5 industry vertical pages
+- `target_locations` + `pseo_page_instances` — Location + local service pages
+- `free_tools` — Free Tools Hub
+- `downloads` — Downloads page
+- `reviews` — Testimonials across service/industry/home pages
+- `pages` — Static page metadata + keyword cycling
+- `associates` — "Trusted By" partner logos
+- `pricing_plans` — Pricing cards on service pages
+- `redirects` — 301 redirect resolution (checked in front-end SPA router)
+- `subscribers` — Mailing list sign-ups
+- `media_metadata` — Image alt text/metadata
+
+### Rules for CMS Agents
+
+1. **Never rename DB columns** without checking the front-end hooks in `src/hooks/` (e.g. `useBlogPosts.ts`, `useReviews.ts`, `useService.ts`, `useLocation.ts`, `useDownloads.ts`, `useFreeTools.ts`, `usePage.ts`, `usePricingPlans.ts`, `useRedirects.ts`).
+2. **Never drop or modify RLS policies** — the front-end relies on anon-read with `published=true` filters.
+3. **Content saved in CMS must render cleanly** in the front-end's React Markdown renderer (`react-markdown`). Avoid HTML in blog post `content_body` — use Markdown only.
+4. **Keyword cycling blocks** use this JSONB shape: `[{ prefix: "...", keywords: ["...", "..."] }]`. The front-end TypewriterSection component consumes this directly.
+5. **Image URLs** — Blog images are in Supabase Storage bucket `blog-images`. Downloads in bucket `downloads`. Use public URLs when saving references.
+
+### Brand Guidelines Summary (for CMS UI)
+
+The public website follows `brand_guidelines_ai_compact.json`. Key rules the CMS should also respect:
+- **Primary colours:** `#f43f5e` (rose), `#be123c` (deep rose), `#0f0508` (near-black), `#fff7fa` (cream)
+- **Green accents:** `#4ade80` (leaf spring), `#166534` (leaf dark) — for success states
+- **Fonts:** Display = Space Grotesk, Body = Inter, Logo = Outfit 900
+- **"pomegranate" is always lowercase** in user-facing text
+- **No pill buttons** — use `rounded-lg` or `rounded-xl` only (not `rounded-full` on interactive elements)
+- The CMS is internal-only so doesn't need to match the front-end design 1:1, but should feel cohesive — use the same colour palette for accents, success/error states, and brand touches
+
+### What the Front-End Needs from CMS (upcoming)
+
+These front-end tasks depend on CMS data being correct and accessible:
+- **C6:** Service page reviews — front-end will call `useReviews('seo-service')` etc. Ensure reviews have correct `service_slug` values.
+- **F2:** Industry keyword cyclers — front-end will read `industries.keyword_cycling_blocks`. Ensure this column exists and is populated.
+- **K1:** Redirects CRUD — front-end `RedirectHandler` reads from `redirects` table. CMS needs a UI to manage these (sidebar: "Redirects" → `/admin/redirects`).
+- **L1:** Content population — front-end will eventually read all visible content from DB. Pages, services, and industries tables need complete `content_body` / `shared_content_blocks` fields.
+
+---
+
+**Version:** 3.0 (Front-End Alignment Update)
+**Last Updated:** 2026-03-16
+**Changes from v2.0:**
+- Added Front-End Website Alignment section with shared table reference
+- Added Rules for CMS Agents (schema safety, RLS, Markdown content)
+- Added Brand Guidelines Summary for CMS UI consistency
+- Added "What the Front-End Needs from CMS" dependency list
+
+**Changes from v1.0:**
+- Task 1.2 downgraded to verification (already implemented in button.tsx)
+- Task 1.3 scope narrowed (Button/Input already have focus rings)
+- Task 2.3 deprioritized to LOW (forms not complex enough)
+- Added Task 1.6: Retrofit Existing Modals
+- Added Task 1.7: Fix Hover-Only Action Buttons
+- Added Task 2.6: Standardize Error Display
+- Added Task 2.7: Tab Component Accessibility
+- Added recommended execution order
+- Added missing files to Task 1.1 (shared components with alert() calls)
+- Added dependency notes between tasks
+- Added CLAUDE.md reference for agents

@@ -6,6 +6,7 @@ import { Button } from '../ui/button';
 import { BookOpen, Check, X, Sparkles, Loader2, Search } from 'lucide-react';
 import type { KnowledgeEntity } from '../../lib/types';
 import { matchEntities } from '../../lib/ai/gemini';
+import { toast } from '../../lib/toast';
 
 interface Props {
   label: string;
@@ -39,7 +40,7 @@ export const KnowledgeEntitySelector: React.FC<Props> = ({ label, allEntities, s
 
   const handleAIScan = async () => {
     if (!contentToScan || contentToScan.length < 50) {
-      alert("Please add more content to the page before scanning for entities.");
+      toast.warning("Please add more content to the page before scanning for entities.");
       return;
     }
 
@@ -51,11 +52,11 @@ export const KnowledgeEntitySelector: React.FC<Props> = ({ label, allEntities, s
         const uniqueIds = Array.from(new Set([...selectedIds, ...matchedIds]));
         onChange(uniqueIds);
       } else {
-        alert("No relevant entities found in the text.");
+        toast.info("No relevant entities found in the text.");
       }
     } catch (e) {
       console.error(e);
-      alert("AI Scan failed.");
+      toast.error("AI Scan failed.");
     } finally {
       setIsScanning(false);
     }

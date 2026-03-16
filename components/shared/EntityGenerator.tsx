@@ -3,6 +3,7 @@ import { Sparkles, Loader2, Check } from 'lucide-react';
 import { Button } from '../ui/button';
 import { extractEntities } from '../../lib/ai/gemini';
 import { createKnowledgeEntity, fetchKnowledgeEntities } from '../../lib/db/knowledge';
+import { toast } from '../../lib/toast';
 
 interface Props {
   getContent: () => string; // Function to get the latest text from the parent
@@ -17,7 +18,7 @@ export const EntityGenerator: React.FC<Props> = ({ getContent, businessId, sourc
   const handleGenerate = async () => {
     const text = getContent();
     if (!text || text.length < 50) {
-      alert("Not enough content to analyze. Please add more text first.");
+      toast.warning("Not enough content to analyze. Please add more text first.");
       return;
     }
 
@@ -28,7 +29,7 @@ export const EntityGenerator: React.FC<Props> = ({ getContent, businessId, sourc
       // 1. Extract
       const newEntities = await extractEntities(text);
       if (newEntities.length === 0) {
-        alert("No entities found in the text.");
+        toast.info("No entities found in the text.");
         setLoading(false);
         return;
       }
@@ -53,14 +54,14 @@ export const EntityGenerator: React.FC<Props> = ({ getContent, businessId, sourc
 
       setGeneratedCount(added);
       if (added > 0) {
-          // Optional: Notify user better
+          toast.success(`Added ${added} new ${added === 1 ? 'entity' : 'entities'} to your Knowledge Graph.`);
       } else {
-        alert("Entities found, but they already exist in your Knowledge Graph.");
+        toast.info("Entities found, but they already exist in your Knowledge Graph.");
       }
 
     } catch (err: any) {
       console.error(err);
-      alert("Failed to generate entities: " + err.message);
+      toast.error("Failed to generate entities", err.message);
     } finally {
       setLoading(false);
     }

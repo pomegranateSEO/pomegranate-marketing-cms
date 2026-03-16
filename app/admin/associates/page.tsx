@@ -9,6 +9,7 @@ import { fetchBusinesses } from '../../../lib/db/businesses';
 import type { Associate } from '../../../lib/types';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 import { uploadFile } from '../../../lib/supabaseClient';
+import { toast } from '../../../lib/toast';
 
 export default function AssociatesPage() {
   const [associates, setAssociates] = useState<Associate[]>([]);
@@ -49,7 +50,7 @@ export default function AssociatesPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!rootBusinessId) return alert("No Root Business found.");
+    if (!rootBusinessId) { toast.error("No Root Business found."); return; }
 
     setSaving(true);
     try {
@@ -63,7 +64,7 @@ export default function AssociatesPage() {
       resetForm();
       loadData();
     } catch (err: any) {
-      alert("Failed to save partner organization: " + err.message);
+      toast.error("Failed to save partner organization", err.message);
     } finally {
       setSaving(false);
     }
@@ -75,7 +76,7 @@ export default function AssociatesPage() {
         await deleteAssociate(id);
         loadData();
       } catch (e: any) {
-        alert("Failed to delete: " + e.message);
+        toast.error("Failed to delete", e.message);
       }
     }
   };
@@ -85,7 +86,7 @@ export default function AssociatesPage() {
     if (!file) return;
 
     if (file.size > 2 * 1024 * 1024) {
-      alert("File too large. Please use an image under 2MB.");
+      toast.error("File too large. Please use an image under 2MB.");
       return;
     }
 
@@ -98,7 +99,7 @@ export default function AssociatesPage() {
       const publicUrl = await uploadFile('images', path, file);
       setFormState(prev => ({ ...prev, profile_image_url: publicUrl }));
     } catch (err: any) {
-      alert("Upload failed: " + err.message);
+      toast.error("Upload failed", err.message);
     } finally {
       setUploading(false);
     }

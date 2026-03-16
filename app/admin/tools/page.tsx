@@ -10,6 +10,7 @@ import { fetchTools, createTool, updateTool, deleteTool } from '../../../lib/db/
 import type { FreeTool, Business, GlobalTheme } from '../../../lib/types';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 import { AITextGenerator } from '../../../components/shared/AITextGenerator';
+import { toast } from '../../../lib/toast';
 
 export default function ToolsPage() {
   const [rootBusiness, setRootBusiness] = useState<Business | null>(null);
@@ -55,7 +56,7 @@ export default function ToolsPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!rootBusiness) return alert("No Root Business found.");
+    if (!rootBusiness) { toast.error("No Root Business found."); return; }
 
     setSaving(true);
     try {
@@ -73,7 +74,7 @@ export default function ToolsPage() {
       resetForm();
       loadData();
     } catch (err: any) {
-      alert("Failed to save tool: " + err.message);
+      toast.error("Failed to save tool", err.message);
     } finally {
       setSaving(false);
     }
@@ -93,7 +94,7 @@ export default function ToolsPage() {
         await deleteTool(id);
         loadData();
       } catch (err: any) {
-        alert("Failed to delete tool: " + err.message);
+        toast.error("Failed to delete tool", err.message);
       }
     }
   };

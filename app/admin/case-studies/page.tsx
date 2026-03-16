@@ -10,6 +10,7 @@ import { fetchBusinesses } from '../../../lib/db/businesses';
 import type { CaseStudy, Service, Industry } from '../../../lib/types';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 import { VisualContentEditor } from '../../../components/shared/VisualContentEditor';
+import { toast } from '../../../lib/toast';
 
 export default function CaseStudiesPage() {
   const [studies, setStudies] = useState<any[]>([]);
@@ -67,7 +68,7 @@ export default function CaseStudiesPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!rootBusinessId) return alert("No Root Business found.");
+    if (!rootBusinessId) { toast.error("No Root Business found."); return; }
 
     setSaving(true);
     try {
@@ -81,7 +82,7 @@ export default function CaseStudiesPage() {
       setFormState({ title: '', slug: '', summary: '', body_html: '', published: false });
       loadData();
     } catch (err: any) {
-      alert("Failed to save case study: " + err.message);
+      toast.error("Failed to save case study", err.message);
     } finally {
       setSaving(false);
     }
@@ -93,7 +94,7 @@ export default function CaseStudiesPage() {
         await deleteCaseStudy(id);
         loadData();
       } catch (err: any) {
-        alert("Failed to delete case study: " + err.message);
+        toast.error("Failed to delete case study", err.message);
       }
     }
   };

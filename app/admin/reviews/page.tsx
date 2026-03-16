@@ -8,6 +8,7 @@ import { fetchReviews, createReview, deleteReview } from '../../../lib/db/review
 import { fetchBusinesses } from '../../../lib/db/businesses';
 import type { Review } from '../../../lib/types';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
+import { toast } from '../../../lib/toast';
 
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -59,7 +60,7 @@ export default function ReviewsPage() {
       setFormData({ author_name: '', rating_value: 5, review_body: '', publisher_url: '', publisher_name: '' });
       loadData();
     } catch (err: any) {
-      alert("Failed to save review. " + err.message);
+      toast.error("Failed to save review", err.message);
     }
   };
 
@@ -69,7 +70,7 @@ export default function ReviewsPage() {
         await deleteReview(id);
         loadData();
       } catch (err: any) {
-        alert("Failed to delete review: " + err.message);
+        toast.error("Failed to delete review", err.message);
       }
     }
   };

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Wifi, WifiOff, AlertTriangle, Save, Loader2, RefreshCw, CheckCircle2, XCircle } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
+import { toast } from '../../../lib/toast';
 import { BusinessForm } from '../../../components/forms/BusinessForm';
 import { fetchBusinesses, createBusiness, deleteBusiness, updateBusiness } from '../../../lib/db/businesses';
 import { checkConnection } from '../../../lib/supabaseClient';
@@ -62,7 +63,7 @@ export default function BusinessPage() {
       } catch (err) {
         console.error(err);
         setDeletingId(null);
-        alert(err instanceof Error ? err.message : "Failed to delete business");
+        toast.error("Failed to delete business");
       }
     }
   };
@@ -81,7 +82,7 @@ export default function BusinessPage() {
         await createBusiness(data);
       }
       await loadData();
-      alert("Root Entity Saved Successfully!");
+      toast.success("Root Entity Saved Successfully!");
     } catch (err: any) {
       console.error("Save Error:", err);
       setError("Failed to save the business entity.");

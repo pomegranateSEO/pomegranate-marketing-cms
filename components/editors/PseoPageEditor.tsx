@@ -13,6 +13,7 @@ import { FAQEditor } from '../shared/FAQEditor';
 import { KnowledgeEntitySelector } from '../shared/KnowledgeEntitySelector';
 import { generateServiceLocationSchema } from '../../lib/seo/schema-generator';
 import { AITextGenerator } from '../shared/AITextGenerator';
+import { toast } from '../../lib/toast';
 
 interface Props {
   page: PseoPageInstance;
@@ -80,7 +81,7 @@ export const PseoPageEditor: React.FC<Props> = ({ page, business, service, locat
       .map((item: string) => item?.trim() || '');
 
     if (landmarks.some((item) => item.length === 0)) {
-      alert('Please enter all 3 landmarks before saving this local service page.');
+      toast.warning('Please enter all 3 landmarks before saving this local service page.');
       return;
     }
 
@@ -90,7 +91,7 @@ export const PseoPageEditor: React.FC<Props> = ({ page, business, service, locat
       .filter(Boolean);
 
     if (keywordTerms.length < 2) {
-      alert('Please add at least 2 keyword cycling terms for this local service page.');
+      toast.warning('Please add at least 2 keyword cycling terms for this local service page.');
       return;
     }
 
@@ -151,7 +152,7 @@ export const PseoPageEditor: React.FC<Props> = ({ page, business, service, locat
       onSaved();
       onClose();
     } catch (e: any) {
-      alert("Failed to save: " + e.message);
+      toast.error("Failed to save", e.message);
     } finally {
       setSaving(false);
     }
@@ -210,13 +211,13 @@ export const PseoPageEditor: React.FC<Props> = ({ page, business, service, locat
       if (jsonMatch && jsonMatch[1]) {
         const schemaJson = JSON.parse(jsonMatch[1]);
         setValue('schema_json_ld', JSON.stringify(schemaJson, null, 2));
-        alert("Schema JSON-LD generated successfully!");
+        toast.success("Schema JSON-LD generated successfully!");
       } else {
         throw new Error("Could not extract JSON from schema string.");
       }
     } catch (e) {
       console.error(e);
-      alert("Failed to generate schema.");
+      toast.error("Failed to generate schema.");
     }
   };
 

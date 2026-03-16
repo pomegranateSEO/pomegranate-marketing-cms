@@ -6,6 +6,7 @@ import { fetchServices, deleteService, createService, updateService } from '../.
 import { fetchBusinesses } from '../../../lib/db/businesses';
 import type { Service } from '../../../lib/types';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
+import { toast } from '../../../lib/toast';
 
 export default function ServicesPage() {
   const [services, setServices] = useState<(Service & { businesses: { name: string } | null })[]>([]);
@@ -27,7 +28,7 @@ export default function ServicesPage() {
       }
     } catch (err) {
       console.error(err);
-      alert("Failed to load services");
+      toast.error("Failed to load services");
     } finally {
       setLoading(false);
     }
@@ -44,7 +45,7 @@ export default function ServicesPage() {
         loadData();
       } catch (e: any) {
         // Detailed error reporting for debugging
-        alert(`Failed to delete service.\n\nDatabase Error: ${e.message || JSON.stringify(e)}`);
+        toast.error("Failed to delete service", e.message);
         console.error("Delete Service Error:", e);
       }
     }
@@ -61,7 +62,7 @@ export default function ServicesPage() {
       }
       loadData();
     } catch (e: any) {
-      alert(`Failed to save service: ${e.message}`);
+      toast.error("Failed to save service", e.message);
     }
   };
 

@@ -6,6 +6,7 @@ import { fetchBusinesses } from '../../../lib/db/businesses';
 import { LocationForm } from '../../../components/forms/LocationForm';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 import { suggestSubLocations } from '../../../lib/ai/gemini';
+import { toast } from '../../../lib/toast';
 import type { TargetLocation } from '../../../lib/types';
 
 export default function LocationsPage() {
@@ -35,7 +36,7 @@ export default function LocationsPage() {
       }
     } catch (err) {
       console.error(err);
-      alert("Failed to load locations");
+      toast.error("Failed to load locations");
     } finally {
       setLoading(false);
     }
@@ -51,7 +52,7 @@ export default function LocationsPage() {
         await deleteLocation(id);
         loadData();
       } catch (e: any) {
-        alert(`Failed to delete location.\n\nError: ${e.message || JSON.stringify(e)}`);
+        toast.error("Failed to delete location", e.message);
       }
     }
   };
@@ -67,7 +68,7 @@ export default function LocationsPage() {
       }
       loadData();
     } catch (e: any) {
-      alert(`Failed to save location: ${e.message}`);
+      toast.error("Failed to save location", e.message);
     }
   };
 
@@ -89,7 +90,7 @@ export default function LocationsPage() {
       // Auto-select all by default
       setSelectedSuggestions(new Set(suggestions));
     } catch (e) {
-      alert("Failed to find sub-locations. Try manual entry.");
+      toast.error("Failed to find sub-locations. Try manual entry.");
     } finally {
       setIsScanning(false);
     }
@@ -125,9 +126,9 @@ export default function LocationsPage() {
       await Promise.all(promises);
       setExpandingLocation(null);
       loadData();
-      alert(`Successfully added ${selectedSuggestions.size} sub-locations!`);
+      toast.success(`Added ${selectedSuggestions.size} sub-locations successfully!`);
     } catch (e: any) {
-      alert("Error adding sub-locations: " + e.message);
+      toast.error("Error adding sub-locations", e.message);
     } finally {
       setIsAddingSubLocations(false);
     }

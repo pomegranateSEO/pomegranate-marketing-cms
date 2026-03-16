@@ -8,6 +8,7 @@ import { fetchPeople, createPerson, updatePerson, deletePerson } from '../../../
 import { fetchBusinesses } from '../../../lib/db/businesses';
 import type { Person, Business } from '../../../lib/types';
 import { MediaManager } from '../../../components/shared/MediaManager';
+import { toast } from '../../../lib/toast';
 
 export default function PeoplePage() {
   const [people, setPeople] = useState<Person[]>([]);
@@ -62,7 +63,7 @@ export default function PeoplePage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!rootBusiness) return alert("No Root Business found. Please create one first.");
+    if (!rootBusiness) { toast.error("No Root Business found. Please create one first."); return; }
 
     setSaving(true);
     try {
@@ -93,7 +94,7 @@ export default function PeoplePage() {
       resetForm();
       loadData();
     } catch (err: any) {
-      alert("Failed to save person: " + err.message);
+      toast.error("Failed to save person", err.message);
     } finally {
       setSaving(false);
     }
@@ -105,7 +106,7 @@ export default function PeoplePage() {
         await deletePerson(id);
         loadData();
       } catch (e: any) {
-        alert(`Failed to delete person.\n\nDatabase Error: ${e.message || JSON.stringify(e)}`);
+        toast.error("Failed to delete person", e.message);
       }
     }
   };

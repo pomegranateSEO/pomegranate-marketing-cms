@@ -9,6 +9,7 @@ import { Label } from '../ui/label';
 import { Loader2, MapPin, Sparkles } from 'lucide-react';
 import type { TargetLocation } from '../../lib/types';
 import { generateLandmarks } from '../../lib/ai/gemini';
+import { toast } from '../../lib/toast';
 
 // Schema Validation
 const locationFormSchema = z.object({
@@ -69,7 +70,7 @@ export const LocationForm: React.FC<Props> = ({ initialData, businessId, onSubmi
     const region = watch('address_region');
     const query = `${name} ${region}`.trim();
 
-    if (!query) return alert("Enter a name to geocode.");
+    if (!query) { toast.warning("Enter a name to geocode."); return; }
 
     setGeocoding(true);
     try {
@@ -79,11 +80,11 @@ export const LocationForm: React.FC<Props> = ({ initialData, businessId, onSubmi
         setValue('geo_data.lat', parseFloat(data[0].lat));
         setValue('geo_data.lng', parseFloat(data[0].lon));
       } else {
-        alert("Could not find coordinates.");
+        toast.warning("Could not find coordinates.");
       }
     } catch (e) {
       console.error(e);
-      alert("Geocoding failed.");
+      toast.error("Geocoding failed.");
     } finally {
       setGeocoding(false);
     }
@@ -93,7 +94,7 @@ export const LocationForm: React.FC<Props> = ({ initialData, businessId, onSubmi
     const name = watch('name');
     const region = watch('address_region');
     
-    if (!name) return alert("Please enter a location name first.");
+    if (!name) { toast.warning("Please enter a location name first."); return; }
 
     setGeneratingLandmarks(true);
     try {
@@ -103,12 +104,12 @@ export const LocationForm: React.FC<Props> = ({ initialData, businessId, onSubmi
         const newText = landmarks.join('\n');
         // If there's already text, append. Otherwise set.
         setValue('landmarks_text', currentText ? `${currentText}\n${newText}` : newText);
-        alert(`Successfully generated ${landmarks.length} landmarks!`);
+        toast.success(`Generated ${landmarks.length} landmarks!`);
       } else {
-        alert("No landmarks found for this location.");
+        toast.info("No landmarks found for this location.");
       }
     } catch (e) {
-      alert("AI Generation failed.");
+      toast.error("AI generation failed.");
     } finally {
       setGeneratingLandmarks(false);
     }
@@ -121,7 +122,7 @@ export const LocationForm: React.FC<Props> = ({ initialData, businessId, onSubmi
       : [];
 
     if (landmarksList.length < 3) {
-      alert('Please enter at least 3 landmarks. Local service pages require 3 landmarks for hero text.');
+      toast.warning('Please enter at least 3 landmarks. Local service pages require 3 landmarks for hero text.');
       return;
     }
 

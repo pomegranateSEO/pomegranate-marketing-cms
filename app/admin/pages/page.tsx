@@ -15,6 +15,7 @@ import { FAQEditor } from '../../../components/shared/FAQEditor';
 import { AITextGenerator } from '../../../components/shared/AITextGenerator';
 import { KnowledgeEntitySelector } from '../../../components/shared/KnowledgeEntitySelector';
 import { generateCorePages } from '../../../lib/ai/page-generator';
+import { toast } from '../../../lib/toast';
 
 const SCHEMA_PAGE_TYPES = [
   "WebPage",
@@ -83,7 +84,7 @@ export default function PagesPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!rootBusiness) return alert("No Root Business found.");
+    if (!rootBusiness) { toast.error("No Root Business found."); return; }
 
     setSaving(true);
     try {
@@ -136,7 +137,7 @@ export default function PagesPage() {
       resetForm();
       loadData();
     } catch (err: any) {
-      alert("Failed to save page: " + err.message);
+      toast.error("Failed to save page", err.message);
     } finally {
       setSaving(false);
     }
@@ -148,14 +149,14 @@ export default function PagesPage() {
         await deletePage(id);
         loadData();
       } catch (err: any) {
-        alert("Failed to delete page: " + err.message);
+        toast.error("Failed to delete page", err.message);
       }
     }
   };
 
   const handleGenerateCorePages = async () => {
-    if (!rootBusiness) return alert("No Root Business found.");
-    
+    if (!rootBusiness) { toast.error("No Root Business found."); return; }
+
     const confirmMsg = "This will generate the following pages if they don't exist:\n\n- About Us\n- Contact Us\n- Privacy Policy\n- Terms of Service\n- Downloads Hub\n- Tools Hub\n- Case Studies Hub\n- Industries Hub\n- Locations Hub\n- Blog Root\n\nContent will be based on your Brand Identity settings. Proceed?";
     
     if (!confirm(confirmMsg)) return;
@@ -190,10 +191,10 @@ export default function PagesPage() {
       }
 
       await loadData();
-      alert(`Success! Generated ${createdCount} new core pages.`);
+      toast.success(`Generated ${createdCount} new core pages!`);
 
     } catch (e: any) {
-      alert("Generation failed: " + e.message);
+      toast.error("Generation failed", e.message);
     } finally {
       setGeneratingCore(false);
     }
