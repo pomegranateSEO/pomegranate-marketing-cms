@@ -1,0 +1,211 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["WebPage", "CollectionPage"],
+      "@id": "https://pomegranate.marketing/",
+      "url": "https://pomegranate.marketing/",
+      "name": "{{pages.meta_title}}",
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "https://pomegranate.marketing/#website",
+        "url": "https://pomegranate.marketing/",
+        "name": "pomegranate"
+      },
+      "primaryImageOfPage": { "@id": "https://pomegranate.marketing/#primaryimage" },
+      "image": { "@id": "https://pomegranate.marketing/#primaryimage" },
+      "thumbnailUrl": "{{businesses.logo_url}}",
+      "datePublished": "{{pages.created_at | ISO 8601}}",
+      "dateModified": "{{pages.updated_at | ISO 8601}}",
+      "description": "{{pages.meta_description}}",
+      "breadcrumb": { "@id": "https://pomegranate.marketing/#breadcrumb" },
+      "inLanguage": "en-GB",
+      "isFamilyFriendly": "true",
+      "mainEntity": { "@id": "https://pomegranate.marketing/#services-catalog" },
+      "about": [
+        {
+          "@type": "Thing",
+          "name": "Search engine optimization",
+          "sameAs": [
+            "https://en.wikipedia.org/wiki/Search_engine_optimization",
+            "https://www.wikidata.org/wiki/Q180711"
+          ]
+        },
+        {
+          "@type": "Thing",
+          "name": "Web design",
+          "sameAs": [
+            "https://en.wikipedia.org/wiki/Web_design",
+            "https://www.wikidata.org/wiki/Q190637"
+          ]
+        }
+      ],
+      "mentions": [
+        {
+          "@type": "Thing",
+          "name": "Marketing strategy",
+          "sameAs": [
+            "https://en.wikipedia.org/wiki/Marketing_strategy",
+            "https://www.wikidata.org/wiki/Q156324"
+          ]
+        },
+        {
+          "@type": "Thing",
+          "name": "Training",
+          "sameAs": [
+            "https://en.wikipedia.org/wiki/Training",
+            "https://www.wikidata.org/wiki/Q918385"
+          ]
+        },
+        {
+          "@type": "SoftwareApplication",
+          "name": "WordPress",
+          "sameAs": [
+            "https://en.wikipedia.org/wiki/WordPress",
+            "https://www.wikidata.org/wiki/Q13166"
+          ]
+        },
+        {
+          "@type": "Place",
+          "name": "East London",
+          "sameAs": [
+            "https://en.wikipedia.org/wiki/East_London",
+            "https://www.wikidata.org/wiki/Q209537"
+          ]
+        }
+      ]
+    },
+
+    {
+      "@type": "ProfessionalService",
+      "@id": "https://pomegranate.marketing/#organization",
+      "name": "{{businesses.name}}",
+      "alternateName": "{{businesses.alternate_name}}",
+      "url": "{{businesses.website_url}}",
+      "priceRange": "{{businesses.price_range}}",
+      "telephone": "{{businesses.telephone}}",
+      "email": "{{businesses.email}}",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{businesses.street_address}}",
+        "addressLocality": "{{businesses.address_locality}}",
+        "addressRegion": "{{businesses.address_region}}",
+        "postalCode": "{{businesses.postal_code}}",
+        "addressCountry": "{{businesses.address_country}}"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "{{businesses.latitude}}",
+        "longitude": "{{businesses.longitude}}"
+      },
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://pomegranate.marketing/#/schema/logo/image/",
+        "url": "{{businesses.logo_url}}",
+        "contentUrl": "{{businesses.logo_url}}",
+        "width": "{{logo_width}}",
+        "height": "{{logo_height}}",
+        "caption": "{{businesses.name}} logo"
+      },
+      "sameAs": [
+        "{{businesses.social_links[0]}}",
+        "{{businesses.social_links[1]}}"
+      ],
+      "foundingDate": "{{businesses.founding_date}}",
+      "areaServed": [
+        {
+          "@type": "Place",
+          "name": "East London",
+          "sameAs": "https://www.wikidata.org/wiki/Q209537"
+        },
+        {
+          "@type": "Country",
+          "name": "United Kingdom",
+          "sameAs": "https://www.wikidata.org/wiki/Q145"
+        }
+      ],
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "{{businesses.aggregate_rating.ratingValue}}",
+        "reviewCount": "{{businesses.aggregate_rating.reviewCount}}",
+        "bestRating": "5"
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          "opens": "{{businesses.opens}}",
+          "closes": "{{businesses.closes}}"
+        }
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "@id": "https://pomegranate.marketing/#services-catalog",
+        "name": "SEO & Web Design Services",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Search Engine Optimisation",
+              "description": "Comprehensive SEO including Technical, On-Page, and Link Building.",
+              "url": "https://pomegranate.marketing/seo-services/",
+              "additionalType": "https://www.wikidata.org/wiki/Q180711"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Web Design",
+              "description": "High-performance web design for WordPress, WooCommerce, and Shopify.",
+              "url": "https://pomegranate.marketing/web-design/",
+              "additionalType": "https://www.wikidata.org/wiki/Q190637"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "SEO Training",
+              "description": "Approved council training and corporate workshops.",
+              "url": "https://pomegranate.marketing/seo-training/",
+              "additionalType": "https://www.wikidata.org/wiki/Q918385"
+            }
+          }
+        ]
+      }
+    },
+
+    {
+      "@type": "WebSite",
+      "@id": "https://pomegranate.marketing/#website",
+      "url": "https://pomegranate.marketing/",
+      "name": "pomegranate",
+      "publisher": { "@id": "https://pomegranate.marketing/#organization" },
+      "inLanguage": "en-GB"
+    },
+
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://pomegranate.marketing/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home"
+        }
+      ]
+    },
+
+    {
+      "@type": "ImageObject",
+      "@id": "https://pomegranate.marketing/#primaryimage",
+      "url": "{{businesses.logo_url}}",
+      "contentUrl": "{{businesses.logo_url}}",
+      "width": "{{logo_width}}",
+      "height": "{{logo_height}}",
+      "caption": "{{businesses.name}} logo"
+    }
+  ]
+}

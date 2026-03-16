@@ -3,14 +3,16 @@ import { Loader2, MapPin, Trash2, Plus, ArrowLeft, Pencil, Network, CheckCircle2
 import { Button } from '../../../components/ui/button';
 import { fetchLocations, deleteLocation, createLocation, updateLocation } from '../../../lib/db/locations';
 import { fetchBusinesses } from '../../../lib/db/businesses';
+import { fetchKnowledgeEntities } from '../../../lib/db/knowledge';
 import { LocationForm } from '../../../components/forms/LocationForm';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 import { suggestSubLocations } from '../../../lib/ai/gemini';
 import { toast } from '../../../lib/toast';
-import type { TargetLocation } from '../../../lib/types';
+import type { TargetLocation, KnowledgeEntity } from '../../../lib/types';
 
 export default function LocationsPage() {
   const [locations, setLocations] = useState<(TargetLocation & { businesses: { name: string } | null })[]>([]);
+  const [knowledgeEntities, setKnowledgeEntities] = useState<KnowledgeEntity[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
   const [editingLocation, setEditingLocation] = useState<TargetLocation | null>(null);
@@ -26,11 +28,13 @@ export default function LocationsPage() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [locationsData, businessesData] = await Promise.all([
+      const [locationsData, businessesData, entitiesData] = await Promise.all([
         fetchLocations(),
-        fetchBusinesses()
+        fetchBusinesses(),
+        fetchKnowledgeEntities()
       ]);
       setLocations(locationsData);
+      setKnowledgeEntities(entitiesData);
       if (businessesData.length > 0) {
         setRootBusinessId(businessesData[0].id);
       }
@@ -241,14 +245,15 @@ export default function LocationsPage() {
             {editingLocation ? 'Edit Target Location' : 'Add Target Location'}
           </h1>
         </div>
-        <div className="bg-white p-6 rounded-lg border shadow-sm">
-           <LocationForm 
-              initialData={editingLocation || undefined}
-              businessId={rootBusinessId} 
-              onSubmit={handleCreateOrUpdate} 
-              onCancel={() => { setIsCreating(false); setEditingLocation(null); }} 
-           />
-        </div>
+<div className="bg-white p-6 rounded-lg border shadow-sm">
+            <LocationForm 
+               initialData={editingLocation || undefined}
+               businessId={rootBusinessId} 
+               knowledgeEntities={knowledgeEntities}
+               onSubmit={handleCreateOrUpdate} 
+               onCancel={() => { setIsCreating(false); setEditingLocation(null); }} 
+            />
+         </div>
       </div>
     );
   }

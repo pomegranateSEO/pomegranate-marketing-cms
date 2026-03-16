@@ -57,7 +57,14 @@ export default function PagesPage() {
     mentions_entities: [] as string[],
     // Keyword cycling fields
     keyword_prefix_text: 'We are a',
-    keyword_terms: ''
+    keyword_terms: '',
+    // Hero data fields
+    hero_title: '',
+    hero_subtitle: '',
+    hero_eyebrow: '',
+    // SEO fields
+    canonical_url: '',
+    og_image_url: '',
   });
 
   const loadData = async () => {
@@ -114,18 +121,28 @@ export default function PagesPage() {
         enabled: keywordTerms.length > 0,
       };
 
+      const heroDataPayload = {
+        title: formState.hero_title || undefined,
+        subtitle: formState.hero_subtitle || undefined,
+        eyebrow: formState.hero_eyebrow || undefined,
+      };
+      const hasHeroData = Object.values(heroDataPayload).some(Boolean);
+
       const payload: Partial<StaticPage> = {
         business_id: rootBusiness.id,
         title: formState.title,
         slug: formState.slug || formState.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
         status: (formState.status as 'draft' | 'published'),
         page_type: formState.page_type || 'WebPage',
-        content_html: formState.content, 
-        seo_title: formState.title, 
-        faqs: formState.faqs,
+        content_html: formState.content,
+        seo_title: formState.title,
+        faq_list: formState.faqs,
         about_entities: formState.about_entities,
         mentions_entities: formState.mentions_entities,
-        keyword_cycling_blocks: keywordTerms.length > 0 ? [keywordCyclingBlock] : []
+        keyword_cycling_blocks: keywordTerms.length > 0 ? [keywordCyclingBlock] : [],
+        ...(hasHeroData && { hero_data: heroDataPayload }),
+        canonical_url: formState.canonical_url || undefined,
+        og_image_url: formState.og_image_url || undefined,
       };
 
       if (formState.id) {
@@ -203,8 +220,8 @@ export default function PagesPage() {
   const startEdit = (page?: StaticPage) => {
     setActiveTab('content');
     if (page) {
-      const pageFaqs = Array.isArray(page.faqs) 
-        ? page.faqs as { question: string; answer: string }[] 
+      const pageFaqs = Array.isArray(page.faq_list) 
+        ? page.faq_list as { question: string; answer: string }[] 
         : [];
 
       // Extract keyword cycling data
@@ -217,11 +234,13 @@ export default function PagesPage() {
         ? primaryBlock.keywords.join(', ') 
         : '';
 
+      const heroData = (page.hero_data as any) || {};
+
       setFormState({
         id: page.id,
         title: page.title,
         slug: page.slug,
-        content: page.content_html || '', 
+        content: page.content_html || '',
         status: page.status,
         page_type: page.page_type || 'WebPage',
         faqs: pageFaqs,
@@ -230,7 +249,12 @@ export default function PagesPage() {
         about_entities: page.about_entities || [],
         mentions_entities: page.mentions_entities || [],
         keyword_prefix_text: prefixText,
-        keyword_terms: keywordTerms
+        keyword_terms: keywordTerms,
+        hero_title: heroData.title || '',
+        hero_subtitle: heroData.subtitle || '',
+        hero_eyebrow: heroData.eyebrow || '',
+        canonical_url: page.canonical_url || '',
+        og_image_url: page.og_image_url || '',
       });
     } else {
       resetForm();
@@ -239,10 +263,15 @@ export default function PagesPage() {
   };
 
   const resetForm = () => {
-    setFormState({ 
+    setFormState({
       id: '', title: '', slug: '', content: '', status: 'draft', page_type: 'WebPage', faqs: [], target_keyword: '', custom_head: '', about_entities: [], mentions_entities: [],
       keyword_prefix_text: 'We are a',
-      keyword_terms: ''
+      keyword_terms: '',
+      hero_title: '',
+      hero_subtitle: '',
+      hero_eyebrow: '',
+      canonical_url: '',
+      og_image_url: '',
     });
   };
 
@@ -340,6 +369,46 @@ export default function PagesPage() {
                    )}
                 </div>
 
+               {/* HERO FIELDS */}
+               <div className="bg-gradient-to-r from-rose-50 to-orange-50 p-4 rounded-lg border border-rose-200 mb-6">
+                 <h4 className="text-sm font-semibold text-slate-800 flex items-center gap-2 mb-3">
+                   <span className="w-6 h-6 bg-rose-500 text-white rounded flex items-center justify-center text-xs font-bold">H</span>
+                   Hero Section
+                 </h4>
+                 <p className="text-xs text-slate-500 mb-3">
+                   Main page heading (H1), subtitle, and eyebrow label. These appear at the top of the page.
+                 </p>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   <div className="space-y-1">
+                     <Label className="text-xs">Eyebrow / Label</Label>
+                     <Input
+                       value={formState.hero_eyebrow}
+                       onChange={e => setFormState({ ...formState, hero_eyebrow: e.target.value })}
+                       placeholder="pomegranate marketing"
+                       className="bg-white text-sm"
+                     />
+                   </div>
+                   <div className="space-y-1 md:col-span-2">
+                     <Label className="text-xs">Hero Title (H1)</Label>
+                     <Input
+                       value={formState.hero_title}
+                       onChange={e => setFormState({ ...formState, hero_title: e.target.value })}
+                       placeholder="Main page heading..."
+                       className="bg-white text-sm"
+                     />
+                   </div>
+                   <div className="space-y-1 md:col-span-2">
+                     <Label className="text-xs">Hero Subtitle</Label>
+                     <Input
+                       value={formState.hero_subtitle}
+                       onChange={e => setFormState({ ...formState, hero_subtitle: e.target.value })}
+                       placeholder="Supporting line below the main heading..."
+                       className="bg-white text-sm"
+                     />
+                   </div>
+                 </div>
+               </div>
+
                <div className="space-y-6">
                    <div className="space-y-2">
                      <div className="flex justify-between">
@@ -424,19 +493,38 @@ export default function PagesPage() {
                         <option value="published">Published</option>
                       </select>
                   </div>
-                  <div className="space-y-2">
-                    <Label>Schema.org Page Type</Label>
-                     <select 
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                      value={formState.page_type}
-                      onChange={e => setFormState({...formState, page_type: e.target.value})}
-                    >
-                      {SCHEMA_PAGE_TYPES.map(type => (
-                        <option key={type} value={type}>{type}</option>
-                      ))}
-                    </select>
-                  </div>
-               </div>
+<div className="space-y-2">
+                     <Label>Schema.org Page Type</Label>
+                      <select 
+                       className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                       value={formState.page_type}
+                       onChange={e => setFormState({...formState, page_type: e.target.value})}
+                     >
+                       {SCHEMA_PAGE_TYPES.map(type => (
+                         <option key={type} value={type}>{type}</option>
+                       ))}
+                     </select>
+                   </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-6 mb-6">
+                   <div className="space-y-2">
+                     <Label>Canonical URL</Label>
+                     <Input 
+                       value={formState.canonical_url} 
+                       onChange={e => setFormState({...formState, canonical_url: e.target.value})} 
+                       placeholder="https://example.com/page"
+                     />
+                   </div>
+                   <div className="space-y-2">
+                     <Label>Open Graph Image URL</Label>
+                     <Input 
+                       value={formState.og_image_url} 
+                       onChange={e => setFormState({...formState, og_image_url: e.target.value})} 
+                       placeholder="https://example.com/og-image.jpg"
+                     />
+                   </div>
+                </div>
 
                <div className="space-y-2">
                  <Label className="flex items-center gap-2">

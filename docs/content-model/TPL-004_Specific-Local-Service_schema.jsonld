@@ -1,0 +1,213 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "{{pages.url}}",
+      "url": "{{pages.url}}",
+      "name": "{{pages.meta_title}}",
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "https://pomegranate.marketing/#website",
+        "url": "https://pomegranate.marketing/",
+        "name": "pomegranate"
+      },
+      "about": [
+        {
+          "@id": "{{pages.url}}#service"
+        },
+        {
+          "@type": "Thing",
+          "name": "{{knowledge_graph_entities.name}}",
+          "sameAs": [
+            "{{knowledge_graph_entities.wikipedia_url}}",
+            "{{knowledge_graph_entities.wikidata_url}}"
+          ]
+        }
+      ],
+      "mentions": [
+        {
+          "@type": "Place",
+          "name": "{{location_name}}",
+          "sameAs": [
+            "{{location_wikipedia_url}}",
+            "{{location_wikidata_url}}"
+          ]
+        },
+        {
+          "@type": "{{knowledge_graph_entities.entity_type}}",
+          "name": "{{knowledge_graph_entities.name}}",
+          "sameAs": "{{knowledge_graph_entities.wikidata_url}}"
+        }
+      ],
+      "primaryImageOfPage": {
+        "@id": "{{pages.url}}#primaryimage"
+      },
+      "image": {
+        "@id": "{{pages.url}}#primaryimage"
+      },
+      "datePublished": "{{pages.created_at | ISO 8601}}",
+      "dateModified": "{{pages.updated_at | ISO 8601}}",
+      "description": "{{pages.meta_description}}",
+      "breadcrumb": {
+        "@id": "{{pages.url}}#breadcrumb"
+      },
+      "mainEntity": {
+        "@id": "{{pages.url}}#service"
+      },
+      "inLanguage": "en-GB",
+      "isFamilyFriendly": "true",
+      "potentialAction": [
+        {
+          "@type": "ReadAction",
+          "target": ["{{pages.url}}"]
+        }
+      ]
+    },
+
+    {
+      "@type": "Service",
+      "@id": "{{pages.url}}#service",
+      "name": "{{location_name}} {{service_name}} Service",
+      "description": "{{pages.service_description}}",
+      "serviceType": "{{pages.service_type}}",
+      "additionalType": "{{service_wikidata_url}}",
+      "provider": {
+        "@id": "https://pomegranate.marketing/#organization"
+      },
+      "areaServed": {
+        "@type": "City",
+        "name": "{{location_name}}",
+        "sameAs": [
+          "{{location_wikipedia_url}}",
+          "{{location_wikidata_url}}"
+        ]
+      },
+      "audience": [
+        {
+          "@type": "Audience",
+          "name": "{{audience_name_1}}",
+          "audienceType": "{{audience_type_1}}",
+          "sameAs": "{{audience_wikidata_url_1}}"
+        },
+        {
+          "@type": "BusinessAudience",
+          "name": "{{audience_name_2}}",
+          "audienceType": "{{audience_type_2}}",
+          "sameAs": "{{audience_wikidata_url_2}}"
+        }
+      ],
+      "subjectOf": [
+        { "@id": "{{pages.url}}#faq" }
+      ],
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "GBP",
+        "price": "0",
+        "description": "Contact for tailored pricing",
+        "url": "{{pages.url}}"
+      }
+    },
+
+    {
+      "@type": "FAQPage",
+      "@id": "{{pages.url}}#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "{{faq_question_1}}",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "{{faq_answer_1}}"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "{{faq_question_2}}",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "{{faq_answer_2}}"
+          }
+        }
+      ]
+    },
+
+    {
+      "@type": "ImageObject",
+      "@id": "{{pages.url}}#primaryimage",
+      "inLanguage": "en-GB",
+      "url": "{{pages.og_image_url}}",
+      "contentUrl": "{{pages.og_image_url}}",
+      "width": "{{og_image_width}}",
+      "height": "{{og_image_height}}"
+    },
+
+    {
+      "@type": "BreadcrumbList",
+      "@id": "{{pages.url}}#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "item": {
+            "@id": "https://pomegranate.marketing/",
+            "name": "Home"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "item": {
+            "@id": "https://pomegranate.marketing/locations/",
+            "name": "Locations"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "item": {
+            "@id": "https://pomegranate.marketing/locations/{{location_slug}}/",
+            "name": "{{location_name}}"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "{{pages.breadcrumb_name}}"
+        }
+      ]
+    },
+
+    {
+      "@type": "WebSite",
+      "@id": "https://pomegranate.marketing/#website",
+      "url": "https://pomegranate.marketing/",
+      "name": "pomegranate",
+      "publisher": {
+        "@id": "https://pomegranate.marketing/#organization"
+      },
+      "inLanguage": "en-GB"
+    },
+
+    {
+      "@type": "Organization",
+      "@id": "https://pomegranate.marketing/#organization",
+      "name": "Pomegranate Marketing Ltd",
+      "alternateName": "pomegranate",
+      "url": "https://pomegranate.marketing/",
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://pomegranate.marketing/#logo",
+        "inLanguage": "en-GB",
+        "url": "{{businesses.logo_url}}",
+        "contentUrl": "{{businesses.logo_url}}",
+        "width": "{{logo_width}}",
+        "height": "{{logo_height}}",
+        "caption": "Pomegranate Marketing Logo"
+      },
+      "image": {
+        "@id": "https://pomegranate.marketing/#logo"
+      }
+    }
+  ]
+}

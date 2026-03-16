@@ -1,0 +1,58 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "https://pomegranate.marketing/privacy-policy/",
+      "url": "https://pomegranate.marketing/privacy-policy/",
+      "name": "{{pages.meta_title}}",
+      "description": "{{pages.meta_description}}",
+      "inLanguage": "en-GB",
+      "isFamilyFriendly": "true",
+      "datePublished": "{{pages.created_at | ISO 8601}}",
+      "dateModified": "{{pages.updated_at | ISO 8601}}",
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "https://pomegranate.marketing/#website",
+        "url": "https://pomegranate.marketing/",
+        "name": "pomegranate"
+      },
+      "primaryImageOfPage": {
+        "@id": "https://pomegranate.marketing/privacy-policy/#primaryimage"
+      },
+      "image": {
+        "@id": "https://pomegranate.marketing/privacy-policy/#primaryimage"
+      },
+      "breadcrumb": {
+        "@id": "https://pomegranate.marketing/privacy-policy/#breadcrumb"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://pomegranate.marketing/privacy-policy/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "item": {
+            "@id": "https://pomegranate.marketing/",
+            "name": "Home"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "{{pages.breadcrumb_name}}"
+        }
+      ]
+    },
+    {
+      "@type": "ImageObject",
+      "@id": "https://pomegranate.marketing/privacy-policy/#primaryimage",
+      "url": "{{pages.og_image_url}}",
+      "contentUrl": "{{pages.og_image_url}}",
+      "width": "{{og_image_width}}",
+      "height": "{{og_image_height}}"
+    }
+  ]
+}

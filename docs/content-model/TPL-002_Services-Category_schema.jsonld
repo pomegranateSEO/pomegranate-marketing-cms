@@ -1,0 +1,143 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["WebPage", "CollectionPage"],
+      "@id": "https://pomegranate.marketing/seo-services/",
+      "url": "https://pomegranate.marketing/seo-services/",
+      "name": "{{pages.meta_title}}",
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "https://pomegranate.marketing/#website",
+        "url": "https://pomegranate.marketing/",
+        "name": "pomegranate"
+      },
+      "breadcrumb": { "@id": "https://pomegranate.marketing/seo-services/#breadcrumb" },
+      "inLanguage": "en-GB",
+      "isFamilyFriendly": "true",
+      "datePublished": "{{pages.created_at | ISO 8601}}",
+      "dateModified": "{{pages.updated_at | ISO 8601}}",
+      "description": "{{pages.meta_description}}",
+      "image": { "@id": "https://pomegranate.marketing/seo-services/#primaryimage" },
+      "primaryImageOfPage": { "@id": "https://pomegranate.marketing/seo-services/#primaryimage" },
+      "mainEntity": { "@id": "https://pomegranate.marketing/seo-services/#main-service" },
+      "about": [
+        {
+          "@type": "Thing",
+          "name": "Search engine optimization",
+          "sameAs": [
+            "https://en.wikipedia.org/wiki/Search_engine_optimization",
+            "https://www.wikidata.org/wiki/Q180711"
+          ]
+        }
+      ],
+      "mentions": [
+        {
+          "@type": "Thing",
+          "name": "Technical SEO",
+          "sameAs": [
+            "https://en.wikipedia.org/wiki/Search_engine_optimization#Technical_SEO",
+            "https://www.wikidata.org/wiki/Q114055561"
+          ]
+        },
+        {
+          "@type": "Thing",
+          "name": "Backlink",
+          "sameAs": [
+            "https://en.wikipedia.org/wiki/Backlink",
+            "https://www.wikidata.org/wiki/Q652422"
+          ]
+        },
+        {
+          "@type": "Thing",
+          "name": "Google Search",
+          "sameAs": [
+            "https://en.wikipedia.org/wiki/Google_Search",
+            "https://www.wikidata.org/wiki/Q9366"
+          ]
+        }
+      ]
+    },
+
+    {
+      "@type": "Service",
+      "@id": "https://pomegranate.marketing/seo-services/#main-service",
+      "name": "Search Engine Optimisation Services",
+      "serviceType": "SEO",
+      "provider": { "@id": "https://pomegranate.marketing/#organization" },
+      "areaServed": {
+        "@type": "Country",
+        "name": "United Kingdom"
+      },
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "@id": "https://pomegranate.marketing/seo-services/#seo-catalog",
+        "name": "SEO Service Sub-Categories",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "@id": "https://pomegranate.marketing/seo-services/on-page-seo-service/",
+              "name": "On-Page SEO",
+              "description": "Optimising content and HTML for better keyword rankings.",
+              "url": "https://pomegranate.marketing/seo-services/on-page-seo-service/",
+              "additionalType": "https://www.wikidata.org/wiki/Q180711"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "@id": "https://pomegranate.marketing/seo-services/link-building-service/",
+              "name": "Link Building",
+              "description": "Authority building through strategic backlink acquisition.",
+              "url": "https://pomegranate.marketing/seo-services/link-building-service/",
+              "additionalType": "https://www.wikidata.org/wiki/Q652422"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "@id": "https://pomegranate.marketing/seo-services/technical-seo-service/",
+              "name": "Technical SEO",
+              "description": "Improving site speed, crawlability, and indexing.",
+              "url": "https://pomegranate.marketing/seo-services/technical-seo-service/",
+              "additionalType": "https://www.wikidata.org/wiki/Q114055561"
+            }
+          }
+        ]
+      }
+    },
+
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://pomegranate.marketing/seo-services/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "item": {
+            "@id": "https://pomegranate.marketing/",
+            "name": "Home"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "SEO Services"
+        }
+      ]
+    },
+
+    {
+      "@type": "ImageObject",
+      "@id": "https://pomegranate.marketing/seo-services/#primaryimage",
+      "url": "{{pages.og_image_url}}",
+      "contentUrl": "{{pages.og_image_url}}",
+      "width": "{{og_image_width}}",
+      "height": "{{og_image_height}}"
+    }
+  ]
+}

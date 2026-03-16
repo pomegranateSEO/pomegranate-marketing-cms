@@ -16,14 +16,10 @@ export const fetchPages = async () => {
 };
 
 export const createPage = async (page: Partial<StaticPage>) => {
-  // Ensure mandatory fields are present based on schema
   const payload = {
     ...page,
     page_type: page.page_type || 'static',
-    // Map content to content_html if provided
     content_html: page.content_html || '',
-    // Use 'faqs' column, ensure it is a JSON array
-    faqs: page.faqs || []
   };
 
   const { data, error } = await supabase
@@ -41,11 +37,6 @@ export const updatePage = async (id: string, page: Partial<StaticPage>) => {
     ...page, 
     last_updated: new Date().toISOString()
   };
-  
-  // Ensure faqs is valid JSON if present
-  if (payload.faqs === undefined || payload.faqs === null) {
-     delete payload.faqs;
-  }
 
   const { data, error } = await supabase
     .from('pages')

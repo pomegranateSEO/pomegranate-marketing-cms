@@ -173,7 +173,7 @@ export interface Service {
   // Legacy (keep during transition)
   faqs?: Json;
 
-// Phase 2A additions
+  // Phase 2A additions
   long_description?: string;
   seo_title?: string;
   seo_meta_desc?: string;
@@ -182,6 +182,51 @@ export interface Service {
   faq_list?: Json;
   schema_json_ld?: Json;
   pricing_data?: Json;
+  about_entities?: string[];
+  mentions_entities?: string[];
+  
+  // Content fields for full CMS editability
+  hero_data?: {
+    title?: string;
+    subtitle?: string;
+    body?: string;
+    cta_primary_text?: string;
+    cta_primary_link?: string;
+    cta_secondary_text?: string;
+    cta_secondary_link?: string;
+    background_style?: string;
+  };
+  content_sections?: {
+    why_heading?: string;
+    why_body?: string[];
+    who_its_for?: string[];
+    environments_heading?: string;
+    environments_scroll_text?: string;
+  };
+  deliverables?: {
+    heading?: string;
+    items?: Array<{
+      icon: string;
+      title: string;
+      description: string;
+    }>;
+  };
+  process?: {
+    heading?: string;
+    subheading?: string;
+    items?: Array<{
+      id: string;
+      title: string;
+      content: string;
+      note?: string;
+      noteDescription?: string;
+    }>;
+  };
+  cta?: {
+    heading?: string;
+    subheading?: string;
+  };
+  og_image_url?: string;
 }
 
 export interface TargetLocation {
@@ -201,7 +246,9 @@ export interface TargetLocation {
   area_type?: string;
   address_region?: string;
   address_country?: string;
-  landmarks_list?: string[]; // TEXT ARRAY (string[]) NOT JSONB
+  landmarks_list?: string[];
+  about_entities?: string[];
+  mentions_entities?: string[];
 }
 
 export interface KnowledgeEntity {
@@ -346,6 +393,59 @@ export interface StaticPage {
   faq_list?: Json;
   schema_json_ld?: Json;
 
+  // Content fields for full CMS editability
+  hero_data?: {
+    headline?: string;
+    subtext?: string;
+    tagline?: string;
+    cta_primary_text?: string;
+    cta_primary_link?: string;
+    cta_secondary_text?: string;
+    cta_secondary_link?: string;
+    title?: string;
+    subtitle?: string;
+  };
+  content_sections?: {
+    // Homepage
+    services_heading?: string;
+    services_subheading?: string;
+    story_quote?: string;
+    story_body?: string[];
+    // About page
+    mission_quote?: string;
+    mission_body?: string[];
+    values_heading?: string;
+    values_items?: Array<{
+      icon: string;
+      title: string;
+      description: string;
+    }>;
+    awards_heading?: string;
+    awards_items?: Array<{
+      name: string;
+      year: string;
+      organization: string;
+      link: string;
+      description: string;
+      logo_url?: string;
+    }>;
+    founder_title?: string;
+    founder_name?: string;
+    founder_bio?: string[];
+    founder_tags?: string[];
+    founder_linkedin_url?: string;
+    timeline?: Array<{
+      year: string;
+      title: string;
+      description: string;
+      icon?: string;
+    }>;
+    // Contact page
+    contact_heading?: string;
+    contact_body?: string;
+  };
+  og_image_url?: string;
+
   // Design Studio
   design_template_id?: string;
   rendered_blocks?: RenderedBlock[];
@@ -437,8 +537,36 @@ export interface Industry {
   keyword_cycling_blocks?: Json;
   faq_list?: Json;
   schema_json_ld?: Json;
+  about_entities?: string[];
+  mentions_entities?: string[];
   created_at?: string;
   last_updated?: string;
+  
+  // Content fields for full CMS editability
+  hero_data?: {
+    title?: string;
+    landmarks?: string[];
+    keyword?: string;
+    body?: string;
+    cta_text?: string;
+  };
+  content_sections?: {
+    overview_heading?: string;
+    overview_items?: Array<{
+      icon: string;
+      title: string;
+      description: string;
+    }>;
+  };
+  deliverables?: {
+    heading?: string;
+    items?: string[];
+  };
+  cta?: {
+    heading?: string;
+    subheading?: string;
+  };
+  og_image_url?: string;
 }
 
 export interface CaseStudy {
@@ -500,7 +628,7 @@ export interface BlogTopic {
   slug: string;
   description?: string;
   parent_topic_id?: string | null;
-  depth_level: number; // 0=pillar, 1=cluster, 2=sub
+  depth_level: number;
   topic_type: 'pillar' | 'cluster' | 'sub-cluster' | 'micro-topic';
   primary_entity_id?: string;
   related_service_ids?: string[];
@@ -512,7 +640,7 @@ export interface BlogTopic {
   estimated_search_volume?: number;
   keyword_difficulty?: number;
   topical_authority_score?: number;
-  content_gap_priority?: number; // 1-10
+  content_gap_priority?: number;
   suggested_content_count?: number;
   existing_content_count?: number;
   speakable_hints?: string[];
@@ -521,4 +649,23 @@ export interface BlogTopic {
   
   // UI Helper
   children?: BlogTopic[];
+}
+
+export interface Download {
+  id: string;
+  business_id: string;
+  title: string;
+  type: string;
+  description?: string;
+  file_url?: string;
+  preview_image_url?: string;
+  file_size_label?: string;
+  page_count_label?: string;
+  gated: boolean;
+  published: boolean;
+  sort_order: number;
+  seo_title?: string;
+  seo_meta_desc?: string;
+  created_at?: string;
+  last_updated?: string;
 }

@@ -1,0 +1,88 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["WebPage", "CollectionPage"],
+      "@id": "https://pomegranate.marketing/industries/",
+      "url": "https://pomegranate.marketing/industries/",
+      "name": "{{pages.meta_title}}",
+      "description": "{{pages.meta_description}}",
+      "inLanguage": "en-GB",
+      "isFamilyFriendly": "true",
+      "datePublished": "{{pages.created_at | ISO 8601}}",
+      "dateModified": "{{pages.updated_at | ISO 8601}}",
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "https://pomegranate.marketing/#website",
+        "url": "https://pomegranate.marketing/",
+        "name": "pomegranate"
+      },
+      "primaryImageOfPage": { "@id": "https://pomegranate.marketing/industries/#primaryimage" },
+      "image": { "@id": "https://pomegranate.marketing/industries/#primaryimage" },
+      "breadcrumb": { "@id": "https://pomegranate.marketing/industries/#breadcrumb" },
+      "about": [
+        {
+          "@type": "Thing",
+          "name": "Industry",
+          "sameAs": [
+            "https://en.wikipedia.org/wiki/Industry",
+            "https://www.wikidata.org/wiki/Q8148"
+          ]
+        }
+      ],
+      "mentions": [
+        {
+          "@type": "Thing",
+          "name": "Software development",
+          "sameAs": [
+            "https://en.wikipedia.org/wiki/Software_development",
+            "https://www.wikidata.org/wiki/Q638608"
+          ]
+        },
+        {
+          "@type": "Thing",
+          "name": "Education",
+          "sameAs": [
+            "https://en.wikipedia.org/wiki/Education",
+            "https://www.wikidata.org/wiki/Q8434"
+          ]
+        },
+        {
+          "@type": "Thing",
+          "name": "Nonprofit organization",
+          "sameAs": [
+            "https://en.wikipedia.org/wiki/Nonprofit_organization",
+            "https://www.wikidata.org/wiki/Q163740"
+          ]
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://pomegranate.marketing/industries/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "item": {
+            "@id": "https://pomegranate.marketing/",
+            "name": "Home"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Industries"
+        }
+      ]
+    },
+    {
+      "@type": "ImageObject",
+      "@id": "https://pomegranate.marketing/industries/#primaryimage",
+      "url": "{{pages.og_image_url}}",
+      "contentUrl": "{{pages.og_image_url}}",
+      "width": "{{og_image_width}}",
+      "height": "{{og_image_height}}"
+    }
+  ]
+}

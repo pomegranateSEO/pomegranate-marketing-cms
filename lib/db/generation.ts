@@ -41,11 +41,13 @@ export const updatePageInstance = async (id: string, updates: Partial<PseoPageIn
       last_updated: new Date().toISOString() 
     })
     .eq('id', id)
-    .select()
-    .single();
+    .select();
 
   if (error) throw error;
-  return data as PseoPageInstance;
+  if (!data || data.length === 0) {
+    throw new Error(`Update failed: No rows updated for ID ${id}. Check RLS policies.`);
+  }
+  return data[0] as PseoPageInstance;
 };
 
 export const deletePageInstance = async (id: string) => {

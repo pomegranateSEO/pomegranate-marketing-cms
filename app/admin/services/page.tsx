@@ -4,12 +4,14 @@ import { Button } from '../../../components/ui/button';
 import { ServiceForm } from '../../../components/forms/ServiceForm';
 import { fetchServices, deleteService, createService, updateService } from '../../../lib/db/services';
 import { fetchBusinesses } from '../../../lib/db/businesses';
-import type { Service } from '../../../lib/types';
+import { fetchKnowledgeEntities } from '../../../lib/db/knowledge';
+import type { Service, KnowledgeEntity } from '../../../lib/types';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 import { toast } from '../../../lib/toast';
 
 export default function ServicesPage() {
   const [services, setServices] = useState<(Service & { businesses: { name: string } | null })[]>([]);
+  const [knowledgeEntities, setKnowledgeEntities] = useState<KnowledgeEntity[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
@@ -18,11 +20,13 @@ export default function ServicesPage() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [servicesData, businessesData] = await Promise.all([
+      const [servicesData, businessesData, entitiesData] = await Promise.all([
         fetchServices(),
-        fetchBusinesses()
+        fetchBusinesses(),
+        fetchKnowledgeEntities()
       ]);
       setServices(servicesData);
+      setKnowledgeEntities(entitiesData);
       if (businessesData.length > 0) {
         setRootBusinessId(businessesData[0].id);
       }
@@ -110,14 +114,15 @@ export default function ServicesPage() {
             {editingService ? 'Edit Service' : 'Add New Service'}
           </h1>
         </div>
-        <div className="bg-white p-6 rounded-lg border shadow-sm">
-           <ServiceForm 
-              initialData={editingService || undefined}
-              businessId={rootBusinessId} 
-              onSubmit={handleCreateOrUpdate} 
-              onCancel={() => { setIsCreating(false); setEditingService(null); }} 
-           />
-        </div>
+<div className="bg-white p-6 rounded-lg border shadow-sm">
+            <ServiceForm 
+               initialData={editingService || undefined}
+               businessId={rootBusinessId} 
+               knowledgeEntities={knowledgeEntities}
+               onSubmit={handleCreateOrUpdate} 
+               onCancel={() => { setIsCreating(false); setEditingService(null); }} 
+            />
+         </div>
       </div>
     );
   }

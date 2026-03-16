@@ -1,0 +1,186 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "AboutPage",
+      "@id": "https://pomegranate.marketing/about/",
+      "url": "https://pomegranate.marketing/about/",
+      "name": "{{pages.meta_title}}",
+      "description": "{{pages.meta_description}}",
+      "inLanguage": "en-GB",
+      "isFamilyFriendly": "true",
+      "datePublished": "{{pages.created_at | ISO 8601}}",
+      "dateModified": "{{pages.updated_at | ISO 8601}}",
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "https://pomegranate.marketing/#website",
+        "url": "https://pomegranate.marketing/",
+        "name": "pomegranate"
+      },
+      "primaryImageOfPage": {
+        "@id": "https://pomegranate.marketing/about/#primaryimage"
+      },
+      "image": {
+        "@id": "https://pomegranate.marketing/about/#primaryimage"
+      },
+      "breadcrumb": {
+        "@id": "https://pomegranate.marketing/about/#breadcrumb"
+      },
+      "mainEntity": {
+        "@id": "https://pomegranate.marketing/#organization"
+      },
+      "about": [
+        {
+          "@id": "https://pomegranate.marketing/#organization"
+        }
+      ],
+      "mentions": [
+        {
+          "@id": "https://pomegranate.marketing/about/#founder"
+        },
+        {
+          "@type": "Organization",
+          "name": "Google Partners",
+          "sameAs": [
+            "https://www.wikidata.org/wiki/Q15558448"
+          ]
+        }
+      ]
+    },
+    {
+      "@type": "ProfessionalService",
+      "@id": "https://pomegranate.marketing/#organization",
+      "name": "{{businesses.name}}",
+      "alternateName": "{{businesses.alternate_name}}",
+      "url": "{{businesses.website_url}}",
+      "priceRange": "{{businesses.price_range}}",
+      "telephone": "{{businesses.telephone}}",
+      "email": "{{businesses.email}}",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{businesses.street_address}}",
+        "addressLocality": "{{businesses.address_locality}}",
+        "addressRegion": "{{businesses.address_region}}",
+        "postalCode": "{{businesses.postal_code}}",
+        "addressCountry": "{{businesses.address_country}}"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "{{businesses.latitude}}",
+        "longitude": "{{businesses.longitude}}"
+      },
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://pomegranate.marketing/#logo",
+        "url": "{{businesses.logo_url}}",
+        "contentUrl": "{{businesses.logo_url}}",
+        "width": "{{logo_width}}",
+        "height": "{{logo_height}}",
+        "caption": "{{businesses.name}} logo"
+      },
+      "sameAs": [
+        "{{businesses.social_links[0]}}",
+        "{{businesses.social_links[1]}}"
+      ],
+      "foundingDate": "{{businesses.founding_date}}",
+      "areaServed": [
+        {
+          "@type": "Place",
+          "name": "East London",
+          "sameAs": "https://www.wikidata.org/wiki/Q209537"
+        },
+        {
+          "@type": "Country",
+          "name": "United Kingdom",
+          "sameAs": "https://www.wikidata.org/wiki/Q145"
+        }
+      ],
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "{{businesses.aggregate_rating.ratingValue}}",
+        "reviewCount": "{{businesses.aggregate_rating.reviewCount}}",
+        "bestRating": "5"
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "opens": "{{businesses.opens}}",
+          "closes": "{{businesses.closes}}"
+        }
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "@id": "https://pomegranate.marketing/#services-catalog",
+        "name": "SEO & Web Design Services",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Search Engine Optimisation",
+              "url": "https://pomegranate.marketing/seo-services/",
+              "additionalType": "https://www.wikidata.org/wiki/Q180711"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Web Design",
+              "url": "https://pomegranate.marketing/web-design/",
+              "additionalType": "https://www.wikidata.org/wiki/Q190637"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "@type": "Person",
+      "@id": "https://pomegranate.marketing/about/#founder",
+      "name": "{{founder.name}}",
+      "jobTitle": "{{founder.job_title}}",
+      "image": "{{founder.image_url}}",
+      "sameAs": [
+        "{{founder.linkedin_url}}",
+        "{{founder.twitter_url}}"
+      ],
+      "worksFor": {
+        "@id": "https://pomegranate.marketing/#organization"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://pomegranate.marketing/about/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "item": {
+            "@id": "https://pomegranate.marketing/",
+            "name": "Home"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "About"
+        }
+      ]
+    },
+    {
+      "@type": "ImageObject",
+      "@id": "https://pomegranate.marketing/about/#primaryimage",
+      "url": "{{pages.og_image_url}}",
+      "contentUrl": "{{pages.og_image_url}}",
+      "width": "{{og_image_width}}",
+      "height": "{{og_image_height}}"
+    }
+  ]
+}

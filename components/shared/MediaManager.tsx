@@ -11,6 +11,7 @@ import { toast } from '../../lib/toast';
 interface FileObject {
   name: string;
   id: string;
+  bucket?: string;
   metadata: {
     mimetype: string;
     size: number;
@@ -58,18 +59,25 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
         limit: 100, sortBy: { column: 'created_at', order: 'desc' } 
       });
 
+      // Blog images from separate bucket
+      const { data: blogImages } = await supabase.storage.from('blog-images').list('', { 
+        limit: 100, sortBy: { column: 'created_at', order: 'desc' } 
+      });
+
       const isFile = (f: any) => f.id && f.metadata;
 
-      const mappedRoot = (rootFiles || []).filter(isFile).map(f => ({ ...f, name: f.name }));
-      const mappedUploads = (uploads || []).filter(isFile).map(f => ({ ...f, name: `uploads/${f.name}` }));
-      const mappedLogos = (logos || []).filter(isFile).map(f => ({ ...f, name: `logos/${f.name}` }));
-      const mappedAssociates = (associates || []).filter(isFile).map(f => ({ ...f, name: `associates/${f.name}` }));
+      const mappedRoot = (rootFiles || []).filter(isFile).map(f => ({ ...f, name: f.name, bucket: 'images' }));
+      const mappedUploads = (uploads || []).filter(isFile).map(f => ({ ...f, name: `uploads/${f.name}`, bucket: 'images' }));
+      const mappedLogos = (logos || []).filter(isFile).map(f => ({ ...f, name: `logos/${f.name}`, bucket: 'images' }));
+      const mappedAssociates = (associates || []).filter(isFile).map(f => ({ ...f, name: `associates/${f.name}`, bucket: 'images' }));
+      const mappedBlogImages = (blogImages || []).filter(isFile).map(f => ({ ...f, name: f.name, bucket: 'blog-images' }));
 
       const allFiles = [
         ...mappedRoot,
         ...mappedUploads,
         ...mappedLogos,
-        ...mappedAssociates
+        ...mappedAssociates,
+        ...mappedBlogImages
       ];
 
       allFiles.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
@@ -124,13 +132,14 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
     }
   };
 
-  const getPublicUrl = (path: string) => {
-    const { data } = supabase.storage.from('images').getPublicUrl(path);
+  const getPublicUrl = (path: string, bucket: string = 'images') => {
+    const { data } = supabase.storage.from(bucket).getPublicUrl(path);
     return data.publicUrl;
   };
 
   const handleImageClick = async (file: FileObject) => {
-    const url = getPublicUrl(file.name);
+    const bucket = file.bucket || 'images';
+    const url = getPublicUrl(file.name, bucket);
     
     if (mode === 'picker' && onSelect) {
       onSelect(url);
@@ -244,7 +253,8 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {files.map((file) => {
-                const url = getPublicUrl(file.name);
+                const bucket = file.bucket || 'images';
+                const url = getPublicUrl(file.name, bucket);
                 return (
                   <div 
                     key={file.id} 

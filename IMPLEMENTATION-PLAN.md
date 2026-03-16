@@ -2,13 +2,90 @@
 
 **Project:** Pomegranate v2 CMS Admin Panel UI/UX Improvements
 **Created:** March 16, 2026
-**Last Updated:** March 16, 2026 (v2.0 - Post-Audit Revision)
+**Last Updated:** March 17, 2026 (v3.0 - Content Model Alignment Added)
 **Status:** Ready for Implementation
 **Priority:** CRITICAL > HIGH > MEDIUM > LOW
 
 **Companion Docs:**
 - `CODE-EXAMPLES.md` - Working code examples for each task
 - `DESIGN-MOCKUPS.md` - ASCII visual references for target UI
+- `CONTENT_MODEL_AUDIT.md` (in front-end repo) - Gap analysis for TPL-001 through TPL-013
+
+---
+
+## ⚠️ PRIORITY — Content Model Alignment (P0–P3)
+
+**Source:** `CONTENT_MODEL_AUDIT.md` in front-end repo at `C:\Users\k_che\Documents\TEST NEW POMEGRANATE WEBSITE 13-03-2026`
+
+### P0 - Blocking (Current Session)
+
+| Task | Description | Status |
+|------|-------------|--------|
+| `pseo_page_instances` admin UI | ✅ ALREADY EXISTS at `/admin/generation` — batch generation + individual page editor with SEO, hero, FAQ, entity linking, JSON-LD | ✅ COMPLETE |
+| `downloads` database CRUD | Enhance `/admin/downloads` to manage `downloads` **table** (not just storage bucket). Add: title, description, type (Guide/Template/Checklist/Report), preview_image_url, file_size_label, page_count_label, gated toggle, published toggle, sort_order, seo_title, seo_meta_desc | ❌ NOT STARTED |
+
+**Gap Analysis:** Current `/admin/downloads/page.tsx` only manages Supabase **storage bucket** files. The `downloads` **database table** (created in front-end Phase 0) has no CRUD interface.
+
+**Implementation for P0 - Downloads Table CRUD:**
+
+1. Create `lib/db/downloads.ts`:
+   - `fetchDownloads()` - SELECT * FROM downloads ORDER BY sort_order
+   - `createDownload(data)` - INSERT INTO downloads
+   - `updateDownload(id, data)` - UPDATE downloads SET ... WHERE id = $1
+   - `deleteDownload(id)` - DELETE FROM downloads WHERE id = $1
+
+2. Enhance `/admin/downloads/page.tsx`:
+   - Add database record management alongside storage upload
+   - When user uploads file → create storage entry + prompt for metadata
+   - Edit form for: title, description, type, preview_image_url, gated, published, sort_order, seo fields
+   - Table view showing all downloads with status indicators
+
+3. Add `Download` type to `lib/types.ts` (match front-end schema):
+   ```typescript
+   interface Download {
+     id: string;
+     business_id: string;
+     title: string;
+     type: 'Guide' | 'Template' | 'Checklist' | 'Report';
+     description: string;
+     file_url: string;
+     preview_image_url?: string;
+     file_size_label?: string;
+     page_count_label?: string;
+     gated: boolean;
+     published: boolean;
+     sort_order: number;
+     seo_title?: string;
+     seo_meta_desc?: string;
+     created_at: string;
+     last_updated: string;
+   }
+   ```
+
+### P1 - High Priority (Next)
+
+| Task | Description | Status |
+|------|-------------|--------|
+| Hero fields | Add hero component fields (headline, subheadline, body, CTA) to services, industries, pages forms | ❌ NOT STARTED |
+| SEO fields | Add `canonical_url`, `og_image_url`, `og_title`, `og_description` to all content types |❌ NOT STARTED |
+| Entity linking | Add `about_entities`, `mentions_entities` multi-select to services, industries, locations | ❌ NOT STARTED |
+
+### P2 - Medium Priority
+
+| Task | Description | Status |
+|------|-------------|--------|
+| Deliverables component | Structured repeatable editor for services/industries deliverables | ❌ NOT STARTED |
+| Pricing UI | Editor for `pricing_data` JSONB column (pricing plans per service) | ❌ NOT STARTED |
+| Process Steps | Structured editor for service process steps (icons, titles, descriptions) | ❌ NOT STARTED |
+| Contact/Legal config | Form fields for static pages contact/legal sections | ❌ NOT STARTED |
+
+### P3 - Lower Priority
+
+| Task | Description | Status |
+|------|-------------|--------|
+| FAQ structured editor | Replace free-form JSON with structured question/answer builder | ❌ NOT STARTED |
+| Testimonial filters | Add service/industry filter selectors to reviews management | ❌ NOT STARTED |
+| Author selector | Add `author_person_id` selector to blog posts | ❌ NOT STARTED |
 
 ---
 
@@ -487,11 +564,12 @@ Before marking any task complete, verify:
 
 | Phase | Tasks | Completed | Progress |
 |-------|-------|-----------|----------|
+| P0: Content Model | 2 | 1 | 50% |
 | Phase 1: Critical | 7 | 1 | 14% |
 | Phase 2: High | 7 | 0 | 0% |
 | Phase 3: Medium | 5 | 0 | 0% |
 | Phase 4: Low | 1 | 0 | 0% |
-| **TOTAL** | **20** | **1** | **5%** |
+| **TOTAL** | **22** | **2** | **9%** |
 
 ---
 
@@ -499,6 +577,20 @@ Before marking any task complete, verify:
 
 This is the optimal order accounting for dependencies:
 
+**Content Model Alignment (P0-P3):**
+1. **P0: Downloads CRUD** - Add database management to `/admin/downloads`
+2. **P1: Hero fields** - Add hero component fields to forms
+3. **P1: SEO fields** - Add canonical_url, og_image_url to all content types
+4. **P1: Entity linking** - Add about_entities/mentions_entities selectors
+5. **P2: Deliverables** - Structured repeatable component
+6. **P2: Pricing UI** - Editor for pricing_data JSONB
+7. **P2: Process Steps** - Structured editor for service processes
+8. **P2: Contact/Legal** - Form fields for static pages
+9. **P3: FAQ editor** - Structured question/answer builder
+10. **P3: Testimonial filters** - Service/industry filter selectors
+11. **P3: Author selector** - Blog post author_person_id
+
+**UI/UX Improvements (Phase 1-4):**
 1. **Task 1.1** - Toast system (unblocks everything else)
 2. **Task 1.5** - Confirm dialog (paired with toast, replaces confirm())
 3. **Task 1.7** - Fix hover-only buttons (quick win)
@@ -578,8 +670,15 @@ These front-end tasks depend on CMS data being correct and accessible:
 
 ---
 
-**Version:** 3.0 (Front-End Alignment Update)
-**Last Updated:** 2026-03-16
+**Version:** 4.0 (Content Model Alignment Added)
+**Last Updated:** 2026-03-17
+**Changes from v3.0:**
+- Added P0-P3 Content Model Alignment section at top
+- P0: `pseo_page_instances` admin UI marked COMPLETE (exists at /admin/generation)
+- P0: `downloads` database CRUD enhancement added as blocking task
+- Updated Progress Tracker to include Content Model phase
+- Added implementation details for downloads database CRUD
+
 **Changes from v2.0:**
 - Added Front-End Website Alignment section with shared table reference
 - Added Rules for CMS Agents (schema safety, RLS, Markdown content)

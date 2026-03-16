@@ -1,0 +1,269 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": [
+        "WebPage",
+        "CollectionPage"
+      ],
+      "@id": "https://pomegranate.marketing/locations/{{location_slug}}/",
+      "url": "https://pomegranate.marketing/locations/{{location_slug}}/",
+      "name": "{{pages.meta_title}}",
+      "description": "{{pages.meta_description}}",
+      "inLanguage": "en-GB",
+      "isFamilyFriendly": "true",
+      "datePublished": "{{pages.created_at | ISO 8601}}",
+      "dateModified": "{{pages.updated_at | ISO 8601}}",
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "https://pomegranate.marketing/#website",
+        "url": "https://pomegranate.marketing/",
+        "name": "pomegranate"
+      },
+      "primaryImageOfPage": {
+        "@id": "https://pomegranate.marketing/locations/{{location_slug}}/#primaryimage"
+      },
+      "image": {
+        "@id": "https://pomegranate.marketing/locations/{{location_slug}}/#primaryimage"
+      },
+      "breadcrumb": {
+        "@id": "https://pomegranate.marketing/locations/{{location_slug}}/#breadcrumb"
+      },
+      "mainEntity": {
+        "@id": "https://pomegranate.marketing/locations/{{location_slug}}/#service"
+      },
+      "about": [
+        {
+          "@type": "Place",
+          "name": "{{location_name}}",
+          "sameAs": [
+            "{{location_wikipedia_url}}",
+            "{{location_wikidata_url}}"
+          ]
+        },
+        {
+          "@type": "Thing",
+          "name": "Digital marketing",
+          "sameAs": [
+            "https://en.wikipedia.org/wiki/Digital_marketing",
+            "https://www.wikidata.org/wiki/Q1321787"
+          ]
+        }
+      ],
+      "mentions": [
+        {
+          "@type": "Thing",
+          "name": "Search engine optimization",
+          "sameAs": "https://www.wikidata.org/wiki/Q180711"
+        },
+        {
+          "@type": "Thing",
+          "name": "Web design",
+          "sameAs": "https://www.wikidata.org/wiki/Q190637"
+        }
+      ]
+    },
+    {
+      "@type": "Service",
+      "@id": "https://pomegranate.marketing/locations/{{location_slug}}/#service",
+      "name": "Digital Marketing Services in {{location_name}}",
+      "serviceType": "Digital Marketing",
+      "additionalType": "https://www.wikidata.org/wiki/Q1321787",
+      "provider": {
+        "@id": "https://pomegranate.marketing/#organization"
+      },
+      "areaServed": {
+        "@type": "City",
+        "name": "{{location_name}}",
+        "sameAs": "{{location_wikidata_url}}"
+      },
+      "audience": [
+        {
+          "@type": "BusinessAudience",
+          "name": "Local Business Owners",
+          "audienceType": "Small to Medium Enterprises",
+          "sameAs": "https://www.wikidata.org/wiki/Q4830453"
+        },
+        {
+          "@type": "BusinessAudience",
+          "name": "Marketing Directors",
+          "audienceType": "Marketing & Management",
+          "sameAs": "https://www.wikidata.org/wiki/Q1191749"
+        }
+      ],
+      "subjectOf": {
+        "@id": "https://pomegranate.marketing/locations/{{location_slug}}/#faq"
+      },
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "@id": "https://pomegranate.marketing/locations/{{location_slug}}/#catalog",
+        "name": "Digital Marketing Services in {{location_name}}",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "SEO Service in {{location_name}}",
+              "url": "https://pomegranate.marketing/locations/{{location_slug}}/seo-service/",
+              "additionalType": "https://www.wikidata.org/wiki/Q180711"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Web Design Service in {{location_name}}",
+              "url": "https://pomegranate.marketing/locations/{{location_slug}}/web-design-service/",
+              "additionalType": "https://www.wikidata.org/wiki/Q190637"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "SEO Training in {{location_name}}",
+              "url": "https://pomegranate.marketing/locations/{{location_slug}}/seo-training/",
+              "additionalType": "https://www.wikidata.org/wiki/Q918385"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://pomegranate.marketing/locations/{{location_slug}}/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "{{faq_question_1}}",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "{{faq_answer_1}}"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "{{faq_question_2}}",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "{{faq_answer_2}}"
+          }
+        }
+      ]
+    },
+    {
+      "@type": "ProfessionalService",
+      "@id": "https://pomegranate.marketing/#organization",
+      "name": "{{businesses.name}}",
+      "alternateName": "{{businesses.alternate_name}}",
+      "url": "{{businesses.website_url}}",
+      "priceRange": "{{businesses.price_range}}",
+      "telephone": "{{businesses.telephone}}",
+      "email": "{{businesses.email}}",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{businesses.street_address}}",
+        "addressLocality": "{{businesses.address_locality}}",
+        "addressRegion": "{{businesses.address_region}}",
+        "postalCode": "{{businesses.postal_code}}",
+        "addressCountry": "{{businesses.address_country}}"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "{{businesses.latitude}}",
+        "longitude": "{{businesses.longitude}}"
+      },
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://pomegranate.marketing/#logo",
+        "url": "{{businesses.logo_url}}",
+        "contentUrl": "{{businesses.logo_url}}",
+        "width": "{{logo_width}}",
+        "height": "{{logo_height}}",
+        "caption": "{{businesses.name}} logo"
+      },
+      "sameAs": [
+        "{{businesses.social_links[0]}}",
+        "{{businesses.social_links[1]}}"
+      ],
+      "foundingDate": "{{businesses.founding_date}}",
+      "areaServed": [
+        {
+          "@type": "City",
+          "name": "{{location_name}}",
+          "sameAs": "{{location_wikidata_url}}"
+        },
+        {
+          "@type": "Country",
+          "name": "United Kingdom",
+          "sameAs": "https://www.wikidata.org/wiki/Q145"
+        }
+      ],
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "{{businesses.aggregate_rating.ratingValue}}",
+        "reviewCount": "{{businesses.aggregate_rating.reviewCount}}",
+        "bestRating": "5"
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "opens": "{{businesses.opens}}",
+          "closes": "{{businesses.closes}}"
+        }
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://pomegranate.marketing/#website",
+      "url": "https://pomegranate.marketing/",
+      "name": "pomegranate",
+      "publisher": {
+        "@id": "https://pomegranate.marketing/#organization"
+      },
+      "inLanguage": "en-GB"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://pomegranate.marketing/locations/{{location_slug}}/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "item": {
+            "@id": "https://pomegranate.marketing/",
+            "name": "Home"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "item": {
+            "@id": "https://pomegranate.marketing/locations/",
+            "name": "Locations"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "{{location_name}}"
+        }
+      ]
+    },
+    {
+      "@type": "ImageObject",
+      "@id": "https://pomegranate.marketing/locations/{{location_slug}}/#primaryimage",
+      "url": "{{pages.og_image_url}}",
+      "contentUrl": "{{pages.og_image_url}}",
+      "width": "{{og_image_width}}",
+      "height": "{{og_image_height}}"
+    }
+  ]
+}

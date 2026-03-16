@@ -50,11 +50,12 @@ export const PseoPageEditor: React.FC<Props> = ({ page, business, service, locat
       url_slug: page.url_slug || '',
       seo_title: page.seo_title || '',
       seo_meta_desc: page.seo_meta_desc || '',
+      canonical_url: page.canonical_url || '',
       status: page.status || 'draft',
       hero_headline: (page.unique_hero as any)?.headline || '',
       hero_subheadline: (page.unique_hero as any)?.subheadline || '',
       local_context_content: (page.unique_local_context as any)?.content || '',
-      custom_head: (page.unique_local_context as any)?.custom_head || '',
+      custom_head: page.custom_head_html?.[0] || '',
       unique_process_content: (page.unique_process_content as any)?.content || '',
       unique_faqs: Array.isArray(page.unique_faqs) ? page.unique_faqs : [],
       about_entities: page.about_entities || [],
@@ -126,6 +127,7 @@ export const PseoPageEditor: React.FC<Props> = ({ page, business, service, locat
         url_slug: data.url_slug,
         seo_title: data.seo_title,
         seo_meta_desc: data.seo_meta_desc,
+        canonical_url: data.canonical_url || undefined,
         status: data.status,
         published: data.status === 'published',
         unique_hero: {
@@ -134,8 +136,8 @@ export const PseoPageEditor: React.FC<Props> = ({ page, business, service, locat
         },
         unique_local_context: {
           content: data.local_context_content,
-          custom_head: data.custom_head // Save head code here
         },
+        custom_head_html: data.custom_head ? [data.custom_head] : undefined,
         unique_process_content: {
           content: data.unique_process_content
         },
@@ -432,32 +434,36 @@ export const PseoPageEditor: React.FC<Props> = ({ page, business, service, locat
              </div>
           </div>
 
-          {/* SCHEMA & PUBLISH TAB */}
+{/* SCHEMA & PUBLISH TAB */}
           <div className={`${activeTab === 'schema' ? 'block' : 'hidden'} space-y-6`}>
-              <div className="grid grid-cols-2 gap-4">
-                 <div className="space-y-2">
-                    <Label>Status</Label>
-                    <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" {...register('status')}>
-                      <option value="draft">Draft</option>
-                      <option value="published">Published</option>
-                    </select>
-                 </div>
-              </div>
+               <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                     <Label>Status</Label>
+                     <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" {...register('status')}>
+                       <option value="draft">Draft</option>
+                       <option value="published">Published</option>
+                     </select>
+                  </div>
+                  <div className="space-y-2">
+                     <Label>Canonical URL</Label>
+                     <Input {...register('canonical_url')} placeholder="https://example.com/locations/city/service" />
+                  </div>
+               </div>
 
-              <div className="space-y-2">
-                 <Label className="flex items-center gap-2">
-                    <Code className="h-4 w-4 text-slate-500" />
-                    Custom &lt;head&gt; Code
-                 </Label>
-                 <Textarea 
-                    {...register('custom_head')} 
-                    placeholder="<script>...</script> or <meta name='...'>" 
-                    className="font-mono text-xs h-32 bg-slate-50"
-                 />
-                 <p className="text-xs text-slate-400">Injected into the head of this specific page instance.</p>
-              </div>
+               <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                     <Code className="h-4 w-4 text-slate-500" />
+                     Custom &lt;head&gt; Code
+                  </Label>
+                  <Textarea 
+                     {...register('custom_head')} 
+                     placeholder="<script>...</script> or <meta name='...'>" 
+                     className="font-mono text-xs h-32 bg-slate-50"
+                  />
+                  <p className="text-xs text-slate-400">Injected into the head of this specific page instance.</p>
+               </div>
 
-              <div className="space-y-2">
+               <div className="space-y-2">
                 <div className="flex justify-between items-center mb-2">
                    <Label>Generated Schema (JSON-LD)</Label>
                    <Button type="button" size="sm" variant="secondary" onClick={handleGenerateSchema}>

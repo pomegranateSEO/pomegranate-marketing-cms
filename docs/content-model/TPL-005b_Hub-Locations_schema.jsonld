@@ -1,0 +1,87 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["WebPage", "CollectionPage"],
+      "@id": "https://pomegranate.marketing/locations/",
+      "url": "https://pomegranate.marketing/locations/",
+      "name": "{{pages.meta_title}}",
+      "description": "{{pages.meta_description}}",
+      "inLanguage": "en-GB",
+      "isFamilyFriendly": "true",
+      "datePublished": "{{pages.created_at | ISO 8601}}",
+      "dateModified": "{{pages.updated_at | ISO 8601}}",
+
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "https://pomegranate.marketing/#website",
+        "url": "https://pomegranate.marketing/",
+        "name": "pomegranate"
+      },
+
+      "primaryImageOfPage": { "@id": "https://pomegranate.marketing/locations/#primaryimage" },
+      "image": { "@id": "https://pomegranate.marketing/locations/#primaryimage" },
+
+      "breadcrumb": { "@id": "https://pomegranate.marketing/locations/#breadcrumb" },
+
+      "about": [
+        {
+          "@type": "Thing",
+          "name": "Service area",
+          "sameAs": [
+            "https://en.wikipedia.org/wiki/Service_area",
+            "https://www.wikidata.org/wiki/Q7455734"
+          ]
+        }
+      ],
+
+      "mentions": [
+        {
+          "@type": "Place",
+          "name": "London",
+          "sameAs": [
+            "https://en.wikipedia.org/wiki/London",
+            "https://www.wikidata.org/wiki/Q84"
+          ]
+        },
+        {
+          "@type": "Place",
+          "name": "Essex",
+          "sameAs": [
+            "https://en.wikipedia.org/wiki/Essex",
+            "https://www.wikidata.org/wiki/Q23240"
+          ]
+        }
+      ]
+    },
+
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://pomegranate.marketing/locations/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "item": {
+            "@id": "https://pomegranate.marketing/",
+            "name": "Home"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Locations"
+        }
+      ]
+    },
+
+    {
+      "@type": "ImageObject",
+      "@id": "https://pomegranate.marketing/locations/#primaryimage",
+      "url": "{{pages.og_image_url}}",
+      "contentUrl": "{{pages.og_image_url}}",
+      "width": "{{og_image_width}}",
+      "height": "{{og_image_height}}"
+    }
+  ]
+}

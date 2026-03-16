@@ -7,9 +7,10 @@ import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { Label } from '../ui/label';
 import { Loader2, MapPin, Sparkles } from 'lucide-react';
-import type { TargetLocation } from '../../lib/types';
+import type { TargetLocation, KnowledgeEntity } from '../../lib/types';
 import { generateLandmarks } from '../../lib/ai/gemini';
 import { toast } from '../../lib/toast';
+import { KnowledgeEntitySelector } from '../shared/KnowledgeEntitySelector';
 
 // Schema Validation
 const locationFormSchema = z.object({
@@ -30,14 +31,17 @@ type LocationFormValues = z.infer<typeof locationFormSchema>;
 interface Props {
   initialData?: Partial<TargetLocation>;
   businessId: string;
+  knowledgeEntities?: KnowledgeEntity[];
   onSubmit: (data: any) => void;
   onCancel: () => void;
   isLoading?: boolean;
 }
 
-export const LocationForm: React.FC<Props> = ({ initialData, businessId, onSubmit, onCancel, isLoading }) => {
+export const LocationForm: React.FC<Props> = ({ initialData, businessId, knowledgeEntities = [], onSubmit, onCancel, isLoading }) => {
   const [geocoding, setGeocoding] = useState(false);
   const [generatingLandmarks, setGeneratingLandmarks] = useState(false);
+  const [aboutEntities, setAboutEntities] = useState<string[]>(initialData?.about_entities || []);
+  const [mentionsEntities, setMentionsEntities] = useState<string[]>(initialData?.mentions_entities || []);
 
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<LocationFormValues>({
     resolver: zodResolver(locationFormSchema) as any,
@@ -134,6 +138,8 @@ export const LocationForm: React.FC<Props> = ({ initialData, businessId, onSubmi
       demographics_tag: values.demographics_tag,
       geo_data: values.geo_data,
       landmarks_list: landmarksList,
+      about_entities: aboutEntities,
+      mentions_entities: mentionsEntities,
     };
 
     onSubmit(submissionData);
@@ -232,6 +238,29 @@ export const LocationForm: React.FC<Props> = ({ initialData, businessId, onSubmi
          </div>
 
       </div>
+
+       {/* Knowledge Entities */}
+       {knowledgeEntities.length > 0 && (
+         <div className="md:col-span-2 space-y-4 pt-4 border-t">
+           <p className="text-xs text-slate-500">Link this location to knowledge graph entities for enhanced local SEO schema.</p>
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+             <KnowledgeEntitySelector 
+               label="About Entities"
+               allEntities={knowledgeEntities}
+               selectedIds={aboutEntities}
+               onChange={(ids) => setAboutEntities(ids)}
+               contentToScan={initialData?.name || ''}
+             />
+             <KnowledgeEntitySelector 
+               label="Mentioned Entities"
+               allEntities={knowledgeEntities}
+               selectedIds={mentionsEntities}
+               onChange={(ids) => setMentionsEntities(ids)}
+               contentToScan={initialData?.name || ''}
+             />
+           </div>
+         </div>
+       )}
 
       <div className="flex justify-end gap-3 pt-4 border-t">
         <Button type="button" variant="ghost" onClick={onCancel}>Cancel</Button>
