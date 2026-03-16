@@ -1,5 +1,5 @@
 
-import { supabase } from '../supabaseClient';
+import { supabase } from '../supabaseAdmin';
 
 export async function getDashboardStats() {
   const { count: businesses } = await supabase.from('businesses').select('*', { count: 'exact', head: true });

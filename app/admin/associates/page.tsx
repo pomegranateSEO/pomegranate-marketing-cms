@@ -8,9 +8,10 @@ import { fetchAssociates, createAssociate, updateAssociate, deleteAssociate } fr
 import { fetchBusinesses } from '../../../lib/db/businesses';
 import type { Associate } from '../../../lib/types';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
-import { uploadFile } from '../../../lib/supabaseClient';
+import { uploadFile } from '../../../lib/supabaseAdmin';
 import { toast } from '../../../lib/toast';
 import { useConfirm } from '../../../lib/confirm-dialog';
+import { TableSkeleton, PageHeaderSkeleton } from '../../../components/shared/skeletons';
 
 export default function AssociatesPage() {
   const [associates, setAssociates] = useState<Associate[]>([]);
@@ -126,7 +127,14 @@ export default function AssociatesPage() {
 
   const getContent = () => associates.map(a => `Partner: ${a.name} (${a.role})\n${a.bio}`).join('\n---\n');
 
-  if (loading) return <div className="p-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-slate-400"/></div>;
+  if (loading) {
+    return (
+      <div className="p-6">
+        <PageHeaderSkeleton />
+        <TableSkeleton rows={5} columns={4} />
+      </div>
+    );
+  }
 
   if (isEditing) {
     return (

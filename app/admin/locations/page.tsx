@@ -11,6 +11,7 @@ import { toast } from '../../../lib/toast';
 import type { TargetLocation, KnowledgeEntity } from '../../../lib/types';
 import { useConfirm } from '../../../lib/confirm-dialog';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose, DialogBody, DialogFooter } from '../../../components/ui/dialog';
+import { TableSkeleton, PageHeaderSkeleton } from '../../../components/shared/skeletons';
 
 export default function LocationsPage() {
   const [locations, setLocations] = useState<(TargetLocation & { businesses: { name: string } | null })[]>([]);
@@ -162,8 +163,9 @@ export default function LocationsPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-96">
-        <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+      <div className="p-6">
+        <PageHeaderSkeleton />
+        <TableSkeleton rows={5} columns={4} />
       </div>
     );
   }

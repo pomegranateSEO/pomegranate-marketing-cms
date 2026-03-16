@@ -1,4 +1,4 @@
-import { supabase } from '../supabaseClient';
+import { supabase } from '../supabaseAdmin';
 import type { StaticPage } from '../types';
 
 export const fetchPages = async () => {

@@ -1,4 +1,4 @@
-import { supabase } from '../supabaseClient';
+import { supabase } from '../supabaseAdmin';
 import type { CaseStudy } from '../types';
 
 export const fetchCaseStudies = async () => {

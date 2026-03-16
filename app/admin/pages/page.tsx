@@ -17,6 +17,7 @@ import { KnowledgeEntitySelector } from '../../../components/shared/KnowledgeEnt
 import { generateCorePages } from '../../../lib/ai/page-generator';
 import { toast } from '../../../lib/toast';
 import { useConfirm } from '../../../lib/confirm-dialog';
+import { TableSkeleton, PageHeaderSkeleton } from '../../../components/shared/skeletons';
 
 const SCHEMA_PAGE_TYPES = [
   "WebPage",
@@ -295,7 +296,14 @@ export default function PagesPage() {
   const getPageContent = () => `Page Title: ${formState.title}\n\nContent:\n${formState.content}`;
   const getAllPagesContent = () => pages.map(p => `Page: ${p.title}\n${p.content_html}`).join('\n---\n');
 
-  if (loading) return <div className="p-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-slate-400"/></div>;
+  if (loading) {
+    return (
+      <div className="p-6">
+        <PageHeaderSkeleton />
+        <TableSkeleton rows={5} columns={4} />
+      </div>
+    );
+  }
 
   // --- EDITOR VIEW ---
   if (isEditing) {

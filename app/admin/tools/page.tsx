@@ -12,6 +12,7 @@ import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 import { AITextGenerator } from '../../../components/shared/AITextGenerator';
 import { toast } from '../../../lib/toast';
 import { useConfirm } from '../../../lib/confirm-dialog';
+import { TableSkeleton, PageHeaderSkeleton } from '../../../components/shared/skeletons';
 
 export default function ToolsPage() {
   const [rootBusiness, setRootBusiness] = useState<Business | null>(null);
@@ -145,7 +146,14 @@ export default function ToolsPage() {
 
   const getToolsContent = () => tools.map(t => `Tool: ${t.name}\n${t.short_description}`).join('\n---\n');
 
-  if (loading) return <div className="p-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-slate-400"/></div>;
+  if (loading) {
+    return (
+      <div className="p-6">
+        <PageHeaderSkeleton />
+        <TableSkeleton rows={5} columns={4} />
+      </div>
+    );
+  }
 
   if (isEditing) {
     const brandTheme = rootBusiness?.global_theme as GlobalTheme;

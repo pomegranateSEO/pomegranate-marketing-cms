@@ -8,7 +8,7 @@ import { Textarea } from '../ui/textarea';
 import { Label } from '../ui/label';
 import { Loader2, Upload, ExternalLink } from 'lucide-react';
 import type { Download } from '../../lib/types';
-import { uploadFile } from '../../lib/supabaseClient';
+import { uploadFile } from '../../lib/supabaseAdmin';
 
 const DOWNLOAD_TYPES = [
   'Guide',

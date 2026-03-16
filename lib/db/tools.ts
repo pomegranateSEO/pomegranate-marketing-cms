@@ -1,4 +1,4 @@
-import { supabase } from '../supabaseClient';
+import { supabase } from '../supabaseAdmin';
 import type { FreeTool } from '../types';
 
 export const fetchTools = async () => {

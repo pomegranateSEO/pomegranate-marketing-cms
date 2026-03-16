@@ -10,6 +10,7 @@ import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 import { IndustryForm } from '../../../components/forms/IndustryForm';
 import { toast } from '../../../lib/toast';
 import { useConfirm } from '../../../lib/confirm-dialog';
+import { TableSkeleton, PageHeaderSkeleton } from '../../../components/shared/skeletons';
 
 export default function IndustriesPage() {
   const [industries, setIndustries] = useState<Industry[]>([]);
@@ -84,7 +85,14 @@ export default function IndustriesPage() {
 
   const getIndustriesContent = () => industries.map(i => `Industry: ${i.name}\n${i.description}`).join('\n---\n');
 
-  if (loading) return <div className="p-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-slate-400"/></div>;
+  if (loading) {
+    return (
+      <div className="p-6">
+        <PageHeaderSkeleton />
+        <TableSkeleton rows={5} columns={4} />
+      </div>
+    );
+  }
 
   // — EDITOR VIEW —
   if (editingIndustry !== undefined) {

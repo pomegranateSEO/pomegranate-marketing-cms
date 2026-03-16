@@ -1,5 +1,5 @@
 
-import { supabase } from '../supabaseClient';
+import { supabase } from '../supabaseAdmin';
 import type { BlogTopic } from '../types';
 
 export const fetchBlogTopics = async () => {

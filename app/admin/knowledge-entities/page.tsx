@@ -9,6 +9,7 @@ import { fetchBusinesses } from '../../../lib/db/businesses';
 import { searchWikipedia, getWikidataIdFromWikipediaUrl, type WikiEntity } from '../../../lib/wikipedia/api';
 import { toast } from '../../../lib/toast';
 import { useConfirm } from '../../../lib/confirm-dialog';
+import { CardSkeleton, PageHeaderSkeleton } from '../../../components/shared/skeletons';
 
 export default function KnowledgeEntitiesPage() {
   const [entities, setEntities] = useState<KnowledgeEntity[]>([]);
@@ -202,8 +203,13 @@ export default function KnowledgeEntitiesPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-96">
-        <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+      <div className="p-6 max-w-6xl mx-auto">
+        <PageHeaderSkeleton />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <CardSkeleton key={i} />
+          ))}
+        </div>
       </div>
     );
   }

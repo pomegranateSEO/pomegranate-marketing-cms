@@ -6,6 +6,7 @@ import { fetchRedirects, createRedirect, updateRedirect, deleteRedirect, Redirec
 import { RedirectForm } from '../../../components/forms/RedirectForm';
 import { toast } from '../../../lib/toast';
 import { useConfirm } from '../../../lib/confirm-dialog';
+import { TableSkeleton, PageHeaderSkeleton } from '../../../components/shared/skeletons';
 
 export default function RedirectsPage() {
   const [redirects, setRedirects] = useState<Redirect[]>([]);
@@ -97,7 +98,12 @@ export default function RedirectsPage() {
   const activeCount = redirects.filter(r => r.is_active).length;
 
   if (loading) {
-    return <div className="flex justify-center p-12"><Loader2 className="animate-spin text-slate-400" /></div>;
+    return (
+      <div className="p-6">
+        <PageHeaderSkeleton />
+        <TableSkeleton rows={5} columns={4} />
+      </div>
+    );
   }
 
   if (isCreating || editingRedirect) {

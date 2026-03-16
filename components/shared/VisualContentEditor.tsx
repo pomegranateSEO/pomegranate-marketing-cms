@@ -9,7 +9,7 @@ import { fetchServices } from '../../lib/db/services';
 import { fetchTools } from '../../lib/db/tools';
 import { fetchCaseStudies } from '../../lib/db/case-studies';
 import { fetchAssociates } from '../../lib/db/associates';
-import { supabase } from '../../lib/supabaseClient';
+import { supabase } from '../../lib/supabaseAdmin';
 import { AITextGenerator } from './AITextGenerator';
 import { GlobalTheme } from '../../lib/types';
 

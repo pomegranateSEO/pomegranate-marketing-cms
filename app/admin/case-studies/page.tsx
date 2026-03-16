@@ -12,6 +12,7 @@ import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 import { VisualContentEditor } from '../../../components/shared/VisualContentEditor';
 import { toast } from '../../../lib/toast';
 import { useConfirm } from '../../../lib/confirm-dialog';
+import { TableSkeleton, PageHeaderSkeleton } from '../../../components/shared/skeletons';
 
 export default function CaseStudiesPage() {
   const [studies, setStudies] = useState<any[]>([]);
@@ -116,7 +117,14 @@ export default function CaseStudiesPage() {
 
   const getContent = () => studies.map(s => `Case Study: ${s.title}\n${s.summary}`).join('\n---\n');
 
-  if (loading) return <div className="p-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-slate-400"/></div>;
+  if (loading) {
+    return (
+      <div className="p-6">
+        <PageHeaderSkeleton />
+        <TableSkeleton rows={5} columns={4} />
+      </div>
+    );
+  }
 
   if (isEditing) {
     return (

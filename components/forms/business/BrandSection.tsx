@@ -5,7 +5,7 @@ import { Textarea } from '../../ui/textarea';
 import { Label } from '../../ui/label';
 import { Upload, Sparkles, FileText, CheckCircle2, Loader2, AlertTriangle } from 'lucide-react';
 import { analyzeBrandGuidelines } from '../../../lib/ai/gemini';
-import { uploadFile } from '../../../lib/supabaseClient';
+import { uploadFile } from '../../../lib/supabaseAdmin';
 import { toast } from '../../../lib/toast';
 
 export const BrandSection: React.FC = () => {

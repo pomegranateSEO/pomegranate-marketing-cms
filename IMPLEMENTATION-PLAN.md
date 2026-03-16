@@ -2,7 +2,7 @@
 
 **Project:** Pomegranate v2 CMS Admin Panel UI/UX Improvements
 **Created:** March 16, 2026
-**Last Updated:** March 17, 2026 (v5.0 - Session Updates Applied)
+**Last Updated:** March 16, 2026 (v5.1 - Test Audit Verified)
 **Status:** Ready for Implementation
 **Priority:** CRITICAL > HIGH > MEDIUM > LOW
 
@@ -170,6 +170,7 @@ Replace all native `alert()` calls with Sonner toast notifications. There are 30
 > ### 🧪 TEST CHECKPOINT T1 — Toast System
 > **Trigger:** After Task 1.1 is merged. Spin up a test agent with `TESTING-PLAN.md` → **Test Suite T1**.
 > **What to verify:** Toasts appear on every page where alerts were replaced. No `alert()` calls remain in source. Success/error/info/warning variants all render correctly. Auto-dismiss timings are correct.
+> **Status:** ✅ VERIFIED — All 12 checks passed (2026-03-16)
 
 ---
 
@@ -316,6 +317,7 @@ Some pages hide action buttons behind `opacity-0 group-hover:opacity-100`. These
 > ### 🧪 TEST CHECKPOINT T2 — Phase 1 Complete
 > **Trigger:** After Tasks 1.2, 1.3, 1.4, 1.5, 1.6, and 1.7 are all merged. Spin up a test agent with `TESTING-PLAN.md` → **Test Suite T2**.
 > **What to verify:** All `window.confirm()` replaced with modal dialogs. Modals have focus trap, Escape key, click-outside-close. All icon-only buttons have `aria-label`. Hover-only buttons are always visible. Button disabled states work. Focus rings visible on sidebar nav and custom elements.
+> **Status:** ✅ VERIFIED — All 18 checks passed (2026-03-16)
 
 ---
 
@@ -330,20 +332,21 @@ Some pages hide action buttons behind `opacity-0 group-hover:opacity-100`. These
 Every admin page shows a centered `Loader2` spinner during loading. Replace with skeleton screens that match the page layout. See `CODE-EXAMPLES.md` Example 3.
 
 **Components to create in `components/ui/skeleton.tsx` and `components/shared/skeletons.tsx`:**
-- [ ] Base `Skeleton` component (pulse animation bar)
-- [ ] `TableSkeleton` - header + rows matching table layout
-- [ ] `CardSkeleton` - matching entity card layout
-- [ ] `FormSkeleton` - matching form field layout
-- [ ] `PageHeaderSkeleton` - title + description + action button
-- [ ] `DashboardStatsSkeleton` - matching dashboard cards
+- [x] Base `Skeleton` component (pulse animation bar)
+- [x] `TableSkeleton` - header + rows matching table layout
+- [x] `CardSkeleton` - matching entity card layout
+- [x] `FormSkeleton` - matching form field layout
+- [x] `PageHeaderSkeleton` - title + description + action button
+- [x] `DashboardStatsSkeleton` - matching dashboard cards
 
 **Pages to update (replace `Loader2` spinner with appropriate skeleton):**
-- [ ] Dashboard, businesses, services, locations
-- [ ] posts, pages, reviews, tools
-- [ ] industries, case-studies, downloads, associates
-- [ ] knowledge-entities, people, blog-topics
+- [x] Dashboard, businesses, services, locations
+- [x] posts, pages, reviews, tools
+- [x] industries, case-studies, downloads, associates
+- [x] knowledge-entities, people, blog-topics
+- [x] redirects, error-logs, generation
 
-**Status:** [ ] NOT STARTED
+**Status:** [x] COMPLETED — 2026-03-16
 
 > ### 🧪 TEST CHECKPOINT T3 — Skeleton Screens
 > **Trigger:** After Task 2.1 is merged. Spin up a test agent with `TESTING-PLAN.md` → **Test Suite T3**.

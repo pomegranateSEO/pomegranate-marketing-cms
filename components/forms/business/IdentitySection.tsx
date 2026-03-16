@@ -5,7 +5,7 @@ import { Textarea } from '../../ui/textarea';
 import { Label } from '../../ui/label';
 import { Sparkles, Upload, Check, Loader2, AlertTriangle, Hexagon } from 'lucide-react';
 import { SEO_LIMITS, getCharacterCountColor } from '../../../lib/seo/metadata-validator';
-import { uploadFile } from '../../../lib/supabaseClient';
+import { uploadFile } from '../../../lib/supabaseAdmin';
 import { toast } from '../../../lib/toast';
 
 const CODE_LOGO_VALUE = 'code:pomegranate-logo';

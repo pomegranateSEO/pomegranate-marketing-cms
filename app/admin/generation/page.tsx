@@ -15,6 +15,7 @@ import type { Service, TargetLocation, PseoPageInstance, Business, KnowledgeEnti
 import { PseoPageEditor } from '../../../components/editors/PseoPageEditor';
 import { toast } from '../../../lib/toast';
 import { useConfirm } from '../../../lib/confirm-dialog';
+import { TableSkeleton, PageHeaderSkeleton } from '../../../components/shared/skeletons';
 
 export default function GenerationPage() {
   const [services, setServices] = useState<Service[]>([]);
@@ -224,7 +225,12 @@ export default function GenerationPage() {
   };
 
   if (loading) {
-    return <div className="p-12 text-center"><Loader2 className="h-8 w-8 animate-spin mx-auto text-slate-400" /></div>;
+    return (
+      <div className="p-6">
+        <PageHeaderSkeleton />
+        <TableSkeleton rows={5} columns={4} />
+      </div>
+    );
   }
   
   const editingService = services.find(s => s.id === editingPage?.service_id);

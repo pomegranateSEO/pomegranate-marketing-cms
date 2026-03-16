@@ -6,6 +6,7 @@ import { fetchErrorLogs, resolveErrorLog, ErrorLog } from '../../../lib/db/redir
 import { createRedirect } from '../../../lib/db/redirects';
 import { RedirectForm } from '../../../components/forms/RedirectForm';
 import { toast } from '../../../lib/toast';
+import { TableSkeleton, PageHeaderSkeleton } from '../../../components/shared/skeletons';
 
 export default function ErrorLogsPage() {
   const [errorLogs, setErrorLogs] = useState<ErrorLog[]>([]);
@@ -74,7 +75,12 @@ export default function ErrorLogsPage() {
   const topErrors = errorLogs.filter(l => !l.resolved).slice(0, 50);
 
   if (loading) {
-    return <div className="flex justify-center p-12"><Loader2 className="animate-spin text-slate-400" /></div>;
+    return (
+      <div className="p-6">
+        <PageHeaderSkeleton />
+        <TableSkeleton rows={5} columns={4} />
+      </div>
+    );
   }
 
   if (creatingRedirect) {

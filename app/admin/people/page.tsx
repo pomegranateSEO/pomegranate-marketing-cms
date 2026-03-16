@@ -10,6 +10,7 @@ import type { Person, Business } from '../../../lib/types';
 import { MediaManager } from '../../../components/shared/MediaManager';
 import { toast } from '../../../lib/toast';
 import { useConfirm } from '../../../lib/confirm-dialog';
+import { TableSkeleton, PageHeaderSkeleton } from '../../../components/shared/skeletons';
 
 export default function PeoplePage() {
   const [people, setPeople] = useState<Person[]>([]);
@@ -207,7 +208,14 @@ export default function PeoplePage() {
     }));
   };
 
-  if (loading) return <div className="flex justify-center p-12"><Loader2 className="animate-spin text-slate-400" /></div>;
+  if (loading) {
+    return (
+      <div className="p-6">
+        <PageHeaderSkeleton />
+        <TableSkeleton rows={5} columns={4} />
+      </div>
+    );
+  }
 
   if (isEditing) {
     return (

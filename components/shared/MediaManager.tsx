@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { supabase, uploadFile } from '../../lib/supabaseClient';
+import { supabase, uploadFile } from '../../lib/supabaseAdmin';
 import { Button } from '../ui/button';
 import { Loader2, Upload, Image as ImageIcon, Copy, X, Save, Edit2 } from 'lucide-react';
 import { Label } from '../ui/label';

@@ -1,5 +1,5 @@
 
-import { supabase } from '../supabaseClient';
+import { supabase } from '../supabaseAdmin';
 import type { PseoPageInstance } from '../types';
 
 export const fetchPageInstances = async (serviceId?: string) => {

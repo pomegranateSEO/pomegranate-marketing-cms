@@ -18,6 +18,7 @@ import { generateTopicRoadmap, generateSubTopics, generateParentTopic } from '..
 import type { BlogTopic, Business, KnowledgeEntity } from '../../../lib/types';
 import { toast } from '../../../lib/toast';
 import { useConfirm } from '../../../lib/confirm-dialog';
+import { CardSkeleton, PageHeaderSkeleton } from '../../../components/shared/skeletons';
 
 // --- MINDMAP NODE COMPONENT ---
 
@@ -364,7 +365,18 @@ export default function BlogTopicsPage() {
     }
   };
 
-  if (loading) return <div className="flex h-96 items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-slate-300"/></div>;
+  if (loading) {
+    return (
+      <div className="p-6">
+        <PageHeaderSkeleton />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <CardSkeleton key={i} />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   const selectedTopic = flatTopics.find(t => t.id === selectedTopicId);
 

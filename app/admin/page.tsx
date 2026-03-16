@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { getDashboardStats } from '../../lib/db/stats';
 import { Button } from '../../components/ui/button';
+import { DashboardStatsSkeleton } from '../../components/shared/skeletons';
 
 export default function DashboardPage() {
     const [stats, setStats] = useState({
@@ -93,6 +94,14 @@ export default function DashboardPage() {
     ];
 
     const nextStep = steps.find(s => !s.completed) || steps[steps.length - 1];
+
+    if (loading) {
+        return (
+            <div className="p-8 max-w-6xl mx-auto">
+                <DashboardStatsSkeleton />
+            </div>
+        );
+    }
 
     return (
         <div className="p-8 max-w-6xl mx-auto">

@@ -1,4 +1,4 @@
-import { supabase } from '../supabaseClient';
+import { supabase } from '../supabaseAdmin';
 import type { Download } from '../types';
 
 export const fetchDownloads = async () => {

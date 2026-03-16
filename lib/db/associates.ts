@@ -1,4 +1,4 @@
-import { supabase } from '../supabaseClient';
+import { supabase } from '../supabaseAdmin';
 import type { Associate } from '../types';
 
 export const fetchAssociates = async () => {

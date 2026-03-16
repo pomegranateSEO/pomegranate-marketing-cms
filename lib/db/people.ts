@@ -1,4 +1,4 @@
-import { supabase } from '../supabaseClient';
+import { supabase } from '../supabaseAdmin';
 import type { Person } from '../types';
 
 export const fetchPeople = async () => {

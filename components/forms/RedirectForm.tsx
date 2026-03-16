@@ -5,7 +5,7 @@ import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
 import { Search, ExternalLink } from 'lucide-react';
 import type { Redirect } from '../../lib/db/redirects';
-import { supabase } from '../../lib/supabaseClient';
+import { supabase } from '../../lib/supabaseAdmin';
 
 interface PageOption {
   path: string;

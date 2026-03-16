@@ -1,4 +1,4 @@
-import { supabase } from '../supabaseClient';
+import { supabase } from '../supabaseAdmin';
 import type { TargetLocation } from '../types';
 
 export const fetchLocations = async () => {

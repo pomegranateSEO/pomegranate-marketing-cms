@@ -4,10 +4,11 @@ import { Button } from '../../../components/ui/button';
 import { toast } from '../../../lib/toast';
 import { BusinessForm } from '../../../components/forms/BusinessForm';
 import { fetchBusinesses, createBusiness, deleteBusiness, updateBusiness } from '../../../lib/db/businesses';
-import { checkConnection } from '../../../lib/supabaseClient';
+import { checkConnection } from '../../../lib/supabaseAdmin';
 import type { Business } from '../../../lib/types';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 import { useConfirm } from '../../../lib/confirm-dialog';
+import { FormSkeleton, PageHeaderSkeleton } from '../../../components/shared/skeletons';
 
 export default function BusinessPage() {
   const [businesses, setBusinesses] = useState<Business[]>([]);
@@ -123,9 +124,9 @@ export default function BusinessPage() {
   // RENDER LOADING
   if (loading) {
      return (
-       <div className="flex flex-col items-center justify-center h-96 text-slate-500 gap-4">
-         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-         <p>Syncing Knowledge Graph...</p>
+       <div className="p-6 max-w-3xl mx-auto">
+         <PageHeaderSkeleton />
+         <FormSkeleton fields={8} />
        </div>
      );
   }

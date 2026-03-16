@@ -3,7 +3,7 @@ import { Download, Plus, Loader2, File, Trash2, ExternalLink, Pencil, Eye, EyeOf
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
-import { supabase, uploadFile } from '../../../lib/supabaseClient';
+import { supabase, uploadFile } from '../../../lib/supabaseAdmin';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 import { fetchBusinesses } from '../../../lib/db/businesses';
 import { fetchDownloads, createDownload, updateDownload, deleteDownload } from '../../../lib/db/downloads';
@@ -11,6 +11,7 @@ import { DownloadForm } from '../../../components/forms/DownloadForm';
 import { toast } from '../../../lib/toast';
 import type { Download as DownloadType } from '../../../lib/types';
 import { useConfirm } from '../../../lib/confirm-dialog';
+import { TableSkeleton, PageHeaderSkeleton } from '../../../components/shared/skeletons';
 
 export default function DownloadsPage() {
   const [downloads, setDownloads] = useState<DownloadType[]>([]);
@@ -99,7 +100,12 @@ export default function DownloadsPage() {
   };
 
   if (loading) {
-    return <div className="flex justify-center p-12"><Loader2 className="animate-spin text-slate-400" /></div>;
+    return (
+      <div className="p-6">
+        <PageHeaderSkeleton />
+        <TableSkeleton rows={5} columns={4} />
+      </div>
+    );
   }
 
   if (isCreating || editingDownload) {

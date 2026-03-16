@@ -6,7 +6,7 @@ import {
   Factory, Users, Award, Image as ImageIcon, Lightbulb, ArrowRight, AlertTriangle
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { supabase } from '../../lib/supabaseClient';
+import { supabase } from '../../lib/supabaseAdmin';
 
 export const Sidebar = () => {
   const [email, setEmail] = useState('User');
