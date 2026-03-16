@@ -63,8 +63,15 @@ export default function PagesPage() {
     keyword_terms: '',
     // Hero data fields
     hero_title: '',
-    hero_subtitle: '',
     hero_eyebrow: '',
+    hero_subtitle: '',      // contact/about: hd.subtitle
+    hero_subtext: '',       // home: hd.subtext (line below hero title)
+    hero_tagline: '',       // home: hd.tagline (small line under subtext)
+    hero_primary_cta_text: '',      // home: hd.primary_cta_text
+    hero_secondary_cta_text: '',    // home: hd.secondary_cta_text
+    hero_secondary_cta_link: '',    // home: hd.secondary_cta_link
+    // Content sections — JSON editor for complex nested data
+    content_sections_json: '',
     // SEO fields
     canonical_url: '',
     og_image_url: '',
@@ -124,12 +131,29 @@ export default function PagesPage() {
         enabled: keywordTerms.length > 0,
       };
 
-      const heroDataPayload = {
-        title: formState.hero_title || undefined,
-        subtitle: formState.hero_subtitle || undefined,
-        eyebrow: formState.hero_eyebrow || undefined,
-      };
-      const hasHeroData = Object.values(heroDataPayload).some(Boolean);
+      // Build hero_data — only include keys that have values, so existing DB
+      // fields not present in this form are not inadvertently cleared.
+      const heroDataPayload: Record<string, string> = {};
+      if (formState.hero_title)              heroDataPayload.title              = formState.hero_title;
+      if (formState.hero_eyebrow)            heroDataPayload.eyebrow            = formState.hero_eyebrow;
+      if (formState.hero_subtitle)           heroDataPayload.subtitle           = formState.hero_subtitle;
+      if (formState.hero_subtext)            heroDataPayload.subtext            = formState.hero_subtext;
+      if (formState.hero_tagline)            heroDataPayload.tagline            = formState.hero_tagline;
+      if (formState.hero_primary_cta_text)   heroDataPayload.primary_cta_text   = formState.hero_primary_cta_text;
+      if (formState.hero_secondary_cta_text) heroDataPayload.secondary_cta_text = formState.hero_secondary_cta_text;
+      if (formState.hero_secondary_cta_link) heroDataPayload.secondary_cta_link = formState.hero_secondary_cta_link;
+
+      // Parse content_sections JSON editor
+      let parsedContentSections: Record<string, any> | undefined;
+      if (formState.content_sections_json) {
+        try {
+          parsedContentSections = JSON.parse(formState.content_sections_json);
+        } catch {
+          toast.error('Content Sections JSON is invalid. Fix the JSON and try again.');
+          setSaving(false);
+          return;
+        }
+      }
 
       const payload: Partial<StaticPage> = {
         business_id: rootBusiness.id,
@@ -143,7 +167,8 @@ export default function PagesPage() {
         about_entities: formState.about_entities,
         mentions_entities: formState.mentions_entities,
         keyword_cycling_blocks: keywordTerms.length > 0 ? [keywordCyclingBlock] : [],
-        ...(hasHeroData && { hero_data: heroDataPayload }),
+        ...(Object.keys(heroDataPayload).length > 0 && { hero_data: heroDataPayload }),
+        ...(parsedContentSections && { content_sections: parsedContentSections }),
         canonical_url: formState.canonical_url || undefined,
         og_image_url: formState.og_image_url || undefined,
       };
@@ -269,8 +294,14 @@ export default function PagesPage() {
         keyword_prefix_text: prefixText,
         keyword_terms: keywordTerms,
         hero_title: heroData.title || '',
-        hero_subtitle: heroData.subtitle || '',
         hero_eyebrow: heroData.eyebrow || '',
+        hero_subtitle: heroData.subtitle || '',
+        hero_subtext: heroData.subtext || '',
+        hero_tagline: heroData.tagline || '',
+        hero_primary_cta_text: heroData.primary_cta_text || '',
+        hero_secondary_cta_text: heroData.secondary_cta_text || '',
+        hero_secondary_cta_link: heroData.secondary_cta_link || '',
+        content_sections_json: page.content_sections ? JSON.stringify(page.content_sections, null, 2) : '',
         canonical_url: page.canonical_url || '',
         og_image_url: page.og_image_url || '',
       });
@@ -286,8 +317,14 @@ export default function PagesPage() {
       keyword_prefix_text: 'We are a',
       keyword_terms: '',
       hero_title: '',
-      hero_subtitle: '',
       hero_eyebrow: '',
+      hero_subtitle: '',
+      hero_subtext: '',
+      hero_tagline: '',
+      hero_primary_cta_text: '',
+      hero_secondary_cta_text: '',
+      hero_secondary_cta_link: '',
+      content_sections_json: '',
       canonical_url: '',
       og_image_url: '',
     });
@@ -401,11 +438,11 @@ export default function PagesPage() {
                    Hero Section
                  </h4>
                  <p className="text-xs text-slate-500 mb-3">
-                   Main page heading (H1), subtitle, and eyebrow label. These appear at the top of the page.
+                   All hero section fields. Fill only the ones your page uses — empty fields are ignored on save.
                  </p>
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                    <div className="space-y-1">
-                     <Label className="text-xs">Eyebrow / Label</Label>
+                     <Label className="text-xs">Eyebrow / Label <span className="text-slate-400">(contact, about)</span></Label>
                      <Input
                        value={formState.hero_eyebrow}
                        onChange={e => setFormState({ ...formState, hero_eyebrow: e.target.value })}
@@ -414,7 +451,7 @@ export default function PagesPage() {
                      />
                    </div>
                    <div className="space-y-1 md:col-span-2">
-                     <Label className="text-xs">Hero Title (H1)</Label>
+                     <Label className="text-xs">Hero Title (H1) <span className="text-slate-400">(all pages)</span></Label>
                      <Input
                        value={formState.hero_title}
                        onChange={e => setFormState({ ...formState, hero_title: e.target.value })}
@@ -423,7 +460,7 @@ export default function PagesPage() {
                      />
                    </div>
                    <div className="space-y-1 md:col-span-2">
-                     <Label className="text-xs">Hero Subtitle</Label>
+                     <Label className="text-xs">Subtitle <span className="text-slate-400">(contact, about — line directly under title)</span></Label>
                      <Input
                        value={formState.hero_subtitle}
                        onChange={e => setFormState({ ...formState, hero_subtitle: e.target.value })}
@@ -431,7 +468,72 @@ export default function PagesPage() {
                        className="bg-white text-sm"
                      />
                    </div>
+                   <div className="space-y-1 md:col-span-2">
+                     <Label className="text-xs">Subtext <span className="text-slate-400">(home — e.g. "We take small businesses from darkness to light.")</span></Label>
+                     <Input
+                       value={formState.hero_subtext}
+                       onChange={e => setFormState({ ...formState, hero_subtext: e.target.value })}
+                       placeholder="We take small businesses from darkness to light."
+                       className="bg-white text-sm"
+                     />
+                   </div>
+                   <div className="space-y-1 md:col-span-2">
+                     <Label className="text-xs">Tagline <span className="text-slate-400">(home — small line below subtext)</span></Label>
+                     <Input
+                       value={formState.hero_tagline}
+                       onChange={e => setFormState({ ...formState, hero_tagline: e.target.value })}
+                       placeholder="AI agents are here now but don't worry; we speak their language."
+                       className="bg-white text-sm"
+                     />
+                   </div>
+                   <div className="space-y-1">
+                     <Label className="text-xs">Primary CTA Text <span className="text-slate-400">(home)</span></Label>
+                     <Input
+                       value={formState.hero_primary_cta_text}
+                       onChange={e => setFormState({ ...formState, hero_primary_cta_text: e.target.value })}
+                       placeholder="Begin Seeding"
+                       className="bg-white text-sm"
+                     />
+                   </div>
+                   <div className="space-y-1">
+                     <Label className="text-xs">Secondary CTA Text <span className="text-slate-400">(home)</span></Label>
+                     <Input
+                       value={formState.hero_secondary_cta_text}
+                       onChange={e => setFormState({ ...formState, hero_secondary_cta_text: e.target.value })}
+                       placeholder="FREE SEO TOOLS"
+                       className="bg-white text-sm"
+                     />
+                   </div>
+                   <div className="space-y-1 md:col-span-2">
+                     <Label className="text-xs">Secondary CTA Link <span className="text-slate-400">(home)</span></Label>
+                     <Input
+                       value={formState.hero_secondary_cta_link}
+                       onChange={e => setFormState({ ...formState, hero_secondary_cta_link: e.target.value })}
+                       placeholder="/free-tools"
+                       className="bg-white text-sm"
+                     />
+                   </div>
                  </div>
+               </div>
+
+               {/* CONTENT SECTIONS JSON EDITOR */}
+               <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-6">
+                 <h4 className="text-sm font-semibold text-slate-800 flex items-center gap-2 mb-2">
+                   <span className="w-6 h-6 bg-slate-600 text-white rounded flex items-center justify-center text-xs font-bold">C</span>
+                   Content Sections
+                 </h4>
+                 <p className="text-xs text-slate-500 mb-3">
+                   All page body content (services, who we are, contact details, mission, values, timeline, etc.) stored as JSON.
+                   Edit carefully — must be valid JSON. Changes here update what's displayed on the live website.
+                 </p>
+                 <textarea
+                   value={formState.content_sections_json}
+                   onChange={e => setFormState({ ...formState, content_sections_json: e.target.value })}
+                   className="w-full h-64 font-mono text-xs bg-white border border-slate-300 rounded p-3 resize-y focus:outline-none focus:ring-2 focus:ring-rose-400"
+                   placeholder="{}"
+                   spellCheck={false}
+                 />
+                 <p className="text-xs text-amber-600 mt-1">⚠ Invalid JSON will block saving. Use a JSON validator if unsure.</p>
                </div>
 
                <div className="space-y-6">
