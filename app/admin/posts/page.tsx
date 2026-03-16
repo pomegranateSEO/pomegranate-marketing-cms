@@ -17,6 +17,8 @@ import { FAQEditor } from '../../../components/shared/FAQEditor';
 import { AITextGenerator } from '../../../components/shared/AITextGenerator';
 import { KnowledgeEntitySelector } from '../../../components/shared/KnowledgeEntitySelector';
 import { toast } from '../../../lib/toast';
+import { useConfirm } from '../../../lib/confirm-dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose, DialogBody } from '../../../components/ui/dialog';
 
 export default function PostsPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -27,6 +29,7 @@ export default function PostsPage() {
   const [rootBusiness, setRootBusiness] = useState<Business | null>(null);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<'semantic' | 'settings'>('semantic');
+  const { confirm, ConfirmDialog } = useConfirm();
   
   // Media Picker State
   const [showMediaPicker, setShowMediaPicker] = useState(false);
@@ -110,10 +113,19 @@ export default function PostsPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (confirm("Delete this post?")) {
+  const handleDelete = async (id: string, title: string) => {
+    const confirmed = await confirm({
+      title: "Delete Post",
+      message: `Are you sure you want to delete "${title}"? This action cannot be undone.`,
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      variant: "destructive",
+    });
+    
+    if (confirmed) {
       try {
         await deletePost(id);
+        toast.success(`Post "${title}" deleted successfully`);
         loadData();
       } catch (e: any) {
         toast.error("Failed to delete post", e.message);
@@ -191,26 +203,22 @@ export default function PostsPage() {
 
     return (
       <div className="p-6 max-w-5xl mx-auto">
-        {/* Media Picker Modal Overlay */}
-        {showMediaPicker && (
-           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-6">
-              <div className="w-full max-w-4xl h-[700px] bg-white rounded-lg shadow-2xl overflow-hidden flex flex-col">
-                 <div className="flex justify-between items-center p-4 border-b">
-                    <h3 className="font-bold text-lg">Select Featured Image</h3>
-                    <Button variant="ghost" size="icon" onClick={() => setShowMediaPicker(false)}>
-                       <X className="h-5 w-5" />
-                    </Button>
-                 </div>
-                 <div className="flex-1 min-h-0 bg-slate-50 p-4">
-                    <MediaManager 
-                       mode="picker" 
-                       onSelect={handleImageSelect} 
-                       onClose={() => setShowMediaPicker(false)} 
-                    />
-                 </div>
-              </div>
-           </div>
-        )}
+        {/* Media Picker Modal */}
+        <Dialog open={showMediaPicker} onOpenChange={setShowMediaPicker}>
+          <DialogContent className="max-w-4xl h-[700px] p-0">
+            <DialogHeader className="p-4 border-b">
+              <DialogTitle id="media-picker-title">Select Featured Image</DialogTitle>
+              <DialogClose onClose={() => setShowMediaPicker(false)} />
+            </DialogHeader>
+            <DialogBody className="p-0 flex-1 min-h-0 bg-slate-50">
+              <MediaManager 
+                mode="picker" 
+                onSelect={handleImageSelect} 
+                onClose={() => setShowMediaPicker(false)} 
+              />
+            </DialogBody>
+          </DialogContent>
+        </Dialog>
 
         <div className="flex justify-between items-center mb-6">
            <div className="flex items-center gap-4">
@@ -312,13 +320,14 @@ export default function PostsPage() {
                               alt="Preview" 
                               className="h-32 w-auto object-cover rounded border bg-slate-50" 
                            />
-                           <button 
-                             type="button"
-                             onClick={() => setFormState(prev => ({ ...prev, featured_image_url: '' }))}
-                             className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                           >
-                              <X className="h-3 w-3" />
-                           </button>
+                            <button 
+                              type="button"
+                              onClick={() => setFormState(prev => ({ ...prev, featured_image_url: '' }))}
+                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                              aria-label="Remove featured image"
+                            >
+                               <X className="h-3 w-3" aria-hidden="true" />
+                            </button>
                         </div>
                      )}
                   </div>
@@ -384,8 +393,8 @@ export default function PostsPage() {
           {/* SECONDARY TABS - Semantic & Advanced Settings */}
           <div className="border-t pt-6 mt-6">
             <div className="flex border-b bg-slate-50 mb-4 rounded-t-lg">
-               <button type="button" onClick={() => setActiveTab('semantic')} className={`px-6 py-3 text-sm font-medium border-b-2 ${activeTab === 'semantic' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}>Semantic Markup</button>
-               <button type="button" onClick={() => setActiveTab('settings')} className={`px-6 py-3 text-sm font-medium border-b-2 ${activeTab === 'settings' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}>Advanced Settings</button>
+               <button type="button" onClick={() => setActiveTab('semantic')} className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'semantic' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}>Semantic Markup</button>
+               <button type="button" onClick={() => setActiveTab('settings')} className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'settings' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}>Advanced Settings</button>
             </div>
 
             {/* SEMANTIC TAB */}
@@ -497,17 +506,18 @@ export default function PostsPage() {
                  </div>
               </div>
               <div className="flex gap-2">
-                 <Button variant="ghost" size="icon" onClick={() => startEdit(post)}>
-                    <Edit2 className="h-4 w-4 text-slate-500" />
-                 </Button>
-                 <Button variant="ghost" size="icon" onClick={() => handleDelete(post.id)}>
-                    <Trash2 className="h-4 w-4 text-red-500" />
-                 </Button>
+                  <Button variant="ghost" size="icon" onClick={() => startEdit(post)} aria-label={`Edit ${post.title}`}>
+                     <Edit2 className="h-4 w-4 text-slate-500" aria-hidden="true" />
+                  </Button>
+                   <Button variant="ghost" size="icon" onClick={() => handleDelete(post.id, post.title)} aria-label={`Delete ${post.title}`}>
+                     <Trash2 className="h-4 w-4 text-red-500" aria-hidden="true" />
+                  </Button>
               </div>
             </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
+           ))}
+         </div>
+       )}
+       <ConfirmDialog />
+     </div>
+   );
+ }

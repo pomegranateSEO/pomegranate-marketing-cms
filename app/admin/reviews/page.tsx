@@ -9,6 +9,7 @@ import { fetchBusinesses } from '../../../lib/db/businesses';
 import type { Review } from '../../../lib/types';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 import { toast } from '../../../lib/toast';
+import { useConfirm } from '../../../lib/confirm-dialog';
 
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -24,6 +25,7 @@ export default function ReviewsPage() {
     publisher_url: '',
     publisher_name: ''
   });
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const loadData = async () => {
     try {
@@ -64,10 +66,18 @@ export default function ReviewsPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (confirm("Delete this review?")) {
+  const handleDelete = async (id: string, authorName: string) => {
+    const confirmed = await confirm({
+      title: "Delete Review",
+      message: `Are you sure you want to delete the review from "${authorName}"? This action cannot be undone.`,
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      variant: "destructive",
+    });
+    if (confirmed) {
       try {
         await deleteReview(id);
+        toast.success(`Review from "${authorName}" deleted`);
         loadData();
       } catch (err: any) {
         toast.error("Failed to delete review", err.message);
@@ -184,9 +194,9 @@ export default function ReviewsPage() {
                       <Star key={i} className="h-4 w-4 fill-current" />
                     ))}
                  </div>
-                 <Button variant="ghost" size="icon" className="h-6 w-6 text-slate-300 hover:text-red-500" onClick={() => handleDelete(review.id)}>
-                   <Trash2 className="h-3 w-3" />
-                 </Button>
+                   <Button variant="ghost" size="icon" className="h-6 w-6 text-slate-300 hover:text-red-500" onClick={() => handleDelete(review.id, review.author_name)} aria-label={`Delete review from ${review.author_name}`}>
+                     <Trash2 className="h-3 w-3" aria-hidden="true" />
+                  </Button>
               </div>
               <p className="text-sm text-slate-700 italic mb-3 line-clamp-3">"{review.review_body}"</p>
               <div className="flex justify-between items-end">
@@ -204,6 +214,7 @@ export default function ReviewsPage() {
           ))}
         </div>
       )}
+      <ConfirmDialog />
     </div>
   );
 }

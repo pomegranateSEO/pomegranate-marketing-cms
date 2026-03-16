@@ -17,6 +17,7 @@ import { fetchBlogTopics, bulkCreateBlogTopics, clearAllTopics, updateBlogTopic,
 import { generateTopicRoadmap, generateSubTopics, generateParentTopic } from '../../../lib/ai/topic-generator';
 import type { BlogTopic, Business, KnowledgeEntity } from '../../../lib/types';
 import { toast } from '../../../lib/toast';
+import { useConfirm } from '../../../lib/confirm-dialog';
 
 // --- MINDMAP NODE COMPONENT ---
 
@@ -126,6 +127,7 @@ export default function BlogTopicsPage() {
 
   // Side Panel Action State
   const [actionLoading, setActionLoading] = useState(false);
+  const { confirm, ConfirmDialog } = useConfirm();
 
   useEffect(() => {
     loadData();
@@ -181,7 +183,14 @@ export default function BlogTopicsPage() {
     
     // If refining, confirm with user
     if (refinementMode && topics.length > 0) {
-       if (!confirm("This will regenerate the entire roadmap based on your new instructions. Existing topics will be replaced. Continue?")) return;
+       const confirmed = await confirm({
+         title: "Regenerate Roadmap",
+         message: "This will regenerate the entire roadmap based on your new instructions. Existing topics will be replaced. Continue?",
+         confirmText: "Regenerate",
+         cancelText: "Cancel",
+         variant: "destructive",
+       });
+       if (!confirmed) return;
     }
 
     setGenerating(true);
@@ -335,9 +344,18 @@ export default function BlogTopicsPage() {
 
   const handleDeleteTopic = async () => {
     if (!selectedTopicId) return;
-    if (confirm("Delete this topic AND all its children?")) {
+    const selectedTopic = flatTopics.find(t => t.id === selectedTopicId);
+    const confirmed = await confirm({
+      title: "Delete Topic",
+      message: `Are you sure you want to delete "${selectedTopic?.name || 'this topic'}" AND all its children? This action cannot be undone.`,
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      variant: "destructive",
+    });
+    if (confirmed) {
        try {
          await deleteBlogTopic(selectedTopicId);
+         toast.success(`"${selectedTopic?.name || 'Topic'}" deleted successfully`);
          setSelectedTopicId(null);
          loadData();
        } catch (e: any) {
@@ -497,8 +515,9 @@ export default function BlogTopicsPage() {
                  </div>
               </div>
            </div>
-        </div>
+         </div>
       )}
+      <ConfirmDialog />
     </div>
   );
 }

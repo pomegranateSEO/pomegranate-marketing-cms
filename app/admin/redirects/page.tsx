@@ -5,6 +5,7 @@ import { Input } from '../../../components/ui/input';
 import { fetchRedirects, createRedirect, updateRedirect, deleteRedirect, Redirect } from '../../../lib/db/redirects';
 import { RedirectForm } from '../../../components/forms/RedirectForm';
 import { toast } from '../../../lib/toast';
+import { useConfirm } from '../../../lib/confirm-dialog';
 
 export default function RedirectsPage() {
   const [redirects, setRedirects] = useState<Redirect[]>([]);
@@ -13,6 +14,7 @@ export default function RedirectsPage() {
   const [editingRedirect, setEditingRedirect] = useState<Redirect | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterActive, setFilterActive] = useState<'all' | 'active' | 'inactive'>('all');
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const loadData = async () => {
     try {
@@ -49,13 +51,21 @@ export default function RedirectsPage() {
   };
 
   const handleDelete = async (id: string, fromPath: string) => {
-    if (!confirm(`Delete redirect "${fromPath}"? This cannot be undone.`)) return;
-    try {
-      await deleteRedirect(id);
-      toast.success("Redirect deleted");
-      loadData();
-    } catch (err: any) {
-      toast.error("Delete failed", err.message);
+    const confirmed = await confirm({
+      title: "Delete Redirect",
+      message: `Are you sure you want to delete redirect "${fromPath}"? This cannot be undone.`,
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      variant: "destructive",
+    });
+    if (confirmed) {
+      try {
+        await deleteRedirect(id);
+        toast.success("Redirect deleted");
+        loadData();
+      } catch (err: any) {
+        toast.error("Delete failed", err.message);
+      }
     }
   };
 
@@ -248,22 +258,24 @@ export default function RedirectsPage() {
                     >
                       <ExternalLink className="h-4 w-4" />
                     </a>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleEdit(redirect)}
-                      className="h-8 w-8 text-slate-500 hover:text-primary hover:bg-slate-100"
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(redirect.id, redirect.from_path)}
-                      className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                     <Button
+                       variant="ghost"
+                       size="icon"
+                       onClick={() => handleEdit(redirect)}
+                       className="h-8 w-8 text-slate-500 hover:text-primary hover:bg-slate-100"
+                       aria-label={`Edit redirect from ${redirect.from_path}`}
+                     >
+                       <Pencil className="h-4 w-4" aria-hidden="true" />
+                     </Button>
+                     <Button
+                       variant="ghost"
+                       size="icon"
+                       onClick={() => handleDelete(redirect.id, redirect.from_path)}
+                       className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50"
+                       aria-label={`Delete redirect from ${redirect.from_path}`}
+                     >
+                       <Trash2 className="h-4 w-4" aria-hidden="true" />
+                     </Button>
                   </td>
                 </tr>
               ))}
@@ -271,6 +283,7 @@ export default function RedirectsPage() {
           </table>
         </div>
       )}
+      <ConfirmDialog />
     </div>
   );
 }

@@ -99,15 +99,16 @@ export const FAQEditor: React.FC<Props> = ({ value = [], onChange, sourceText })
       <div className="space-y-3">
         {value.map((faq, index) => (
           <div key={index} className="bg-white p-3 rounded border shadow-sm relative group animate-in fade-in slide-in-from-bottom-2">
-             <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+             <div className="absolute top-2 right-2">
                 <Button 
                   type="button" 
                   variant="ghost" 
                   size="icon" 
                   onClick={() => removeFAQ(index)}
                   className="h-6 w-6 text-slate-400 hover:text-red-500"
+                  aria-label="Delete FAQ item"
                 >
-                   <Trash2 className="h-3 w-3" />
+                   <Trash2 className="h-3 w-3" aria-hidden="true" />
                 </Button>
              </div>
              

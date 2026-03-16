@@ -22,6 +22,8 @@ import LoginPage from './app/auth/page';
 import GenerationPage from './app/admin/generation/page';
 import BlogTopicsPage from './app/admin/blog-topics/page';
 import PeoplePage from './app/admin/people/page';
+import RedirectsPage from './app/admin/redirects/page';
+import ErrorLogsPage from './app/admin/error-logs/page';
 import { Loader2 } from 'lucide-react';
 
 // Placeholder components for routes not yet implemented in Phase 1
@@ -97,6 +99,8 @@ function App() {
             
             <Route path="/admin/generation" element={<GenerationPage />} />
             <Route path="/admin/people" element={<PeoplePage />} />
+            <Route path="/admin/redirects" element={<RedirectsPage />} />
+            <Route path="/admin/error-logs" element={<ErrorLogsPage />} />
           </Routes>
         </main>
       </div>

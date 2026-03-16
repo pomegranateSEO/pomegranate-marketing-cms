@@ -9,6 +9,7 @@ import type { Industry, Business, KnowledgeEntity } from '../../../lib/types';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 import { IndustryForm } from '../../../components/forms/IndustryForm';
 import { toast } from '../../../lib/toast';
+import { useConfirm } from '../../../lib/confirm-dialog';
 
 export default function IndustriesPage() {
   const [industries, setIndustries] = useState<Industry[]>([]);
@@ -17,6 +18,7 @@ export default function IndustriesPage() {
   const [editingIndustry, setEditingIndustry] = useState<Industry | null | undefined>(undefined);
   const [rootBusiness, setRootBusiness] = useState<Business | null>(null);
   const [saving, setSaving] = useState(false);
+  const { confirm, ConfirmDialog } = useConfirm();
 
   useEffect(() => {
     loadData();
@@ -62,9 +64,17 @@ export default function IndustriesPage() {
   };
 
   const handleDelete = async (id: string, name: string) => {
-    if (confirm(`CAUTION: Are you sure you want to delete the industry "${name}"?\n\nThis action cannot be undone.`)) {
+    const confirmed = await confirm({
+      title: "Delete Industry",
+      message: `Are you sure you want to delete the industry "${name}"? This action cannot be undone.`,
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      variant: "destructive",
+    });
+    if (confirmed) {
       try {
         await deleteIndustry(id);
+        toast.success(`"${name}" deleted successfully`);
         loadData();
       } catch (err: any) {
         toast.error("Failed to delete industry", err.message);
@@ -151,14 +161,15 @@ export default function IndustriesPage() {
                 <Button variant="ghost" size="sm" onClick={() => setEditingIndustry(ind)}>
                   <Edit2 className="h-4 w-4 mr-2" /> Edit
                 </Button>
-                <Button variant="ghost" size="icon" onClick={() => handleDelete(ind.id, ind.name)} className="text-red-500 hover:bg-red-50">
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                 <Button variant="ghost" size="icon" onClick={() => handleDelete(ind.id, ind.name)} className="text-red-500 hover:bg-red-50" aria-label={`Delete ${ind.name}`}>
+                   <Trash2 className="h-4 w-4" aria-hidden="true" />
+                 </Button>
               </div>
             </div>
           ))}
         </div>
       )}
+      <ConfirmDialog />
     </div>
   );
 }

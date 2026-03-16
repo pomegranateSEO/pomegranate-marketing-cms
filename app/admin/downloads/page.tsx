@@ -10,6 +10,7 @@ import { fetchDownloads, createDownload, updateDownload, deleteDownload } from '
 import { DownloadForm } from '../../../components/forms/DownloadForm';
 import { toast } from '../../../lib/toast';
 import type { Download as DownloadType } from '../../../lib/types';
+import { useConfirm } from '../../../lib/confirm-dialog';
 
 export default function DownloadsPage() {
   const [downloads, setDownloads] = useState<DownloadType[]>([]);
@@ -17,6 +18,7 @@ export default function DownloadsPage() {
   const [isCreating, setIsCreating] = useState(false);
   const [editingDownload, setEditingDownload] = useState<DownloadType | null>(null);
   const [rootBusinessId, setRootBusinessId] = useState<string | null>(null);
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const loadData = async () => {
     try {
@@ -59,13 +61,21 @@ export default function DownloadsPage() {
   };
 
   const handleDelete = async (id: string, title: string) => {
-    if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
-    try {
-      await deleteDownload(id);
-      toast.success("Download deleted");
-      loadData();
-    } catch (err: any) {
-      toast.error("Delete failed", err.message);
+    const confirmed = await confirm({
+      title: "Delete Download",
+      message: `Are you sure you want to delete "${title}"? This cannot be undone.`,
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      variant: "destructive",
+    });
+    if (confirmed) {
+      try {
+        await deleteDownload(id);
+        toast.success("Download deleted");
+        loadData();
+      } catch (err: any) {
+        toast.error("Delete failed", err.message);
+      }
     }
   };
 
@@ -224,22 +234,24 @@ export default function DownloadsPage() {
                         <ExternalLink className="h-4 w-4" />
                       </a>
                     )}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleEdit(download)}
-                      className="h-8 w-8 text-slate-500 hover:text-primary hover:bg-slate-100"
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(download.id, download.title)}
-                      className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                     <Button
+                       variant="ghost"
+                       size="icon"
+                       onClick={() => handleEdit(download)}
+                       className="h-8 w-8 text-slate-500 hover:text-primary hover:bg-slate-100"
+                       aria-label={`Edit ${download.title}`}
+                     >
+                       <Pencil className="h-4 w-4" aria-hidden="true" />
+                     </Button>
+                     <Button
+                       variant="ghost"
+                       size="icon"
+                       onClick={() => handleDelete(download.id, download.title)}
+                       className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50"
+                       aria-label={`Delete ${download.title}`}
+                     >
+                     <Trash2 className="h-4 w-4" aria-hidden="true" />
+                     </Button>
                   </td>
                 </tr>
               ))}
@@ -247,6 +259,7 @@ export default function DownloadsPage() {
           </table>
         </div>
       )}
+      <ConfirmDialog />
     </div>
   );
 }

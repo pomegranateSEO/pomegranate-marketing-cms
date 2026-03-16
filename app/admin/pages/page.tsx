@@ -16,6 +16,7 @@ import { AITextGenerator } from '../../../components/shared/AITextGenerator';
 import { KnowledgeEntitySelector } from '../../../components/shared/KnowledgeEntitySelector';
 import { generateCorePages } from '../../../lib/ai/page-generator';
 import { toast } from '../../../lib/toast';
+import { useConfirm } from '../../../lib/confirm-dialog';
 
 const SCHEMA_PAGE_TYPES = [
   "WebPage",
@@ -41,6 +42,7 @@ export default function PagesPage() {
   const [saving, setSaving] = useState(false);
   const [generatingCore, setGeneratingCore] = useState(false);
   const [activeTab, setActiveTab] = useState<'content' | 'semantic' | 'settings'>('content');
+  const { confirm, ConfirmDialog } = useConfirm();
   
   // Form State
   const [formState, setFormState] = useState({
@@ -160,10 +162,19 @@ export default function PagesPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (confirm("Delete this page? This cannot be undone.")) {
+  const handleDelete = async (id: string, title: string) => {
+    const confirmed = await confirm({
+      title: "Delete Page",
+      message: `Are you sure you want to delete "${title}"? This action cannot be undone.`,
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      variant: "destructive",
+    });
+    
+    if (confirmed) {
       try {
         await deletePage(id);
+        toast.success(`Page "${title}" deleted successfully`);
         loadData();
       } catch (err: any) {
         toast.error("Failed to delete page", err.message);
@@ -174,9 +185,15 @@ export default function PagesPage() {
   const handleGenerateCorePages = async () => {
     if (!rootBusiness) { toast.error("No Root Business found."); return; }
 
-    const confirmMsg = "This will generate the following pages if they don't exist:\n\n- About Us\n- Contact Us\n- Privacy Policy\n- Terms of Service\n- Downloads Hub\n- Tools Hub\n- Case Studies Hub\n- Industries Hub\n- Locations Hub\n- Blog Root\n\nContent will be based on your Brand Identity settings. Proceed?";
+    const confirmed = await confirm({
+      title: "Generate Core Pages",
+      message: "This will generate the following pages if they don't exist:\n\n- About Us\n- Contact Us\n- Privacy Policy\n- Terms of Service\n- Downloads Hub\n- Tools Hub\n- Case Studies Hub\n- Industries Hub\n- Locations Hub\n- Blog Root\n\nContent will be based on your Brand Identity settings. Proceed?",
+      confirmText: "Generate Pages",
+      cancelText: "Cancel",
+      variant: "default",
+    });
     
-    if (!confirm(confirmMsg)) return;
+    if (!confirmed) return;
 
     setGeneratingCore(true);
     try {
@@ -299,9 +316,9 @@ export default function PagesPage() {
         </div>
 
         <div className="flex border-b bg-slate-50 mb-4 rounded-t-lg">
-           <button onClick={() => setActiveTab('content')} className={`px-6 py-3 text-sm font-medium border-b-2 ${activeTab === 'content' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}>Content</button>
-           <button onClick={() => setActiveTab('semantic')} className={`px-6 py-3 text-sm font-medium border-b-2 ${activeTab === 'semantic' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}>Semantic Markup</button>
-           <button onClick={() => setActiveTab('settings')} className={`px-6 py-3 text-sm font-medium border-b-2 ${activeTab === 'settings' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}>Settings & Head</button>
+           <button onClick={() => setActiveTab('content')} className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'content' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}>Content</button>
+           <button onClick={() => setActiveTab('semantic')} className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'semantic' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}>Semantic Markup</button>
+           <button onClick={() => setActiveTab('settings')} className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'settings' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}>Settings & Head</button>
         </div>
 
         <form onSubmit={handleSave} className="space-y-6 bg-white p-6 rounded-lg border shadow-sm rounded-tr-none">
@@ -621,19 +638,20 @@ export default function PagesPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right flex justify-end gap-2">
-                     <Button variant="ghost" size="icon" onClick={() => startEdit(page)}>
-                        <Edit2 className="h-4 w-4 text-slate-500" />
-                     </Button>
-                     <Button variant="ghost" size="icon" onClick={() => handleDelete(page.id)} className="text-red-500 hover:bg-red-50">
-                        <Trash2 className="h-4 w-4" />
-                     </Button>
+                      <Button variant="ghost" size="icon" onClick={() => startEdit(page)} aria-label={`Edit ${page.title}`}>
+                         <Edit2 className="h-4 w-4 text-slate-500" aria-hidden="true" />
+                      </Button>
+                       <Button variant="ghost" size="icon" onClick={() => handleDelete(page.id, page.title)} className="text-red-500 hover:bg-red-50" aria-label={`Delete ${page.title}`}>
+                         <Trash2 className="h-4 w-4" aria-hidden="true" />
+                      </Button>
                   </td>
                 </tr>
               ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
-  );
-}
+             </tbody>
+           </table>
+         </div>
+       )}
+       <ConfirmDialog />
+     </div>
+   );
+ }

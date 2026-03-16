@@ -14,6 +14,7 @@ import { fetchPageInstances, bulkCreatePageInstances, deletePageInstance, update
 import type { Service, TargetLocation, PseoPageInstance, Business, KnowledgeEntity } from '../../../lib/types';
 import { PseoPageEditor } from '../../../components/editors/PseoPageEditor';
 import { toast } from '../../../lib/toast';
+import { useConfirm } from '../../../lib/confirm-dialog';
 
 export default function GenerationPage() {
   const [services, setServices] = useState<Service[]>([]);
@@ -37,6 +38,7 @@ export default function GenerationPage() {
 
   // Editing
   const [editingPage, setEditingPage] = useState<PseoPageInstance | null>(null);
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const toLandmarkArray = (value: unknown): string[] => {
     if (!Array.isArray(value)) return [];
@@ -188,13 +190,22 @@ export default function GenerationPage() {
   };
 
   const handleDeletePage = async (pageId: string) => {
-    if (!confirm("Are you sure you want to delete this page?")) return;
-    try {
-      await deletePageInstance(pageId);
-      const freshPages = await fetchPageInstances();
-      setAllPages(freshPages);
-    } catch (e: any) {
-      toast.error("Delete failed", e.message);
+    const confirmed = await confirm({
+      title: "Delete Page",
+      message: "Are you sure you want to delete this page? This action cannot be undone.",
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      variant: "destructive",
+    });
+    if (confirmed) {
+      try {
+        await deletePageInstance(pageId);
+        const freshPages = await fetchPageInstances();
+        setAllPages(freshPages);
+        toast.success("Page deleted successfully");
+      } catch (e: any) {
+        toast.error("Delete failed", e.message);
+      }
     }
   };
 
@@ -448,9 +459,9 @@ export default function GenerationPage() {
                              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${page.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}>
                                 {page.status === 'published' ? 'Published' : 'Draft'}
                              </span>
-                             <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setEditingPage(page)}>
-                               <Edit className="h-3 w-3" />
-                             </Button>
+                              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setEditingPage(page)} aria-label={`Edit ${page.url_slug}`}>
+                                <Edit className="h-3 w-3" aria-hidden="true" />
+                              </Button>
                           </div>
                        ) : (
                           <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-500">
@@ -508,12 +519,12 @@ export default function GenerationPage() {
                             </td>
                             <td className="px-6 py-3 text-right">
                                <div className="flex justify-end gap-2">
-                                  <Button variant="ghost" size="icon" onClick={() => setEditingPage(page)}>
-                                     <Edit className="h-4 w-4 text-slate-500" />
-                                  </Button>
-                                  <Button variant="ghost" size="icon" onClick={() => handleDeletePage(page.id)}>
-                                     <Trash2 className="h-4 w-4 text-red-500" />
-                                  </Button>
+                                   <Button variant="ghost" size="icon" onClick={() => setEditingPage(page)} aria-label={`Edit ${page.url_slug}`}>
+                                      <Edit className="h-4 w-4 text-slate-500" aria-hidden="true" />
+                                   </Button>
+                                   <Button variant="ghost" size="icon" onClick={() => handleDeletePage(page.id)} aria-label={`Delete ${page.url_slug}`}>
+                                      <Trash2 className="h-4 w-4 text-red-500" aria-hidden="true" />
+                                   </Button>
                                </div>
                             </td>
                          </tr>
@@ -530,6 +541,7 @@ export default function GenerationPage() {
             </table>
          </div>
       )}
+      <ConfirmDialog />
     </div>
   );
 }

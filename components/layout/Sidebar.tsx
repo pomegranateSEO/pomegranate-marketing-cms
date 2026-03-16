@@ -63,7 +63,7 @@ export const Sidebar = () => {
             end={item.exact}
             className={({ isActive }) =>
               cn(
-                "flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors",
+                "flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900",
                 isActive
                   ? "bg-primary/20 text-primary border-r-2 border-primary"
                   : "text-slate-300 hover:bg-slate-800 hover:text-white"
@@ -100,8 +100,12 @@ export const Sidebar = () => {
             <div className="text-xs text-slate-400 truncate max-w-[140px]" title={email}>
               {email}
             </div>
-            <button onClick={handleSignOut} className="text-slate-500 hover:text-white transition-colors" title="Sign Out">
-                <LogOut className="h-4 w-4" />
+            <button 
+              onClick={handleSignOut} 
+              className="text-slate-500 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded p-1" 
+              aria-label="Sign out"
+            >
+                <LogOut className="h-4 w-4" aria-hidden="true" />
             </button>
         </div>
       </div>

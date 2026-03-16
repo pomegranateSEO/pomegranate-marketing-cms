@@ -9,6 +9,8 @@ import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 import { suggestSubLocations } from '../../../lib/ai/gemini';
 import { toast } from '../../../lib/toast';
 import type { TargetLocation, KnowledgeEntity } from '../../../lib/types';
+import { useConfirm } from '../../../lib/confirm-dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose, DialogBody, DialogFooter } from '../../../components/ui/dialog';
 
 export default function LocationsPage() {
   const [locations, setLocations] = useState<(TargetLocation & { businesses: { name: string } | null })[]>([]);
@@ -17,6 +19,7 @@ export default function LocationsPage() {
   const [isCreating, setIsCreating] = useState(false);
   const [editingLocation, setEditingLocation] = useState<TargetLocation | null>(null);
   const [rootBusinessId, setRootBusinessId] = useState<string | null>(null);
+  const { confirm, ConfirmDialog } = useConfirm();
 
   // Expansion State
   const [expandingLocation, setExpandingLocation] = useState<TargetLocation | null>(null);
@@ -50,10 +53,19 @@ export default function LocationsPage() {
     loadData();
   }, []);
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm("Are you sure? This will remove this target location from generation queues.")) {
+  const handleDelete = async (id: string, name: string) => {
+    const confirmed = await confirm({
+      title: "Delete Location",
+      message: `Are you sure you want to delete "${name}"? This will remove this target location from generation queues.`,
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      variant: "destructive",
+    });
+    
+    if (confirmed) {
       try {
         await deleteLocation(id);
+        toast.success(`Location "${name}" deleted successfully`);
         loadData();
       } catch (e: any) {
         toast.error("Failed to delete location", e.message);
@@ -156,72 +168,87 @@ export default function LocationsPage() {
     );
   }
 
-  // EXPANSION MODAL (Simulated)
-  if (expandingLocation) {
-     return (
-       <div className="p-6 max-w-3xl mx-auto">
-          <div className="bg-white border rounded-lg shadow-lg overflow-hidden">
-             <div className="bg-purple-50 p-6 border-b border-purple-100">
-                <h2 className="text-xl font-bold text-purple-900 flex items-center gap-2">
-                   <Network className="h-6 w-6" />
-                   Expand: {expandingLocation.name}
-                </h2>
-                <p className="text-purple-700 mt-1">
-                   Select sub-locations to add as new target locations.
-                </p>
-             </div>
-             
-             <div className="p-6">
-                {isScanning ? (
-                   <div className="flex flex-col items-center justify-center py-12 text-slate-500">
-                      <Loader2 className="h-10 w-10 animate-spin text-purple-600 mb-4" />
-                      <p>Scanning geography...</p>
-                   </div>
-                ) : (
-                   <>
-                      {suggestedSubLocations.length === 0 ? (
-                         <div className="text-center py-8 text-slate-500">
-                            No sub-locations found via AI. 
-                            <br/>
-                            <Button variant="link" onClick={() => setExpandingLocation(null)}>Cancel</Button>
-                         </div>
-                      ) : (
-                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-6 max-h-[400px] overflow-y-auto">
-                            {suggestedSubLocations.map(name => (
-                               <div 
-                                 key={name} 
-                                 onClick={() => toggleSuggestion(name)}
-                                 className={`
-                                   p-3 rounded border cursor-pointer flex items-center justify-between transition-colors
-                                   ${selectedSuggestions.has(name) ? 'bg-purple-50 border-purple-300 text-purple-900' : 'hover:bg-slate-50'}
-                                 `}
-                               >
-                                  <span className="font-medium text-sm">{name}</span>
-                                  {selectedSuggestions.has(name) && <CheckCircle2 className="h-4 w-4 text-purple-600" />}
-                               </div>
-                            ))}
-                         </div>
-                      )}
-                      
-                      <div className="flex justify-between items-center pt-4 border-t">
-                         <div className="text-sm text-slate-500">
-                            {selectedSuggestions.size} selected
-                         </div>
-                         <div className="flex gap-3">
-                            <Button variant="ghost" onClick={() => setExpandingLocation(null)}>Cancel</Button>
-                            <Button onClick={saveSubLocations} disabled={selectedSuggestions.size === 0 || isAddingSubLocations}>
-                               {isAddingSubLocations ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
-                               Create {selectedSuggestions.size} Locations
-                            </Button>
-                         </div>
-                      </div>
-                   </>
-                )}
-             </div>
+  // EXPANSION MODAL
+  const ExpansionDialog = () => (
+    <Dialog open={!!expandingLocation} onOpenChange={(open) => !open && setExpandingLocation(null)}>
+      <DialogContent className="max-w-3xl">
+        <DialogHeader>
+          <DialogTitle id="expansion-dialog-title" className="flex items-center gap-2 text-purple-900">
+            <Network className="h-6 w-6" aria-hidden="true" />
+            Expand: {expandingLocation?.name}
+          </DialogTitle>
+          <DialogClose onClose={() => setExpandingLocation(null)} />
+        </DialogHeader>
+        <DialogBody>
+          <p className="text-purple-700 mb-4">
+            Select sub-locations to add as new target locations.
+          </p>
+          
+          {isScanning ? (
+            <div className="flex flex-col items-center justify-center py-12 text-slate-500">
+              <Loader2 className="h-10 w-10 animate-spin text-purple-600 mb-4" aria-hidden="true" />
+              <p>Scanning geography...</p>
+            </div>
+          ) : (
+            <>
+              {suggestedSubLocations.length === 0 ? (
+                <div className="text-center py-8 text-slate-500">
+                  No sub-locations found via AI.
+                </div>
+              ) : (
+                <div 
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-6 max-h-[400px] overflow-y-auto"
+                  role="listbox"
+                  aria-label="Suggested sub-locations"
+                  aria-multiselectable="true"
+                >
+                  {suggestedSubLocations.map(name => (
+                    <div 
+                      key={name} 
+                      onClick={() => toggleSuggestion(name)}
+                      role="option"
+                      aria-selected={selectedSuggestions.has(name)}
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          toggleSuggestion(name);
+                        }
+                      }}
+                      className={`
+                        p-3 rounded border cursor-pointer flex items-center justify-between transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2
+                        ${selectedSuggestions.has(name) ? 'bg-purple-50 border-purple-300 text-purple-900' : 'hover:bg-slate-50'}
+                      `}
+                    >
+                      <span className="font-medium text-sm">{name}</span>
+                      {selectedSuggestions.has(name) && <CheckCircle2 className="h-4 w-4 text-purple-600" aria-hidden="true" />}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </DialogBody>
+        <DialogFooter>
+          <div className="flex justify-between items-center w-full">
+            <div className="text-sm text-slate-500">
+              {selectedSuggestions.size} selected
+            </div>
+            <div className="flex gap-3">
+              <Button variant="ghost" onClick={() => setExpandingLocation(null)}>Cancel</Button>
+              <Button 
+                onClick={saveSubLocations} 
+                disabled={selectedSuggestions.size === 0 || isAddingSubLocations}
+              >
+                {isAddingSubLocations ? <Loader2 className="h-4 w-4 animate-spin mr-2" aria-hidden="true" /> : <Save className="h-4 w-4 mr-2" aria-hidden="true" />}
+                Create {selectedSuggestions.size} Locations
+              </Button>
+            </div>
           </div>
-       </div>
-     );
-  }
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
 
   // CREATE / EDIT VIEW
   if (isCreating || editingLocation) {
@@ -318,29 +345,32 @@ export default function LocationsPage() {
                    </td>
                   <td className="px-6 py-4 text-right flex justify-end gap-2">
                     {!loc.parent_city && (
-                       <Button 
-                         variant="ghost" 
-                         size="icon" 
-                         onClick={() => startExpansion(loc)} 
-                         title="Find sub-locations (boroughs/districts)"
-                         className="text-purple-600 hover:bg-purple-50"
-                       >
-                         <Network className="h-4 w-4" />
-                       </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          onClick={() => startExpansion(loc)} 
+                          title="Find sub-locations (boroughs/districts)"
+                          className="text-purple-600 hover:bg-purple-50"
+                          aria-label={`Find sub-locations for ${loc.name}`}
+                        >
+                          <Network className="h-4 w-4" aria-hidden="true" />
+                        </Button>
                     )}
-                    <Button variant="ghost" size="icon" onClick={() => handleEdit(loc)} className="text-slate-500 hover:text-primary hover:bg-slate-100">
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" onClick={() => handleDelete(loc.id)} className="text-slate-400 hover:text-red-700 hover:bg-red-50">
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                     <Button variant="ghost" size="icon" onClick={() => handleEdit(loc)} className="text-slate-500 hover:text-primary hover:bg-slate-100" aria-label={`Edit ${loc.name}`}>
+                       <Pencil className="h-4 w-4" aria-hidden="true" />
+                     </Button>
+                     <Button variant="ghost" size="icon" onClick={() => handleDelete(loc.id, loc.name)} className="text-slate-400 hover:text-red-700 hover:bg-red-50" aria-label={`Delete ${loc.name}`}>
+                       <Trash2 className="h-4 w-4" aria-hidden="true" />
+                     </Button>
                   </td>
                 </tr>
               ))}
             </tbody>
-          </table>
-        </div>
-      )}
-    </div>
-  );
-}
+           </table>
+          </div>
+        )}
+        <ConfirmDialog />
+        <ExpansionDialog />
+      </div>
+    );
+  }

@@ -9,6 +9,7 @@ import { fetchBusinesses } from '../../../lib/db/businesses';
 import type { Person, Business } from '../../../lib/types';
 import { MediaManager } from '../../../components/shared/MediaManager';
 import { toast } from '../../../lib/toast';
+import { useConfirm } from '../../../lib/confirm-dialog';
 
 export default function PeoplePage() {
   const [people, setPeople] = useState<Person[]>([]);
@@ -17,6 +18,7 @@ export default function PeoplePage() {
   const [rootBusiness, setRootBusiness] = useState<Business | null>(null);
   const [saving, setSaving] = useState(false);
   const [showMediaPicker, setShowMediaPicker] = useState(false);
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const [formState, setFormState] = useState({
     id: '',
@@ -100,10 +102,18 @@ export default function PeoplePage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (confirm("Delete this person? This may affect blog posts linked to this author.")) {
+  const handleDelete = async (id: string, name: string) => {
+    const confirmed = await confirm({
+      title: "Delete Person",
+      message: `Are you sure you want to delete "${name}"? This may affect blog posts linked to this author.`,
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      variant: "destructive",
+    });
+    if (confirmed) {
       try {
         await deletePerson(id);
+        toast.success(`"${name}" deleted successfully`);
         loadData();
       } catch (e: any) {
         toast.error("Failed to delete person", e.message);
@@ -208,9 +218,9 @@ export default function PeoplePage() {
             <div className="w-full max-w-4xl h-[700px] bg-white rounded-lg shadow-2xl overflow-hidden flex flex-col">
               <div className="flex justify-between items-center p-4 border-b">
                 <h3 className="font-bold text-lg">Select Profile Image</h3>
-                <Button variant="ghost" size="icon" onClick={() => setShowMediaPicker(false)}>
-                  <X className="h-5 w-5" />
-                </Button>
+                 <Button variant="ghost" size="icon" onClick={() => setShowMediaPicker(false)} aria-label="Close media picker">
+                   <X className="h-5 w-5" aria-hidden="true" />
+                 </Button>
               </div>
               <div className="flex-1 min-h-0 bg-slate-50 p-4">
                 <MediaManager
@@ -299,9 +309,10 @@ export default function PeoplePage() {
                 <button
                   type="button"
                   onClick={() => setFormState(prev => ({ ...prev, profile_image_url: '' }))}
-                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                  aria-label="Remove profile image"
                 >
-                  <X className="h-3 w-3" />
+                  <X className="h-3 w-3" aria-hidden="true" />
                 </button>
               </div>
             )}
@@ -497,17 +508,18 @@ export default function PeoplePage() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button variant="ghost" size="icon" onClick={() => startEdit(person)}>
-                  <Edit2 className="h-4 w-4 text-slate-500" />
-                </Button>
-                <Button variant="ghost" size="icon" onClick={() => handleDelete(person.id)}>
-                  <Trash2 className="h-4 w-4 text-red-500" />
-                </Button>
+                 <Button variant="ghost" size="icon" onClick={() => startEdit(person)} aria-label={`Edit ${person.full_name}`}>
+                   <Edit2 className="h-4 w-4 text-slate-500" aria-hidden="true" />
+                 </Button>
+                 <Button variant="ghost" size="icon" onClick={() => handleDelete(person.id, person.full_name)} aria-label={`Delete ${person.full_name}`}>
+                   <Trash2 className="h-4 w-4 text-red-500" aria-hidden="true" />
+                 </Button>
               </div>
             </div>
           ))}
         </div>
       )}
+      <ConfirmDialog />
     </div>
   );
 }

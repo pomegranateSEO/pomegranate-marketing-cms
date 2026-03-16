@@ -7,6 +7,7 @@ import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { fetchMediaMetadata, upsertMediaMetadata, MediaMetadata } from '../../lib/db/media';
 import { toast } from '../../lib/toast';
+import { useConfirm } from '../../lib/confirm-dialog';
 
 interface FileObject {
   name: string;
@@ -36,6 +37,7 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
   const [altText, setAltText] = useState('');
   const [customFilename, setCustomFilename] = useState('');
   const [saving, setSaving] = useState(false);
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const loadImages = async () => {
     setLoading(true);
@@ -184,9 +186,14 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
   const handleDelete = async () => {
     if (!selectedFile) return;
     
-    if (!confirm('Are you sure you want to delete this image? This cannot be undone.')) {
-      return;
-    }
+    const confirmed = await confirm({
+      title: "Delete Image",
+      message: "Are you sure you want to delete this image? This cannot be undone.",
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      variant: "destructive",
+    });
+    if (!confirmed) return;
     
     const storagePath = selectedFile.replace(/^.*\/images\//, '');
     
@@ -197,12 +204,12 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
         throw error;
       }
       
-      // Also delete metadata
       await supabase.from('media_metadata').delete().eq('storage_path', storagePath);
       
       setSelectedFile(null);
       setSelectedMetadata(null);
       await loadImages();
+      toast.success("Image deleted successfully");
     } catch (err: any) {
       toast.error("Delete failed", err.message);
     }
@@ -232,9 +239,9 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
             disabled={uploading}
           />
           {mode === 'picker' && onClose && (
-            <Button variant="ghost" size="icon" onClick={onClose}>
-              <X className="h-4 w-4" />
-            </Button>
+             <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close media manager">
+               <X className="h-4 w-4" aria-hidden="true" />
+             </Button>
           )}
         </div>
       </div>
@@ -291,9 +298,9 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
                   <Label className="text-xs">Public URL</Label>
-                  <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => navigator.clipboard.writeText(selectedFile)}>
-                    <Copy className="h-3 w-3" />
-                  </Button>
+                   <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => navigator.clipboard.writeText(selectedFile)} aria-label="Copy URL to clipboard">
+                     <Copy className="h-3 w-3" aria-hidden="true" />
+                   </Button>
                 </div>
                 <Input value={selectedFile} readOnly className="text-xs font-mono h-8" />
               </div>
@@ -301,9 +308,9 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
                   <Label className="text-xs">Custom Filename</Label>
-                  <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => setEditingFilename(!editingFilename)}>
-                    <Edit2 className="h-3 w-3" />
-                  </Button>
+                   <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => setEditingFilename(!editingFilename)} aria-label={editingFilename ? "Save filename" : "Edit filename"}>
+                     <Edit2 className="h-3 w-3" aria-hidden="true" />
+                   </Button>
                 </div>
                 {editingFilename ? (
                   <Input 
@@ -324,9 +331,9 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
                   <Label className="text-xs">Alt Text (Accessibility)</Label>
-                  <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => setEditingAlt(!editingAlt)}>
-                    <Edit2 className="h-3 w-3" />
-                  </Button>
+                   <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => setEditingAlt(!editingAlt)} aria-label={editingAlt ? "Save alt text" : "Edit alt text"}>
+                     <Edit2 className="h-3 w-3" aria-hidden="true" />
+                   </Button>
                 </div>
                 {editingAlt ? (
                   <Textarea 
@@ -367,6 +374,7 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
           </div>
         )}
       </div>
+      <ConfirmDialog />
     </div>
   );
 };

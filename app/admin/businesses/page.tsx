@@ -7,6 +7,7 @@ import { fetchBusinesses, createBusiness, deleteBusiness, updateBusiness } from 
 import { checkConnection } from '../../../lib/supabaseClient';
 import type { Business } from '../../../lib/types';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
+import { useConfirm } from '../../../lib/confirm-dialog';
 
 export default function BusinessPage() {
   const [businesses, setBusinesses] = useState<Business[]>([]);
@@ -16,6 +17,7 @@ export default function BusinessPage() {
   const [error, setError] = useState<string | null>(null);
   const [detailedError, setDetailedError] = useState<string | null>(null);
   const [connectionStatus, setConnectionStatus] = useState<'checking' | 'connected' | 'disconnected'>('checking');
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const runConnectionCheck = async () => {
     setConnectionStatus('checking');
@@ -52,10 +54,19 @@ export default function BusinessPage() {
   }, []);
 
   const handleDelete = async (id: string) => {
-    if (window.confirm("CONFIRM DELETE: This will permanently remove this entity and ALL its related services, locations, and pages.")) {
+    const confirmed = await confirm({
+      title: "Delete Business",
+      message: "This will permanently remove this entity and ALL its related services, locations, and pages. This action cannot be undone.",
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      variant: "destructive",
+    });
+    
+    if (confirmed) {
       try {
         setDeletingId(id);
         await deleteBusiness(id);
+        toast.success("Business deleted successfully");
         setTimeout(async () => {
           await loadData();
           setDeletingId(null);
@@ -231,9 +242,10 @@ export default function BusinessPage() {
         <BusinessForm 
           initialData={rootBusiness} 
           onSubmit={handleSubmit} 
-          isLoading={saving}
-        />
-      </div>
-    </div>
-  );
-}
+           isLoading={saving}
+         />
+       </div>
+       <ConfirmDialog />
+     </div>
+   );
+ }

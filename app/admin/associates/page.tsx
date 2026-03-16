@@ -10,6 +10,7 @@ import type { Associate } from '../../../lib/types';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 import { uploadFile } from '../../../lib/supabaseClient';
 import { toast } from '../../../lib/toast';
+import { useConfirm } from '../../../lib/confirm-dialog';
 
 export default function AssociatesPage() {
   const [associates, setAssociates] = useState<Associate[]>([]);
@@ -27,6 +28,7 @@ export default function AssociatesPage() {
     published: true,
     profile_image_url: ''
   });
+  const { confirm, ConfirmDialog } = useConfirm();
 
   useEffect(() => {
     loadData();
@@ -71,9 +73,17 @@ export default function AssociatesPage() {
   };
 
   const handleDelete = async (id: string, name: string) => {
-    if (confirm(`CAUTION: Are you sure you want to delete "${name}"?\n\nThis action cannot be undone.`)) {
+    const confirmed = await confirm({
+      title: "Delete Partner Organization",
+      message: `Are you sure you want to delete "${name}"? This action cannot be undone.`,
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      variant: "destructive",
+    });
+    if (confirmed) {
       try {
         await deleteAssociate(id);
+        toast.success(`"${name}" deleted successfully`);
         loadData();
       } catch (e: any) {
         toast.error("Failed to delete", e.message);
@@ -280,19 +290,21 @@ export default function AssociatesPage() {
                 <Button variant="ghost" size="sm" onClick={() => startEdit(ass)}>
                   <Edit2 className="h-4 w-4 mr-2" /> Edit
                 </Button>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  onClick={() => handleDelete(ass.id, ass.name)} 
-                  className="text-red-500 hover:bg-red-50"
-                >
-                  <Trash2 className="h-4 w-4" />
+                 <Button 
+                   variant="ghost" 
+                   size="icon" 
+                   onClick={() => handleDelete(ass.id, ass.name)} 
+                   className="text-red-500 hover:bg-red-50"
+                   aria-label={`Delete ${ass.name}`}
+                 >
+                   <Trash2 className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </div>
             </div>
           ))}
         </div>
       )}
+      <ConfirmDialog />
     </div>
   );
 }

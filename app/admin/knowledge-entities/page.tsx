@@ -8,11 +8,13 @@ import type { KnowledgeEntity } from '../../../lib/types';
 import { fetchBusinesses } from '../../../lib/db/businesses';
 import { searchWikipedia, getWikidataIdFromWikipediaUrl, type WikiEntity } from '../../../lib/wikipedia/api';
 import { toast } from '../../../lib/toast';
+import { useConfirm } from '../../../lib/confirm-dialog';
 
 export default function KnowledgeEntitiesPage() {
   const [entities, setEntities] = useState<KnowledgeEntity[]>([]);
   const [loading, setLoading] = useState(true);
   const [rootBusinessId, setRootBusinessId] = useState<string | null>(null);
+  const { confirm, ConfirmDialog } = useConfirm();
   
   // Research State
   const [searchQuery, setSearchQuery] = useState('');
@@ -125,12 +127,19 @@ export default function KnowledgeEntitiesPage() {
   };
 
   const handleDelete = async (id: string, name: string) => {
-    // Explicit confirm dialog
-    if (window.confirm(`Are you sure you want to delete "${name}" from your knowledge graph?`)) {
+    const confirmed = await confirm({
+      title: "Delete Knowledge Entity",
+      message: `Are you sure you want to delete "${name}" from your knowledge graph? This action cannot be undone.`,
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      variant: "destructive",
+    });
+    if (confirmed) {
       try {
         console.log("Deleting ID:", id);
         await deleteKnowledgeEntity(id);
-        await loadData(); // Reload immediately
+        await loadData();
+        toast.success(`"${name}" deleted from knowledge graph`);
       } catch (err: any) {
         console.error(err);
         toast.error("Failed to delete entity", err.message);
@@ -247,9 +256,9 @@ export default function KnowledgeEntitiesPage() {
                 className="bg-white"
                 disabled={!rootBusinessId}
               />
-              <Button type="submit" disabled={isSearching || !rootBusinessId} size="icon">
-                {isSearching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-              </Button>
+               <Button type="submit" disabled={isSearching || !rootBusinessId} size="icon" aria-label="Search entities">
+                 {isSearching ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <Search className="h-4 w-4" aria-hidden="true" />}
+               </Button>
             </form>
 
             <div className="space-y-3 max-h-[600px] overflow-y-auto pr-1">
@@ -283,9 +292,9 @@ export default function KnowledgeEntitiesPage() {
                           </Button>
                           {result.url && (
                              <a href={result.url} target="_blank" rel="noopener noreferrer">
-                               <Button size="icon" variant="outline" className="h-7 w-7" title="View Source">
-                                  <Eye className="h-3 w-3" />
-                               </Button>
+                                <Button size="icon" variant="outline" className="h-7 w-7" aria-label="View source">
+                                   <Eye className="h-3 w-3" aria-hidden="true" />
+                                </Button>
                              </a>
                           )}
                       </div>
@@ -325,7 +334,7 @@ export default function KnowledgeEntitiesPage() {
                       <div key={entity.id} className="bg-white p-4 rounded-lg border shadow-sm group hover:border-primary/50 transition-colors relative flex flex-col">
                         
                         {/* Header: Actions */}
-                        <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="absolute top-3 right-3">
                           <Button 
                               variant="ghost" 
                               size="icon"
@@ -335,7 +344,7 @@ export default function KnowledgeEntitiesPage() {
                                   handleDelete(entity.id, entity.name);
                               }}
                               className="h-7 w-7 text-slate-400 hover:text-red-500 hover:bg-red-50"
-                              title="Delete Entity"
+                              aria-label={`Delete ${entity.name}`}
                           >
                               <Trash2 className="h-4 w-4" />
                           </Button>
@@ -395,6 +404,7 @@ export default function KnowledgeEntitiesPage() {
           )}
         </div>
       </div>
+      <ConfirmDialog />
     </div>
   );
 }

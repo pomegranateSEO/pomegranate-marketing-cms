@@ -11,6 +11,7 @@ import type { CaseStudy, Service, Industry } from '../../../lib/types';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 import { VisualContentEditor } from '../../../components/shared/VisualContentEditor';
 import { toast } from '../../../lib/toast';
+import { useConfirm } from '../../../lib/confirm-dialog';
 
 export default function CaseStudiesPage() {
   const [studies, setStudies] = useState<any[]>([]);
@@ -30,6 +31,7 @@ export default function CaseStudiesPage() {
     published: false,
     client_name: '',
   });
+  const { confirm, ConfirmDialog } = useConfirm();
 
   useEffect(() => {
     loadData();
@@ -89,9 +91,17 @@ export default function CaseStudiesPage() {
   };
 
   const handleDelete = async (id: string, title: string) => {
-    if (confirm(`CAUTION: Are you sure you want to delete the case study "${title}"? \n\nThis action cannot be undone.`)) {
+    const confirmed = await confirm({
+      title: "Delete Case Study",
+      message: `Are you sure you want to delete the case study "${title}"? This action cannot be undone.`,
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      variant: "destructive",
+    });
+    if (confirmed) {
       try {
         await deleteCaseStudy(id);
+        toast.success(`"${title}" deleted successfully`);
         loadData();
       } catch (err: any) {
         toast.error("Failed to delete case study", err.message);
@@ -235,14 +245,15 @@ export default function CaseStudiesPage() {
                    <Button variant="ghost" size="sm" onClick={() => startEdit(study)}>
                       <Edit2 className="h-4 w-4 mr-2" /> Edit
                    </Button>
-                   <Button variant="ghost" size="icon" onClick={() => handleDelete(study.id, study.title)} className="text-red-500 hover:bg-red-50">
-                      <Trash2 className="h-4 w-4" />
-                   </Button>
+                    <Button variant="ghost" size="icon" onClick={() => handleDelete(study.id, study.title)} className="text-red-500 hover:bg-red-50" aria-label={`Delete ${study.title}`}>
+                       <Trash2 className="h-4 w-4" aria-hidden="true" />
+                    </Button>
                 </div>
              </div>
           ))}
         </div>
       )}
+      <ConfirmDialog />
     </div>
   );
 }

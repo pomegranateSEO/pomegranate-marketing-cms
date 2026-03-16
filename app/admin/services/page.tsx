@@ -8,6 +8,7 @@ import { fetchKnowledgeEntities } from '../../../lib/db/knowledge';
 import type { Service, KnowledgeEntity } from '../../../lib/types';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 import { toast } from '../../../lib/toast';
+import { useConfirm } from '../../../lib/confirm-dialog';
 
 export default function ServicesPage() {
   const [services, setServices] = useState<(Service & { businesses: { name: string } | null })[]>([]);
@@ -16,6 +17,7 @@ export default function ServicesPage() {
   const [isCreating, setIsCreating] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [rootBusinessId, setRootBusinessId] = useState<string | null>(null);
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const loadData = async () => {
     try {
@@ -43,12 +45,20 @@ export default function ServicesPage() {
   }, []);
 
   const handleDelete = async (id: string, name: string) => {
-    if (window.confirm(`CAUTION: Are you sure you want to delete the service "${name}"?\n\nThis action cannot be undone. All generated pages, reviews, and case studies linked to this service may be broken or deleted.`)) {
+    const confirmed = await confirm({
+      title: "Delete Service",
+      message: `Are you sure you want to delete "${name}"?\n\nThis action cannot be undone. All generated pages, reviews, and case studies linked to this service may be broken or deleted.`,
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      variant: "destructive",
+    });
+    
+    if (confirmed) {
       try {
         await deleteService(id);
+        toast.success(`Service "${name}" deleted successfully`);
         loadData();
       } catch (e: any) {
-        // Detailed error reporting for debugging
         toast.error("Failed to delete service", e.message);
         console.error("Delete Service Error:", e);
       }
@@ -180,19 +190,20 @@ export default function ServicesPage() {
                   </td>
                   <td className="px-6 py-4 text-slate-500">{service.category || '-'}</td>
                   <td className="px-6 py-4 text-right flex justify-end gap-2">
-                    <Button variant="ghost" size="icon" onClick={() => handleEdit(service)} className="text-slate-500 hover:text-primary hover:bg-slate-100">
-                      <Pencil className="h-4 w-4" />
+                    <Button variant="ghost" size="icon" onClick={() => handleEdit(service)} className="text-slate-500 hover:text-primary hover:bg-slate-100" aria-label={`Edit ${service.name}`}>
+                      <Pencil className="h-4 w-4" aria-hidden="true" />
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={() => handleDelete(service.id, service.name)} className="text-slate-400 hover:text-red-600 hover:bg-red-50">
-                      <Trash2 className="h-4 w-4" />
+                    <Button variant="ghost" size="icon" onClick={() => handleDelete(service.id, service.name)} className="text-slate-400 hover:text-red-600 hover:bg-red-50" aria-label={`Delete ${service.name}`}>
+                      <Trash2 className="h-4 w-4" aria-hidden="true" />
                     </Button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
+         </div>
       )}
+      <ConfirmDialog />
     </div>
   );
 }
