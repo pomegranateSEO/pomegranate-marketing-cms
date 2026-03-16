@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { 
+import {
   LayoutDashboard, Building2, MapPin, Briefcase, BookOpen, Settings,
   FileText, PenTool, Star, Download, Wrench, Layers, LogOut,
-  Factory, Users, Award, Image as ImageIcon, Lightbulb
+  Factory, Users, Award, Image as ImageIcon, Lightbulb, ArrowRight, AlertTriangle
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { supabase } from '../../lib/supabaseClient';
@@ -41,6 +41,11 @@ export const Sidebar = () => {
     { href: "/admin/associates", label: "Partner Orgs", icon: Users },
     { href: "/admin/downloads", label: "Downloads", icon: Download },
     { href: "/admin/tools", label: "Free Tools", icon: Wrench },
+  ];
+
+  const systemNavItems = [
+    { href: "/admin/redirects", label: "Redirects", icon: ArrowRight },
+    { href: "/admin/error-logs", label: "404 Logs", icon: AlertTriangle },
   ];
 
   const generationNavItems = [
@@ -87,6 +92,7 @@ export const Sidebar = () => {
         <NavGroup title="Core Data" items={coreNavItems} />
         <NavGroup title="Content Management" items={contentNavItems} />
         <NavGroup title="Content Building" items={generationNavItems} />
+        <NavGroup title="System" items={systemNavItems} />
       </div>
 
       <div className="p-4 border-t border-slate-800 mt-auto bg-slate-950">
