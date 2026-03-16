@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'sonner';
-import { supabase } from './lib/supabaseAdmin';
+import { supabase } from './lib/supabaseClient';
 import { Sidebar } from './components/layout/Sidebar';
 import DashboardPage from './app/admin/page';
 import BusinessPage from './app/admin/businesses/page';
