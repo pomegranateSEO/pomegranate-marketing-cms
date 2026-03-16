@@ -45,12 +45,9 @@ const serviceFormSchema = z.object({
     id: z.string().optional(),
   })).optional(),
 
-  // Keyword cycling (national + local service usage)
+// Keyword cycling (national + local service usage)
   keyword_prefix_text: z.string().optional(),
   keyword_terms: z.string().optional(),
-  keyword_suffix_text: z.string().optional(),
-  keyword_static_fallback: z.string().optional(),
-  keyword_heading_level: z.string().optional(),
 });
 
 type ServiceFormValues = z.infer<typeof serviceFormSchema>;
@@ -75,7 +72,7 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, onSubmit
 
   const { register, handleSubmit, watch, setValue, control, formState: { errors }, getValues } = useForm<ServiceFormValues>({
     resolver: zodResolver(serviceFormSchema),
-    defaultValues: {
+defaultValues: {
       name: initialData?.name || '',
       base_slug: initialData?.base_slug || '',
       category: initialData?.category || 'Residential Service',
@@ -90,9 +87,6 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, onSubmit
       audience: initialAudiences,
       keyword_prefix_text: primaryKeywordBlock?.prefix_text || 'We are a',
       keyword_terms: Array.isArray(primaryKeywordBlock?.keywords) ? primaryKeywordBlock.keywords.join(', ') : '',
-      keyword_suffix_text: primaryKeywordBlock?.suffix_text || '',
-      keyword_static_fallback: primaryKeywordBlock?.static_fallback || '',
-      keyword_heading_level: primaryKeywordBlock?.heading_level || 'h2',
     },
   });
 
@@ -107,41 +101,40 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, onSubmit
     }
   };
 
-  const onFormSubmit = (values: ServiceFormValues) => {
+const onFormSubmit = (values: ServiceFormValues) => {
     const keywordTerms = (values.keyword_terms || '')
       .split(',')
       .map((item) => item.trim())
       .filter(Boolean);
 
-if (keywordTerms.length < 2) {
-      console.warn('Keyword cycling: fewer than 2 terms provided. Consider adding more terms for better SEO coverage.');
-    }
-
     const prefixText = (values.keyword_prefix_text || '').trim() || 'We are a';
-    const suffixText = (values.keyword_suffix_text || '').trim();
-    const staticFallback = (values.keyword_static_fallback || '').trim() || `${prefixText} ${keywordTerms[0]}${suffixText ? ` ${suffixText}` : ''}`;
+    const firstKeyword = keywordTerms[0] || 'seo agency';
+    const staticFallback = `${prefixText} ${firstKeyword}`;
 
     const keywordCyclingBlock = {
       block_id: primaryKeywordBlock?.block_id || 'service-main-cycler',
       prefix_text: prefixText,
       keywords: keywordTerms,
-      suffix_text: suffixText,
+      suffix_text: '',
       static_fallback: staticFallback,
-      heading_level: values.keyword_heading_level || 'h2',
-      animation_style: primaryKeywordBlock?.animation_style || 'typewriter',
-      cycle_interval_ms: primaryKeywordBlock?.cycle_interval_ms || 3000,
-      transition_duration_ms: primaryKeywordBlock?.transition_duration_ms || 400,
-      loop: typeof primaryKeywordBlock?.loop === 'boolean' ? primaryKeywordBlock.loop : true,
-      autostart: typeof primaryKeywordBlock?.autostart === 'boolean' ? primaryKeywordBlock.autostart : true,
-      aria_live: primaryKeywordBlock?.aria_live || 'polite',
-      enabled: typeof primaryKeywordBlock?.enabled === 'boolean' ? primaryKeywordBlock.enabled : true,
+      heading_level: 'h2',
+      animation_style: 'typewriter',
+      cycle_interval_ms: 3000,
+      transition_duration_ms: 400,
+      loop: true,
+      autostart: true,
+      aria_live: 'polite',
+      enabled: keywordTerms.length > 0,
     };
 
     // Sync the string representation for simple queries
     const audienceString = values.audience?.map(a => a.name).join(', ') || values.audience_type;
 
+    // Remove form-only fields that aren't database columns
+    const { keyword_prefix_text, keyword_terms, ...dbValues } = values;
+
     onSubmit({
-      ...values,
+      ...dbValues,
       audience_type: audienceString, // Flattened for backward compat
       keyword_cycling_blocks: [keywordCyclingBlock],
       business_id: businessId,
@@ -261,52 +254,43 @@ if (keywordTerms.length < 2) {
              />
           </div>
 
-          <div className="md:col-span-2 space-y-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
-            <h4 className="text-sm font-semibold text-slate-800">Keyword Cycling (National + Local Service Pages)</h4>
-            <p className="text-xs text-slate-500">
-              This block powers the keyword typewriter/cycling section for national service pages and local service pages.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="keyword_prefix_text">Prefix Text</Label>
-                <Input id="keyword_prefix_text" {...register('keyword_prefix_text')} placeholder="We are a" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="keyword_suffix_text">Suffix Text</Label>
-                <Input id="keyword_suffix_text" {...register('keyword_suffix_text')} placeholder="helping businesses grow" />
-              </div>
-              <div className="md:col-span-2 space-y-2">
-                <Label htmlFor="keyword_terms">Cycling Terms (comma-separated, minimum 2)</Label>
-                <Input
-                  id="keyword_terms"
-                  {...register('keyword_terms')}
-                  placeholder="seo agency, search engine optimisation company, digital performance team"
-                />
-              </div>
-              <div className="md:col-span-2 space-y-2">
-                <Label htmlFor="keyword_static_fallback">Static Fallback Sentence</Label>
-                <Input
-                  id="keyword_static_fallback"
-                  {...register('keyword_static_fallback')}
-                  placeholder="We are a leading seo agency helping businesses grow"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="keyword_heading_level">Heading Level</Label>
-                <select
-                  id="keyword_heading_level"
-                  {...register('keyword_heading_level')}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                >
-                  <option value="h1">h1</option>
-                  <option value="h2">h2</option>
-                  <option value="h3">h3</option>
-                  <option value="h4">h4</option>
-                  <option value="p">p</option>
-                </select>
-              </div>
-            </div>
-          </div>
+<div className="md:col-span-2 space-y-4 p-4 bg-gradient-to-r from-rose-50 to-orange-50 rounded-lg border border-rose-200">
+             <h4 className="text-sm font-semibold text-slate-800 flex items-center gap-2">
+               <span className="w-6 h-6 bg-rose-500 text-white rounded flex items-center justify-center text-xs font-bold">K</span>
+               Keyword Typewriter
+             </h4>
+             <p className="text-xs text-slate-500">
+               Creates an animated hero text: <code className="bg-white px-1.5 py-0.5 rounded text-rose-600">[Start] + [keyword1] + [keyword2] +...</code>
+             </p>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+               <div className="space-y-2">
+                 <Label htmlFor="keyword_prefix_text" className="font-medium">Start of sentence</Label>
+                 <Input 
+                   id="keyword_prefix_text" 
+                   {...register('keyword_prefix_text')} 
+                   placeholder="We are a"
+                   className="bg-white"
+                 />
+                 <p className="text-xs text-slate-400">e.g., "We are a", "pomegranate is your", "Grow with"</p>
+               </div>
+               <div className="md:col-span-2 space-y-2">
+                 <Label htmlFor="keyword_terms" className="font-medium">Keywords <span className="text-slate-400 font-normal">(comma-separated)</span></Label>
+                 <Input
+                   id="keyword_terms"
+                   {...register('keyword_terms')}
+                   placeholder="seo agency, digital performance team, search engine optimisation company"
+                   className="bg-white"
+                 />
+                 <p className="text-xs text-slate-400">Each keyword will cycle through in the hero section. Add 2-5 keywords for best effect.</p>
+               </div>
+             </div>
+             <div className="mt-3 p-3 bg-white rounded border border-slate-200">
+               <p className="text-xs text-slate-500 mb-1">Preview:</p>
+               <p className="text-lg font-semibold text-slate-800">
+                 {watch('keyword_prefix_text') || 'We are a'} <span className="text-rose-500">{watch('keyword_terms')?.split(',').map(k => k.trim()).filter(Boolean).join('</span>, <span className="text-rose-500">') || 'seo agency'}</span>
+               </p>
+             </div>
+           </div>
       </div>
 
       {/* Shared Content Template Section */}

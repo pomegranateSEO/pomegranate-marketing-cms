@@ -53,7 +53,10 @@ export default function PagesPage() {
     target_keyword: '',
     custom_head: '',
     about_entities: [] as string[],
-    mentions_entities: [] as string[]
+    mentions_entities: [] as string[],
+    // Keyword cycling fields
+    keyword_prefix_text: 'We are a',
+    keyword_terms: ''
   });
 
   const loadData = async () => {
@@ -84,6 +87,32 @@ export default function PagesPage() {
 
     setSaving(true);
     try {
+      // Build keyword cycling block
+      const keywordTerms = (formState.keyword_terms || '')
+        .split(',')
+        .map((item) => item.trim())
+        .filter(Boolean);
+
+      const prefixText = (formState.keyword_prefix_text || '').trim() || 'We are a';
+      const firstKeyword = keywordTerms[0] || 'seo agency';
+      const staticFallback = `${prefixText} ${firstKeyword}`;
+
+      const keywordCyclingBlock = {
+        block_id: 'page-main-cycler',
+        prefix_text: prefixText,
+        keywords: keywordTerms,
+        suffix_text: '',
+        static_fallback: staticFallback,
+        heading_level: 'h2',
+        animation_style: 'typewriter',
+        cycle_interval_ms: 3000,
+        transition_duration_ms: 400,
+        loop: true,
+        autostart: true,
+        aria_live: 'polite',
+        enabled: keywordTerms.length > 0,
+      };
+
       const payload: Partial<StaticPage> = {
         business_id: rootBusiness.id,
         title: formState.title,
@@ -94,7 +123,8 @@ export default function PagesPage() {
         seo_title: formState.title, 
         faqs: formState.faqs,
         about_entities: formState.about_entities,
-        mentions_entities: formState.mentions_entities
+        mentions_entities: formState.mentions_entities,
+        keyword_cycling_blocks: keywordTerms.length > 0 ? [keywordCyclingBlock] : []
       };
 
       if (formState.id) {
@@ -176,6 +206,16 @@ export default function PagesPage() {
         ? page.faqs as { question: string; answer: string }[] 
         : [];
 
+      // Extract keyword cycling data
+      const keywordBlocks = Array.isArray(page.keyword_cycling_blocks) 
+        ? page.keyword_cycling_blocks as any[] 
+        : [];
+      const primaryBlock = keywordBlocks[0];
+      const prefixText = primaryBlock?.prefix_text || 'We are a';
+      const keywordTerms = Array.isArray(primaryBlock?.keywords) 
+        ? primaryBlock.keywords.join(', ') 
+        : '';
+
       setFormState({
         id: page.id,
         title: page.title,
@@ -187,7 +227,9 @@ export default function PagesPage() {
         target_keyword: '',
         custom_head: '',
         about_entities: page.about_entities || [],
-        mentions_entities: page.mentions_entities || []
+        mentions_entities: page.mentions_entities || [],
+        keyword_prefix_text: prefixText,
+        keyword_terms: keywordTerms
       });
     } else {
       resetForm();
@@ -197,7 +239,9 @@ export default function PagesPage() {
 
   const resetForm = () => {
     setFormState({ 
-      id: '', title: '', slug: '', content: '', status: 'draft', page_type: 'WebPage', faqs: [], target_keyword: '', custom_head: '', about_entities: [], mentions_entities: []
+      id: '', title: '', slug: '', content: '', status: 'draft', page_type: 'WebPage', faqs: [], target_keyword: '', custom_head: '', about_entities: [], mentions_entities: [],
+      keyword_prefix_text: 'We are a',
+      keyword_terms: ''
     });
   };
 
@@ -234,22 +278,66 @@ export default function PagesPage() {
            
            {/* CONTENT TAB */}
            <div className={activeTab === 'content' ? 'block' : 'hidden'}>
-               {/* KEYWORD FIRST */}
-               <div className="bg-blue-50/50 p-4 rounded border border-blue-100 mb-6">
-                  <Label className="text-blue-800 font-semibold mb-1 block">Target Keyword (Primary)</Label>
-                  <Input 
-                    value={formState.target_keyword}
-                    onChange={(e) => setFormState({...formState, target_keyword: e.target.value})}
-                    placeholder="Enter Target Keyword for AI Generation (e.g. 'About Our Company')"
-                    className="bg-white border-blue-200 focus:ring-blue-500"
-                  />
-                  {!formState.target_keyword && (
-                     <p className="text-xs text-amber-600 mt-2 flex items-center gap-1 font-medium">
-                        <AlertTriangle className="h-3 w-3" />
-                        No target keyword set. AI generation will be generic.
-                     </p>
-                  )}
-               </div>
+{/* KEYWORD FIRST */}
+                <div className="bg-blue-50/50 p-4 rounded border border-blue-100 mb-6">
+                   <Label className="text-blue-800 font-semibold mb-1 block">Target Keyword (Primary)</Label>
+                   <Input 
+                     value={formState.target_keyword}
+                     onChange={(e) => setFormState({...formState, target_keyword: e.target.value})}
+                     placeholder="Enter Target Keyword for AI Generation (e.g. 'About Our Company')"
+                     className="bg-white border-blue-200 focus:ring-blue-500"
+                   />
+                   {!formState.target_keyword && (
+                      <p className="text-xs text-amber-600 mt-2 flex items-center gap-1 font-medium">
+                         <AlertTriangle className="h-3 w-3" />
+                         No target keyword set. AI generation will be generic.
+                      </p>
+                   )}
+                </div>
+
+                {/* KEYWORD CYCLING SECTION */}
+                <div className="mb-6 p-4 bg-gradient-to-r from-rose-50 to-orange-50 rounded-lg border border-rose-200">
+                   <h4 className="text-sm font-semibold text-slate-800 flex items-center gap-2 mb-3">
+                     <span className="w-6 h-6 bg-rose-500 text-white rounded flex items-center justify-center text-xs font-bold">K</span>
+                     Keyword Typewriter (Homepage Hero)
+                   </h4>
+                   <p className="text-xs text-slate-500 mb-3">
+                     Creates animated hero text: <code className="bg-white px-1.5 py-0.5 rounded text-rose-600">[Start] + [keyword1] + [keyword2] +...</code>
+                   </p>
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                     <div className="space-y-2">
+                       <Label className="font-medium">Start of sentence</Label>
+                       <Input 
+                         value={formState.keyword_prefix_text}
+                         onChange={(e) => setFormState({...formState, keyword_prefix_text: e.target.value})}
+                         placeholder="We are a"
+                         className="bg-white"
+                       />
+                       <p className="text-xs text-slate-400">e.g., "We are a", "pomegranate is your", "Grow with"</p>
+                     </div>
+                     <div className="md:col-span-2 space-y-2">
+                       <Label className="font-medium">Keywords <span className="text-slate-400 font-normal">(comma-separated)</span></Label>
+                       <Input
+                         value={formState.keyword_terms}
+                         onChange={(e) => setFormState({...formState, keyword_terms: e.target.value})}
+                         placeholder="seo agency, digital performance team, search engine optimisation company"
+                         className="bg-white"
+                       />
+                       <p className="text-xs text-slate-400">Each keyword will cycle through in the hero section. Add 2-5 keywords for best effect.</p>
+                     </div>
+                   </div>
+                   {formState.keyword_terms && (
+                     <div className="mt-3 p-3 bg-white rounded border border-slate-200">
+                       <p className="text-xs text-slate-500 mb-1">Preview:</p>
+                       <p className="text-lg font-semibold text-slate-800">
+                         {formState.keyword_prefix_text || 'We are a'}{' '}
+                         <span className="text-rose-500">
+                           {formState.keyword_terms.split(',').map(k => k.trim()).filter(Boolean).join('</span>, <span className="text-rose-500">')}
+                         </span>
+                       </p>
+                     </div>
+                   )}
+                </div>
 
                <div className="space-y-6">
                    <div className="space-y-2">
