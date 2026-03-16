@@ -301,12 +301,15 @@ The codebase has 3+ inline modals built as bare `<div>` overlays without accessi
 Some pages hide action buttons behind `opacity-0 group-hover:opacity-100`. These are invisible to keyboard users and non-functional on touch devices. Make them always visible.
 
 **Files to fix:**
-- [ ] `app/admin/knowledge-entities/page.tsx` - entity card delete buttons
-- [ ] Any other `opacity-0 group-hover:opacity-100` patterns on interactive elements
+- [x] `app/admin/knowledge-entities/page.tsx` - entity card delete buttons
+- [x] `app/admin/people/page.tsx` - profile image remove button
+- [x] `app/admin/posts/page.tsx` - featured image remove button
+- [x] `components/shared/FAQEditor.tsx` - delete FAQ buttons
+- [x] Any other `opacity-0 group-hover:opacity-100` patterns on interactive elements
 
 **Fix:** Remove `opacity-0`, keep hover enhancement as a subtle background change instead.
 
-**Status:** [ ] NOT STARTED
+**Status:** [x] COMPLETED — 2026-03-16
 
 ---
 
@@ -584,11 +587,11 @@ Before marking any task complete, verify:
 | P1: Content Model | 3 | 3 | 100% ✅ |
 | P2: Content Model | 5 | 1 | 20% |
 | P3: Content Model | 3 | 0 | 0% |
-| Phase 1: Critical | 7 | 1 | 14% |
+| Phase 1: Critical | 7 | 7 | 100% ✅ |
 | Phase 2: High | 7 | 0 | 0% |
 | Phase 3: Medium | 5 | 0 | 0% |
 | Phase 4: Low | 1 | 0 | 0% |
-| **TOTAL** | **33** | **7** | **21%** |
+| **TOTAL** | **33** | **13** | **39%** |
 
 > **CMS agents are unblocked as of 2026-03-17.** Content Model Alignment (P0+P1) is complete. P2/P3 items and all UI/UX phases (1–4) are ready to start.
 

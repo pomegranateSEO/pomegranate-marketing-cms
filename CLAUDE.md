@@ -33,32 +33,36 @@ app/
     media/page.tsx               # Media library
     generation/page.tsx          # Batch page generation
 components/
-  ui/                            # Primitives: button, input, textarea, label
+  ui/                            # Primitives: button, input, textarea, label, **dialog (NEW)**
   shared/                        # Composite: MediaManager, FAQEditor, VisualContentEditor, EntityGenerator
   forms/                         # BusinessForm, ServiceForm, LocationForm
   layout/                        # Sidebar
 lib/
   supabaseClient.ts              # Supabase client init
   supabase/                      # Database operations (CRUD functions per entity)
+  **confirm-dialog.tsx**         # **useConfirm hook for modal dialogs (NEW)**
   utils.ts                       # cn() utility (Tailwind class merge)
 ```
 
 ## Current UI/UX Work (IMPORTANT)
 
-**There is an active UI/UX improvement initiative.** Before making frontend changes, read:
+**Phase 1 CRITICAL UI/UX improvements are COMPLETE.** Before making frontend changes, read:
 
-- **`IMPLEMENTATION-PLAN.md`** - The master task list with 20 prioritized tasks across 4 phases. If you are picking up frontend work, find your task here and mark it IN PROGRESS.
+- **`IMPLEMENTATION-PLAN.md`** - The master task list with 20 prioritized tasks across 4 phases. Phase 1 (Critical) is done. Phase 2 (High Priority) is ready to start.
 - **`CODE-EXAMPLES.md`** - Working code patterns for each task (toast system, confirm dialogs, skeletons, validation, accessibility).
 - **`DESIGN-MOCKUPS.md`** - ASCII visual mockups showing before/after targets.
 
-### Key Problems Being Fixed
-1. **30+ `alert()` calls** across all admin pages - replacing with Sonner toast notifications
-2. **15+ `window.confirm()` calls** - replacing with styled confirmation modals
+### Phase 1 COMPLETED (March 16, 2026)
+✅ **Toast system** - All 30+ `alert()` calls replaced with Sonner toast notifications  
+✅ **Confirmation dialogs** - All 19 `window.confirm()` calls replaced with styled modal dialogs  
+✅ **ARIA accessibility** - 50+ icon-only buttons now have `aria-label`, icons have `aria-hidden`  
+✅ **Focus rings** - Sidebar nav, tab buttons, and custom elements have visible focus indicators  
+✅ **Hover-only buttons** - Fixed 4 instances that were invisible to keyboard/touch users  
+✅ **Modal accessibility** - 3+ inline modals retrofitted with focus traps, Escape key, ARIA attributes
+
+### Key Problems Being Fixed (Phase 2 Ready)
 3. **Zero form validation feedback** - adding Zod inline validation
 4. **Every page uses a centered spinner** for loading - replacing with skeleton screens
-5. **~50+ icon-only buttons** missing `aria-label` attributes
-6. **3+ modals** built as bare divs without focus traps or ARIA
-7. **Hover-only action buttons** invisible to keyboard/touch users
 8. **Inconsistent error handling** - some show raw SQL errors to users
 
 ## Conventions
