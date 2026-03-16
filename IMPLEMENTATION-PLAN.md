@@ -74,6 +74,12 @@ Replace all native `alert()` calls with Sonner toast notifications. There are 30
 
 ---
 
+> ### 🧪 TEST CHECKPOINT T1 — Toast System
+> **Trigger:** After Task 1.1 is merged. Spin up a test agent with `TESTING-PLAN.md` → **Test Suite T1**.
+> **What to verify:** Toasts appear on every page where alerts were replaced. No `alert()` calls remain in source. Success/error/info/warning variants all render correctly. Auto-dismiss timings are correct.
+
+---
+
 ### Task 1.2: Fix Button Disabled States
 **Priority:** CRITICAL
 **Effort:** 30 minutes
@@ -211,6 +217,12 @@ Some pages hide action buttons behind `opacity-0 group-hover:opacity-100`. These
 
 ---
 
+> ### 🧪 TEST CHECKPOINT T2 — Phase 1 Complete
+> **Trigger:** After Tasks 1.2, 1.3, 1.4, 1.5, 1.6, and 1.7 are all merged. Spin up a test agent with `TESTING-PLAN.md` → **Test Suite T2**.
+> **What to verify:** All `window.confirm()` replaced with modal dialogs. Modals have focus trap, Escape key, click-outside-close. All icon-only buttons have `aria-label`. Hover-only buttons are always visible. Button disabled states work. Focus rings visible on sidebar nav and custom elements.
+
+---
+
 ## PHASE 2: HIGH PRIORITY
 
 ### Task 2.1: Create Skeleton Screen Components
@@ -237,6 +249,10 @@ Every admin page shows a centered `Loader2` spinner during loading. Replace with
 
 **Status:** [ ] NOT STARTED
 
+> ### 🧪 TEST CHECKPOINT T3 — Skeleton Screens
+> **Trigger:** After Task 2.1 is merged. Spin up a test agent with `TESTING-PLAN.md` → **Test Suite T3**.
+> **What to verify:** Every admin page shows a skeleton (not a centered spinner) during initial load. Skeletons match the page layout (table vs card vs form). No layout shift when data loads in.
+
 ---
 
 ### Task 2.2: Implement Form Validation with Inline Errors
@@ -258,6 +274,10 @@ Zero inline validation exists. Forms fail silently. Add Zod schemas (already ins
 - [ ] Red border on invalid fields, green on valid
 
 **Status:** [ ] NOT STARTED
+
+> ### 🧪 TEST CHECKPOINT T4 — Form Validation
+> **Trigger:** After Task 2.2 is merged. Spin up a test agent with `TESTING-PLAN.md` → **Test Suite T4**.
+> **What to verify:** Required fields show inline errors on blur. Submitting an empty form shows error summary toast. `aria-invalid` set on invalid fields. Red/green border states render. Business, Service, and Location forms all validate correctly.
 
 ---
 
