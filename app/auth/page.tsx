@@ -40,18 +40,18 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-      <div className="bg-white w-full max-w-md p-8 rounded-lg shadow-lg border border-slate-100">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="bg-card w-full max-w-md p-8 rounded-lg shadow-lg border">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary mb-4">
             <ShieldCheck className="h-6 w-6" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">Pomegranate CMS</h1>
-          <p className="text-slate-500 mt-1">Secure Knowledge Graph Access</p>
+          <h1 className="text-2xl font-bold text-foreground">Pomegranate CMS</h1>
+          <p className="text-muted-foreground mt-1">Secure Knowledge Graph Access</p>
         </div>
 
         {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-md mb-6 text-sm flex items-start gap-2 border border-red-100">
+          <div className="bg-destructive/10 text-destructive p-3 rounded-md mb-6 text-sm flex items-start gap-2 border border-destructive/20">
             <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
             {error}
           </div>
@@ -91,7 +91,7 @@ export default function LoginPage() {
             <button 
                 type="button" 
                 onClick={() => { setIsSignUp(!isSignUp); setError(null); }}
-                className="text-sm text-slate-500 hover:text-primary transition-colors"
+                className="text-sm text-muted-foreground hover:text-primary transition-colors"
             >
                 {isSignUp ? "Already have an account? Sign In" : "Need an account? Sign Up"}
             </button>
