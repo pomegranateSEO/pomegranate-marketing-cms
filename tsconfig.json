@@ -25,5 +25,7 @@
     },
     "allowImportingTsExtensions": true,
     "noEmit": true
-  }
+  },
+  "include": ["app/**/*", "components/**/*", "lib/**/*", "*.ts", "*.tsx"],
+  "exclude": ["node_modules", "dist", "scripts", "Branding", "Legacy_docs", "docs", "schema_templates"]
 }
