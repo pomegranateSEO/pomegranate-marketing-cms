@@ -272,8 +272,24 @@ export const generateFAQs = async (text: string): Promise<{ question: string; an
   if (!text || text.length < 50) return [];
 
   const prompt = `
-    Analyze the provided content and generate 3-5 relevant FAQs.
-    'answer' MUST be between 55 and 90 words.
+    You are analyzing content for a business page. Your task has TWO steps:
+
+    STEP 1 - EXTRACT EXISTING FAQs:
+    First, carefully scan the content for any existing FAQ-style patterns. Look for:
+    - Questions followed by answers (with or without "Q:" or "A:" prefixes)
+    - Sentences starting with question words (What, How, Why, When, Where, Which, Can, Do, Is, Are)
+    - Sections explicitly labeled as FAQ, Q&A, or similar
+    - Any question-answer pairs embedded in the text
+
+    STEP 2 - GENERATE ADDITIONAL FAQs (if needed):
+    If fewer than 5 FAQs were found, generate additional relevant questions based on the content.
+    Focus on questions a potential customer would actually ask about this business/service.
+
+    RULES:
+    - Prioritize EXTRACTING real FAQs from the content over generating new ones
+    - Each 'answer' MUST be between 55 and 90 words
+    - Use British English
+    - Return 3-5 FAQs total (prefer extracted ones when available)
     
     CONTENT TO ANALYZE:
     "${text.substring(0, 8000)}"
