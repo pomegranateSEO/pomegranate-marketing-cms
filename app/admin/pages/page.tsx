@@ -360,16 +360,48 @@ export default function PagesPage() {
            )}
         </div>
 
-        <div className="flex border-b bg-slate-50 mb-4 rounded-t-lg">
-           <button onClick={() => setActiveTab('content')} className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'content' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}>Content</button>
-           <button onClick={() => setActiveTab('semantic')} className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'semantic' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}>Semantic Markup</button>
-           <button onClick={() => setActiveTab('settings')} className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'settings' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}>Settings & Head</button>
-        </div>
+         <div className="flex border-b bg-slate-50 mb-4 rounded-t-lg" role="tablist" aria-label="Page settings tabs">
+            <button
+              id="tab-content"
+              role="tab"
+              aria-selected={activeTab === 'content'}
+              aria-controls="panel-content"
+              onClick={() => setActiveTab('content')}
+              className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'content' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}
+            >
+              Content
+            </button>
+            <button
+              id="tab-semantic"
+              role="tab"
+              aria-selected={activeTab === 'semantic'}
+              aria-controls="panel-semantic"
+              onClick={() => setActiveTab('semantic')}
+              className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'semantic' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}
+            >
+              Semantic Markup
+            </button>
+            <button
+              id="tab-settings"
+              role="tab"
+              aria-selected={activeTab === 'settings'}
+              aria-controls="panel-settings"
+              onClick={() => setActiveTab('settings')}
+              className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'settings' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}
+            >
+              Settings & Head
+            </button>
+         </div>
 
-        <form onSubmit={handleSave} className="space-y-6 bg-white p-6 rounded-lg border shadow-sm rounded-tr-none">
-           
-           {/* CONTENT TAB */}
-           <div className={activeTab === 'content' ? 'block' : 'hidden'}>
+         <form onSubmit={handleSave} className="space-y-6 bg-white p-6 rounded-lg border shadow-sm rounded-tr-none">
+
+            {/* CONTENT TAB */}
+            <div
+              id="panel-content"
+              role="tabpanel"
+              aria-labelledby="tab-content"
+              className={activeTab === 'content' ? 'block' : 'hidden'}
+            >
 {/* KEYWORD FIRST */}
                 <div className="bg-blue-50/50 p-4 rounded border border-blue-100 mb-6">
                    <Label className="text-blue-800 font-semibold mb-1 block">Target Keyword (Primary)</Label>
@@ -569,15 +601,20 @@ export default function PagesPage() {
                </div>
            </div>
 
-           {/* SEMANTIC TAB */}
-           <div className={activeTab === 'semantic' ? 'block' : 'hidden'}>
-               <div className="space-y-6">
-                   {/* FAQ Editor Section */}
-                   <FAQEditor 
-                     value={formState.faqs}
-                     onChange={(faqs) => setFormState({...formState, faqs: faqs})}
-                     sourceText={formState.content}
-                   />
+            {/* SEMANTIC TAB */}
+            <div
+              id="panel-semantic"
+              role="tabpanel"
+              aria-labelledby="tab-semantic"
+              className={activeTab === 'semantic' ? 'block' : 'hidden'}
+            >
+                <div className="space-y-6">
+                    {/* FAQ Editor Section */}
+                    <FAQEditor
+                      value={formState.faqs}
+                      onChange={(faqs) => setFormState({...formState, faqs: faqs})}
+                      sourceText={formState.content}
+                    />
                    
                    <div className="grid grid-cols-2 gap-6">
                       <KnowledgeEntitySelector 
@@ -598,9 +635,14 @@ export default function PagesPage() {
                </div>
            </div>
 
-           {/* SETTINGS TAB */}
-           <div className={activeTab === 'settings' ? 'block' : 'hidden'}>
-               <div className="grid grid-cols-2 gap-6 mb-6">
+            {/* SETTINGS TAB */}
+            <div
+              id="panel-settings"
+              role="tabpanel"
+              aria-labelledby="tab-settings"
+              className={activeTab === 'settings' ? 'block' : 'hidden'}
+            >
+                <div className="grid grid-cols-2 gap-6 mb-6">
                   <div className="space-y-2">
                     <Label>URL Slug</Label>
                     <Input 

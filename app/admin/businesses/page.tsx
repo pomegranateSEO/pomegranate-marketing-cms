@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Wifi, WifiOff, AlertTriangle, Save, Loader2, RefreshCw, CheckCircle2, XCircle } from 'lucide-react';
+import { Wifi, WifiOff, Save, Loader2, RefreshCw, CheckCircle2, XCircle, AlertTriangle } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { toast } from '../../../lib/toast';
 import { BusinessForm } from '../../../components/forms/BusinessForm';
@@ -9,6 +9,8 @@ import type { Business } from '../../../lib/types';
 import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 import { useConfirm } from '../../../lib/confirm-dialog';
 import { FormSkeleton, PageHeaderSkeleton } from '../../../components/shared/skeletons';
+import { ErrorBanner } from '../../../components/shared/ErrorBanner';
+import { handleError } from '../../../lib/error-utils';
 
 export default function BusinessPage() {
   const [businesses, setBusinesses] = useState<Business[]>([]);
@@ -96,10 +98,9 @@ export default function BusinessPage() {
       await loadData();
       toast.success("Root Entity Saved Successfully!");
     } catch (err: any) {
-      console.error("Save Error:", err);
-      setError("Failed to save the business entity.");
-      // Capture detailed Supabase error message (e.g., missing column)
-      setDetailedError(err.message || JSON.stringify(err));
+      const sanitized = handleError(err, toast.error, "Failed to save business");
+      setError(sanitized.userMessage);
+      setDetailedError(sanitized.technicalDetails || null);
     } finally {
       setSaving(false);
     }
@@ -220,23 +221,14 @@ export default function BusinessPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 text-red-700 p-4 rounded-md mb-6 border border-red-200">
-          <div className="flex items-center gap-2 font-bold mb-1">
-            <AlertTriangle className="h-5 w-5" />
-            Database Error
-          </div>
-          <p className="text-sm">{error}</p>
-          {detailedError && (
-             <pre className="mt-2 text-xs bg-red-100 p-2 rounded overflow-auto border border-red-300">
-               {detailedError}
-             </pre>
-          )}
-          {detailedError?.includes("column") && (
-             <p className="mt-2 text-xs font-semibold">
-               Tip: Your Supabase table might be missing columns. Check that `employee_count`, `founder_names`, and `social_links` exist in the `businesses` table.
-             </p>
-          )}
-        </div>
+        <ErrorBanner
+          error={{
+            userMessage: error,
+            technicalDetails: detailedError || undefined,
+          }}
+          onDismiss={() => setError(null)}
+          showTechnical={process.env.NODE_ENV === 'development'}
+        />
       )}
 
       <div className="bg-card border rounded-lg p-6 shadow-sm">

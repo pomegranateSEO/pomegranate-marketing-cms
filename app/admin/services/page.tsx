@@ -10,6 +10,7 @@ import { EntityGenerator } from '../../../components/shared/EntityGenerator';
 import { toast } from '../../../lib/toast';
 import { useConfirm } from '../../../lib/confirm-dialog';
 import { TableSkeleton, PageHeaderSkeleton } from '../../../components/shared/skeletons';
+import { useTable, TableSearch, TablePagination, SortIcon, EmptySearchState } from '../../../components/ui/data-table';
 
 export default function ServicesPage() {
   const [services, setServices] = useState<(Service & { businesses: { name: string } | null })[]>([]);
@@ -85,6 +86,26 @@ export default function ServicesPage() {
     setEditingService(service);
     setIsCreating(false);
   };
+
+  // Table functionality
+  const {
+    data: paginatedServices,
+    searchQuery,
+    setSearchQuery,
+    sortConfig,
+    handleSort,
+    pagination,
+    totalPages,
+    handlePageChange,
+    handlePageSizeChange,
+    isFiltered,
+    filteredCount,
+    totalCount,
+  } = useTable({
+    data: services,
+    searchableFields: ['name', 'base_slug', 'category'],
+    initialPageSize: 10,
+  });
 
   // Combine content for bulk entity extraction
   const getAllServicesContent = () => {
@@ -173,37 +194,94 @@ export default function ServicesPage() {
           </Button>
         </div>
       ) : (
-        <div className="bg-white border rounded-lg shadow-sm overflow-hidden">
-          <table className="w-full text-sm text-left">
-            <thead className="bg-slate-50 border-b font-medium text-slate-500">
-              <tr>
-                <th className="px-6 py-4">Service Name</th>
-                <th className="px-6 py-4">Base Slug</th>
-                <th className="px-6 py-4">Category</th>
-                <th className="px-6 py-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {services.map((service) => (
-                <tr key={service.id} className="hover:bg-slate-50 transition-colors">
-                  <td className="px-6 py-4 font-medium text-slate-900">{service.name}</td>
-                  <td className="px-6 py-4 text-slate-500 font-mono bg-slate-50/50 rounded inline-block my-2 mx-6 px-2 py-0.5 text-xs">
-                    /{service.base_slug}
-                  </td>
-                  <td className="px-6 py-4 text-slate-500">{service.category || '-'}</td>
-                  <td className="px-6 py-4 text-right flex justify-end gap-2">
-                    <Button variant="ghost" size="icon" onClick={() => handleEdit(service)} className="text-slate-500 hover:text-primary hover:bg-slate-100" aria-label={`Edit ${service.name}`}>
-                      <Pencil className="h-4 w-4" aria-hidden="true" />
-                    </Button>
-                    <Button variant="ghost" size="icon" onClick={() => handleDelete(service.id, service.name)} className="text-slate-400 hover:text-red-600 hover:bg-red-50" aria-label={`Delete ${service.name}`}>
-                      <Trash2 className="h-4 w-4" aria-hidden="true" />
-                    </Button>
-                  </td>
+        <>
+          <TableSearch
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="Search services by name, slug, or category..."
+            totalItems={totalCount}
+            filteredCount={filteredCount}
+            isFiltered={isFiltered}
+          />
+          
+          <div className="bg-white border rounded-lg shadow-sm overflow-hidden">
+            <table className="w-full text-sm text-left">
+              <thead className="bg-slate-50 border-b font-medium text-slate-500">
+                <tr>
+                  <th className="px-6 py-4">
+                    <button
+                      onClick={() => handleSort('name')}
+                      className="flex items-center gap-1 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+                      aria-label={`Sort by name ${sortConfig.key === 'name' ? (sortConfig.direction === 'asc' ? 'descending' : 'ascending') : ''}`}
+                    >
+                      Service Name
+                      <SortIcon direction={sortConfig.key === 'name' ? sortConfig.direction : null} />
+                    </button>
+                  </th>
+                  <th className="px-6 py-4">
+                    <button
+                      onClick={() => handleSort('base_slug')}
+                      className="flex items-center gap-1 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+                      aria-label={`Sort by slug ${sortConfig.key === 'base_slug' ? (sortConfig.direction === 'asc' ? 'descending' : 'ascending') : ''}`}
+                    >
+                      Base Slug
+                      <SortIcon direction={sortConfig.key === 'base_slug' ? sortConfig.direction : null} />
+                    </button>
+                  </th>
+                  <th className="px-6 py-4">
+                    <button
+                      onClick={() => handleSort('category')}
+                      className="flex items-center gap-1 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+                      aria-label={`Sort by category ${sortConfig.key === 'category' ? (sortConfig.direction === 'asc' ? 'descending' : 'ascending') : ''}`}
+                    >
+                      Category
+                      <SortIcon direction={sortConfig.key === 'category' ? sortConfig.direction : null} />
+                    </button>
+                  </th>
+                  <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-         </div>
+              </thead>
+              <tbody className="divide-y">
+                {paginatedServices.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-12">
+                      <EmptySearchState searchQuery={searchQuery} onClear={() => setSearchQuery('')} />
+                    </td>
+                  </tr>
+                ) : (
+                  paginatedServices.map((service) => (
+                    <tr key={service.id} className="hover:bg-slate-50 transition-colors">
+                      <td className="px-6 py-4 font-medium text-slate-900">{service.name}</td>
+                      <td className="px-6 py-4 text-slate-500 font-mono bg-slate-50/50 rounded inline-block my-2 mx-6 px-2 py-0.5 text-xs">
+                        /{service.base_slug}
+                      </td>
+                      <td className="px-6 py-4 text-slate-500">{service.category || '-'}</td>
+                      <td className="px-6 py-4 text-right flex justify-end gap-2">
+                        <Button variant="ghost" size="icon" onClick={() => handleEdit(service)} className="text-slate-500 hover:text-primary hover:bg-slate-100" aria-label={`Edit ${service.name}`}>
+                          <Pencil className="h-4 w-4" aria-hidden="true" />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleDelete(service.id, service.name)} className="text-slate-400 hover:text-red-600 hover:bg-red-50" aria-label={`Delete ${service.name}`}>
+                          <Trash2 className="h-4 w-4" aria-hidden="true" />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+            
+            {filteredCount > 0 && (
+              <TablePagination
+                currentPage={pagination.page}
+                totalPages={totalPages}
+                pageSize={pagination.pageSize}
+                totalItems={filteredCount}
+                onPageChange={handlePageChange}
+                onPageSizeChange={handlePageSizeChange}
+              />
+            )}
+          </div>
+        </>
       )}
       <ConfirmDialog />
     </div>

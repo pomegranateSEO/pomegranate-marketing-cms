@@ -4,19 +4,18 @@ import { Input } from '../../ui/input';
 import { Textarea } from '../../ui/textarea';
 import { Label } from '../../ui/label';
 import { Sparkles, Upload, Check, Loader2, AlertTriangle, Hexagon } from 'lucide-react';
-import { SEO_LIMITS, getCharacterCountColor } from '../../../lib/seo/metadata-validator';
+import { SEO_LIMITS } from '../../../lib/seo/metadata-validator';
 import { uploadFile } from '../../../lib/supabaseAdmin';
 import { toast } from '../../../lib/toast';
+import { CharacterCountInput, CharacterCountTextarea } from '../FormField';
 
 const CODE_LOGO_VALUE = 'code:pomegranate-logo';
 
 export const IdentitySection: React.FC = () => {
-  const { register, watch, setValue, formState: { errors } } = useFormContext();
+  const { register, watch, setValue } = useFormContext();
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
-  const nameLength = watch('name')?.length || 0;
-  const descriptionLength = watch('description')?.length || 0;
   const logoUrl = watch('logo_url');
   
   const isCodeLogo = logoUrl === CODE_LOGO_VALUE;
@@ -172,35 +171,27 @@ export const IdentitySection: React.FC = () => {
            )}
          </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="name">Business Name / SEO Title</Label>
-          <Input id="name" {...register('name')} placeholder="Pomegranate pSEO" />
-          <div className="flex justify-between text-xs">
-             <span className="text-red-500">{errors.name?.message?.toString()}</span>
-             <span className={getCharacterCountColor(nameLength, SEO_LIMITS.TITLE_MAX)}>
-               {nameLength}/{SEO_LIMITS.TITLE_MAX}
-             </span>
-          </div>
-        </div>
+        <CharacterCountInput
+          name="name"
+          label="Business Name / SEO Title"
+          required
+          placeholder="Pomegranate pSEO"
+          maxLength={SEO_LIMITS.TITLE_MAX}
+        />
         <div className="space-y-2">
           <Label htmlFor="legal_name">Legal Name</Label>
           <Input id="legal_name" {...register('legal_name')} placeholder="Pomegranate Ltd" />
         </div>
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="description">Knowledge Graph Description</Label>
-          <Textarea 
-            id="description" 
-            {...register('description')} 
-            placeholder="A clear, concise description of the entity for schema.org markup..."
-            className="resize-none h-20"
-          />
-          <div className="flex justify-between text-xs">
-             <span className="text-red-500">{errors.description?.message?.toString()}</span>
-             <span className={getCharacterCountColor(descriptionLength, SEO_LIMITS.DESC_MAX)}>
-               {descriptionLength}/{SEO_LIMITS.DESC_MAX}
-             </span>
-          </div>
-        </div>
+         <div className="md:col-span-2">
+           <CharacterCountTextarea
+             name="description"
+             label="Knowledge Graph Description"
+             placeholder="A clear, concise description of the entity for schema.org markup..."
+             maxLength={SEO_LIMITS.DESC_MAX}
+             rows={3}
+             className="resize-none"
+           />
+         </div>
         
         <div className="space-y-2">
            <Label htmlFor="price_range">Price Range (Schema)</Label>

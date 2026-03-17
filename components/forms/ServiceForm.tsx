@@ -284,28 +284,50 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, knowledg
         
         <div className="p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="name">Service Name</Label>
-              <Input 
-                id="name" 
-                {...register('name')} 
-                placeholder="e.g. Emergency Boiler Repair" 
-                onChange={(e) => {
-                  register('name').onChange(e);
-                  handleNameChange(e);
-                }}
-              />
-              <p className="text-xs text-red-500">{errors.name?.message}</p>
-            </div>
+             <div className="space-y-2">
+               <Label htmlFor="name" className={errors.name ? "text-red-600" : ""}>
+                 Service Name <span className="text-red-500" aria-label="required">*</span>
+               </Label>
+               <Input 
+                 id="name" 
+                 {...register('name')} 
+                 placeholder="e.g. Emergency Boiler Repair" 
+                 onChange={(e) => {
+                   register('name').onChange(e);
+                   handleNameChange(e);
+                 }}
+                 className={errors.name ? "border-red-500 focus-visible:ring-red-500" : ""}
+                 aria-invalid={errors.name ? "true" : "false"}
+                 aria-describedby={errors.name ? "name-error" : undefined}
+               />
+               {errors.name && (
+                 <p id="name-error" className="text-xs text-red-500 flex items-center gap-1" role="alert">
+                   <span aria-hidden="true">⚠</span> {errors.name.message}
+                 </p>
+               )}
+             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="base_slug">URL Slug</Label>
-              <div className="flex items-center">
-                <span className="bg-slate-100 border border-r-0 rounded-l px-3 py-2 text-sm text-slate-500">/</span>
-                <Input id="base_slug" {...register('base_slug')} className="rounded-l-none" placeholder="emergency-boiler-repair" />
-              </div>
-              <p className="text-xs text-red-500">{errors.base_slug?.message}</p>
-            </div>
+             <div className="space-y-2">
+               <Label htmlFor="base_slug" className={errors.base_slug ? "text-red-600" : ""}>
+                 URL Slug <span className="text-red-500" aria-label="required">*</span>
+               </Label>
+               <div className="flex items-center">
+                 <span className="bg-slate-100 border border-r-0 rounded-l px-3 py-2 text-sm text-slate-500">/</span>
+                 <Input 
+                   id="base_slug" 
+                   {...register('base_slug')} 
+                   className={`rounded-l-none ${errors.base_slug ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                   placeholder="emergency-boiler-repair"
+                   aria-invalid={errors.base_slug ? "true" : "false"}
+                   aria-describedby={errors.base_slug ? "base_slug-error" : undefined}
+                 />
+               </div>
+               {errors.base_slug && (
+                 <p id="base_slug-error" className="text-xs text-red-500 flex items-center gap-1" role="alert">
+                   <span aria-hidden="true">⚠</span> {errors.base_slug.message}
+                 </p>
+               )}
+             </div>
           </div>
 
           <div className="bg-slate-50 p-4 rounded border border-slate-200">
@@ -326,16 +348,25 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, knowledg
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
-              <select 
-                id="category" 
+              <Label htmlFor="category" className={errors.category ? "text-red-600" : ""}>
+                Category <span className="text-red-500" aria-label="required">*</span>
+              </Label>
+              <select
+                id="category"
                 {...register('category')}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                className={`flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ${errors.category ? "border-red-500 focus-visible:ring-red-500" : "border-input"}`}
+                aria-invalid={errors.category ? "true" : "false"}
+                aria-describedby={errors.category ? "category-error" : undefined}
               >
                 {SERVICE_CATEGORIES.map(cat => (
                   <option key={cat} value={cat}>{cat}</option>
                 ))}
               </select>
+              {errors.category && (
+                <p id="category-error" className="text-xs text-red-500 flex items-center gap-1" role="alert">
+                  <span aria-hidden="true">⚠</span> {errors.category.message}
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="service_type">Schema Service Type</Label>

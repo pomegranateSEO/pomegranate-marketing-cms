@@ -400,29 +400,54 @@ export default function PostsPage() {
 
           {/* SECONDARY TABS - Semantic & Advanced Settings */}
           <div className="border-t pt-6 mt-6">
-            <div className="flex border-b bg-slate-50 mb-4 rounded-t-lg">
-               <button type="button" onClick={() => setActiveTab('semantic')} className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'semantic' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}>Semantic Markup</button>
-               <button type="button" onClick={() => setActiveTab('settings')} className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'settings' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}>Advanced Settings</button>
+            <div className="flex border-b bg-slate-50 mb-4 rounded-t-lg" role="tablist" aria-label="Post settings tabs">
+               <button
+                 type="button"
+                 id="tab-semantic"
+                 role="tab"
+                 aria-selected={activeTab === 'semantic'}
+                 aria-controls="panel-semantic"
+                 onClick={() => setActiveTab('semantic')}
+                 className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'semantic' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}
+               >
+                 Semantic Markup
+               </button>
+               <button
+                 type="button"
+                 id="tab-settings"
+                 role="tab"
+                 aria-selected={activeTab === 'settings'}
+                 aria-controls="panel-settings"
+                 onClick={() => setActiveTab('settings')}
+                 className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'settings' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}
+               >
+                 Advanced Settings
+               </button>
             </div>
 
             {/* SEMANTIC TAB */}
-            <div className={activeTab === 'semantic' ? 'block' : 'hidden'}>
+            <div
+              id="panel-semantic"
+              role="tabpanel"
+              aria-labelledby="tab-semantic"
+              className={activeTab === 'semantic' ? 'block' : 'hidden'}
+            >
                 {/* FAQ Editor Section */}
-                <FAQEditor 
+                <FAQEditor
                   value={formState.faqs}
                   onChange={(faqs) => setFormState({...formState, faqs: faqs})}
                   sourceText={formState.content}
                 />
-                
+
                 <div className="grid grid-cols-2 gap-6">
-                   <KnowledgeEntitySelector 
+                   <KnowledgeEntitySelector
                       label="About Entities"
                       allEntities={knowledgeEntities}
                       selectedIds={formState.about_entities}
                       onChange={(ids) => setFormState({...formState, about_entities: ids})}
                       contentToScan={getPostContent()}
                    />
-                   <KnowledgeEntitySelector 
+                   <KnowledgeEntitySelector
                       label="Mentioned Entities"
                       allEntities={knowledgeEntities}
                       selectedIds={formState.mentions_entities}
@@ -433,16 +458,21 @@ export default function PostsPage() {
             </div>
 
             {/* SETTINGS TAB */}
-            <div className={activeTab === 'settings' ? 'block' : 'hidden'}>
+            <div
+              id="panel-settings"
+              role="tabpanel"
+              aria-labelledby="tab-settings"
+              className={activeTab === 'settings' ? 'block' : 'hidden'}
+            >
                 <div className="space-y-2">
                    <Label className="flex items-center gap-2">
                       <Code className="h-4 w-4 text-slate-500" />
                       Custom &lt;head&gt; Code
                    </Label>
-                   <Textarea 
+                   <Textarea
                       value={formState.custom_head}
                       onChange={e => setFormState({...formState, custom_head: e.target.value})}
-                      placeholder="<script>...</script> or <meta name='...'>" 
+                      placeholder="<script>...</script> or <meta name='...'>"
                       className="font-mono text-xs h-32 bg-slate-50"
                    />
                    <p className="text-xs text-slate-500">Note: This code is currently UI-only and may not persist without database schema updates.</p>

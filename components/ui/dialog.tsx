@@ -2,13 +2,31 @@ import * as React from "react";
 import { cn } from "../../lib/utils";
 import { X } from "lucide-react";
 
+export type DialogSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
+
 interface DialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   children: React.ReactNode;
+  size?: DialogSize;
+  nested?: boolean;
 }
 
-export function Dialog({ open, onOpenChange, children }: DialogProps) {
+const sizeClasses: Record<DialogSize, string> = {
+  sm: 'max-w-sm',
+  md: 'max-w-lg',
+  lg: 'max-w-2xl',
+  xl: 'max-w-4xl',
+  full: 'max-w-[95vw]',
+};
+
+// Context for nested dialog support
+interface DialogContextType {
+  nestedLevel: number;
+}
+const DialogContext = React.createContext<DialogContextType>({ nestedLevel: 0 });
+
+export function Dialog({ open, onOpenChange, children, size = 'md', nested = false }: DialogProps) {
   const dialogRef = React.useRef<HTMLDivElement>(null);
   const previousActiveElement = React.useRef<HTMLElement | null>(null);
 
@@ -75,40 +93,55 @@ export function Dialog({ open, onOpenChange, children }: DialogProps) {
     return () => dialog.removeEventListener("keydown", handleTabKey);
   }, [open]);
 
+  const { nestedLevel } = React.useContext(DialogContext);
+  const actualNestedLevel = nested ? nestedLevel + 1 : 0;
+  const zIndex = 50 + actualNestedLevel * 10;
+
   if (!open) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
-      role="dialog"
-      aria-modal="true"
-      ref={dialogRef}
-    >
-      {/* Backdrop */}
+    <DialogContext.Provider value={{ nestedLevel: actualNestedLevel }}>
       <div
-        className="fixed inset-0 bg-black/50 transition-opacity"
-        onClick={() => onOpenChange(false)}
-        aria-hidden="true"
-      />
-      
-      {/* Dialog content */}
-      <div className="relative z-10 w-full max-w-lg mx-4">
-        {children}
+        className="fixed inset-0 flex items-center justify-center animate-in fade-in duration-200"
+        style={{ zIndex }}
+        role="dialog"
+        aria-modal="true"
+        ref={dialogRef}
+      >
+        {/* Backdrop */}
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity animate-in fade-in duration-200"
+          onClick={() => onOpenChange(false)}
+          aria-hidden="true"
+        />
+        
+        {/* Dialog content */}
+        <div 
+          className={cn(
+            "relative w-full mx-4 animate-in zoom-in-95 fade-in slide-in-from-bottom-4 duration-200",
+            sizeClasses[size]
+          )}
+          style={{ zIndex: zIndex + 1 }}
+        >
+          {children}
+        </div>
       </div>
-    </div>
+    </DialogContext.Provider>
   );
 }
 
 interface DialogContentProps {
   children: React.ReactNode;
   className?: string;
+  scrollable?: boolean;
 }
 
-export function DialogContent({ children, className }: DialogContentProps) {
+export function DialogContent({ children, className, scrollable = false }: DialogContentProps) {
   return (
     <div
       className={cn(
         "bg-white rounded-lg shadow-xl border border-slate-200 overflow-hidden",
+        scrollable && "max-h-[85vh] flex flex-col",
         className
       )}
     >
@@ -163,10 +196,21 @@ export function DialogClose({ onClose }: DialogCloseProps) {
 interface DialogBodyProps {
   children: React.ReactNode;
   className?: string;
+  scrollable?: boolean;
 }
 
-export function DialogBody({ children, className }: DialogBodyProps) {
-  return <div className={cn("p-6", className)}>{children}</div>;
+export function DialogBody({ children, className, scrollable = false }: DialogBodyProps) {
+  return (
+    <div 
+      className={cn(
+        "p-6",
+        scrollable && "overflow-y-auto flex-1",
+        className
+      )}
+    >
+      {children}
+    </div>
+  );
 }
 
 interface DialogFooterProps {

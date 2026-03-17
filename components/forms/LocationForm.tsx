@@ -151,23 +151,45 @@ export const LocationForm: React.FC<Props> = ({ initialData, businessId, knowled
         
         {/* Basic Info */}
         <div className="space-y-2">
-          <Label htmlFor="name">Location Name</Label>
-          <Input 
-            id="name" 
-            {...register('name')} 
-            placeholder="e.g. Brixton" 
+          <Label htmlFor="name" className={errors.name ? "text-red-600" : ""}>
+            Location Name <span className="text-red-500" aria-label="required">*</span>
+          </Label>
+          <Input
+            id="name"
+            {...register('name')}
+            placeholder="e.g. Brixton"
             onChange={(e) => {
               register('name').onChange(e);
               handleNameChange(e);
             }}
+            className={errors.name ? "border-red-500 focus-visible:ring-red-500" : ""}
+            aria-invalid={errors.name ? "true" : "false"}
+            aria-describedby={errors.name ? "name-error" : undefined}
           />
-          <p className="text-xs text-red-500">{errors.name?.message}</p>
+          {errors.name && (
+            <p id="name-error" className="text-xs text-red-500 flex items-center gap-1" role="alert">
+              <span aria-hidden="true">⚠</span> {errors.name.message}
+            </p>
+          )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="slug">URL Slug</Label>
-          <Input id="slug" {...register('slug')} placeholder="brixton" />
-          <p className="text-xs text-red-500">{errors.slug?.message}</p>
+          <Label htmlFor="slug" className={errors.slug ? "text-red-600" : ""}>
+            URL Slug <span className="text-red-500" aria-label="required">*</span>
+          </Label>
+          <Input
+            id="slug"
+            {...register('slug')}
+            placeholder="brixton"
+            className={errors.slug ? "border-red-500 focus-visible:ring-red-500" : ""}
+            aria-invalid={errors.slug ? "true" : "false"}
+            aria-describedby={errors.slug ? "slug-error" : undefined}
+          />
+          {errors.slug && (
+            <p id="slug-error" className="text-xs text-red-500 flex items-center gap-1" role="alert">
+              <span aria-hidden="true">⚠</span> {errors.slug.message}
+            </p>
+          )}
         </div>
 
         <div className="space-y-2">

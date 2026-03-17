@@ -3,10 +3,11 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { Label } from '../ui/label';
-import { Loader2, Factory, Sparkles, Globe, ChevronDown, ChevronUp, MessageSquare, Layout } from 'lucide-react';
+import { Loader2, Factory, Sparkles, Globe, ChevronDown, ChevronUp, MessageSquare, Layout, ListChecks } from 'lucide-react';
 import type { Industry, KnowledgeEntity } from '../../lib/types';
 import { FAQEditor } from '../shared/FAQEditor';
 import { KnowledgeEntitySelector } from '../shared/KnowledgeEntitySelector';
+import { DeliverablesEditor } from '../shared/DeliverablesEditor';
 
 interface FAQItem { question: string; answer: string; }
 
@@ -29,14 +30,19 @@ export const IndustryForm: React.FC<IndustryFormProps> = ({
 }) => {
   const heroData = (initialData?.hero_data as any) || {};
   const ctaData = (initialData?.cta as any) || {};
+  const contentSections = (initialData?.content_sections as any) || {};
   const primaryBlock = Array.isArray(initialData?.keyword_cycling_blocks)
     ? (initialData.keyword_cycling_blocks as any[])[0]
     : null;
   const faqList = Array.isArray(initialData?.faq_list) ? initialData.faq_list as FAQItem[] : [];
+  const overviewItems = Array.isArray(contentSections?.overview_items)
+    ? contentSections.overview_items as { icon: string; title: string; description: string }[]
+    : [];
 
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     hero: true,
     cta: false,
+    deliverables: false,
     faq: false,
     seo: false,
     entities: false,
@@ -64,6 +70,8 @@ export const IndustryForm: React.FC<IndustryFormProps> = ({
   });
 
   const [faqs, setFaqs] = useState<FAQItem[]>(faqList);
+  const [deliverablesItems, setDeliverablesItems] = useState<{ icon: string; title: string; description: string }[]>(overviewItems);
+  const [overviewHeading, setOverviewHeading] = useState<string>(contentSections?.overview_heading || '');
 
   const toggleSection = (section: string) => {
     setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
@@ -122,12 +130,18 @@ export const IndustryForm: React.FC<IndustryFormProps> = ({
       subheading: formState.cta_subheading,
     };
 
+    const contentSectionsOut = {
+      overview_heading: overviewHeading || 'What You Get',
+      overview_items: deliverablesItems,
+    };
+
     onSubmit({
       name: formState.name,
       slug: formState.slug,
       description: formState.description,
       hero_data: heroDataOut,
       keyword_cycling_blocks: [keywordCyclingBlock],
+      content_sections: contentSectionsOut,
       cta: ctaDataOut,
       faq_list: faqs,
       seo_title: formState.seo_title,
@@ -289,6 +303,30 @@ export const IndustryForm: React.FC<IndustryFormProps> = ({
                 {formState.keyword_terms.split(',')[0]?.trim() || ''}
               </span>
             </p>
+          </div>
+        )}
+      </div>
+
+      {/* Deliverables Section */}
+      <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+        <button type="button" onClick={() => toggleSection('deliverables')}className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+          <div className="flex items-center gap-3">
+            <ListChecks className="h-5 w-5 text-slate-600" />
+            <div className="text-left">
+              <h3 className="text-lg font-semibold text-slate-800">Deliverables</h3>
+              <p className="text-xs text-slate-500">"What You Get" section items with icons</p>
+            </div>
+          </div>
+          {expandedSections.deliverables ? <ChevronUp className="h-5 w-5 text-slate-400" /> : <ChevronDown className="h-5 w-5text-slate-400" />}
+        </button>
+        {expandedSections.deliverables && (
+          <div className="p-6 border-t border-slate-200">
+            <DeliverablesEditor
+              value={deliverablesItems}
+              onChange={setDeliverablesItems}
+              heading={overviewHeading}
+              onHeadingChange={setOverviewHeading}
+            />
           </div>
         )}
       </div>

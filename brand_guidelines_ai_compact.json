@@ -1,0 +1,233 @@
+{
+  "profile_name": "pomegranate compact AI generation spec",
+  "profile_id": "pomegranate-ai-compact-v2026-02-26",
+  "version_date": "2026-02-26",
+  "status": "approved derivative-generation profile (portable)",
+  "portability": {
+    "target": "drop-in for new projects",
+    "required_files": [
+      "brand_guidelines_ai_compact.json",
+      "brand_guidelines_ai_agent_preamble.txt"
+    ],
+    "load_order": [
+      "Load JSON profile first",
+      "Apply preamble as agent instruction layer",
+      "Generate output with compliance checklist"
+    ]
+  },
+  "source_baseline": [
+    "brand_guidelines_full.md",
+    "brand_guidelines_ai_compact.md",
+    "approved navbar logo code provided by user"
+  ],
+  "immutable_constants": {
+    "brand_name": "pomegranate",
+    "brand_name_rule": "always lowercase",
+    "service_umbrella": "Website Design and SEO Services or Digital Marketing Services (both approved and interchangeable)",
+    "core_service_offers": [
+      "SEO",
+      "web design",
+      "SEO training",
+      "web design training"
+    ],
+    "signature_text": "Serving small businesses as their digital seeds go from darkness to light and grow, if God Almighty is willing.",
+    "signature_rule": "show exactly once at the end of major material; always on a single line — never allow it to wrap or fold onto a second line",
+    "audience_core": "small businesses",
+    "logo_wordmark_text": "pomegranate",
+    "logo_mark_motif": "dual-hexagon",
+    "button_shape_policy": "no full-pill buttons"
+  },
+  "hard_visual_rules": {
+    "dark_to_light_direction_required": true,
+    "background_direction_note": "major layouts begin darker at the top and become lighter in lower sections",
+    "allow_progression_gimmick_labels": false,
+    "visual_language": [
+      "abstract",
+      "minimal",
+      "futuristic",
+      "cinematic clarity"
+    ],
+    "avoid_photo_real_imagery": true,
+    "approved_exception_motifs": [
+      "abstract fractal tree"
+    ],
+    "clarity_priority": "high",
+    "avoid_visual_noise": true,
+    "accent_allowance": "Use pinks/reds as primary action color. Use new leaf green (e.g. #4ade80, #166534) sparingly for confirmation, success states, or nature-themed flourishes fitting the pomegranate farm motif."
+  },
+  "colour_tokens": {
+    "--colour-dark-start": "#0f0508",
+    "--colour-dark-mid": "#4c0519",
+    "--colour-dark-rise": "#881337",
+    "--colour-accent-primary": "#f43f5e",
+    "--colour-accent-secondary": "#be123c",
+    "--colour-accent-soft": "#fda4af",
+    "--colour-accent-tint": "#ffe4e6",
+    "--colour-text-on-dark": "#fff0f5",
+    "--colour-text-primary": "#0b0b0b",
+    "--colour-bg-light": "#fff7fa",
+    "--colour-accent-leaf-dark": "#166534",
+    "--colour-accent-leaf-spring": "#4ade80",
+    "--colour-accent-leaf-tint": "#f0fdf4"
+  },
+  "typography_and_spacing": {
+    "logo_font": [
+      "Outfit",
+      "sans-serif"
+    ],
+    "heading_font": [
+      "Space Grotesk",
+      "sans-serif"
+    ],
+    "button_font": [
+      "Space Grotesk",
+      "sans-serif"
+    ],
+    "body_font": [
+      "Inter",
+      "sans-serif"
+    ],
+    "logo_weight": 900,
+    "heading_weights": [
+      600,
+      700
+    ],
+    "button_weights": [
+      600,
+      700
+    ],
+    "body_weights": [
+      300,
+      400
+    ],
+    "body_size_min_px": 16,
+    "body_size_preferred_px": 18,
+    "body_line_height_min": 1.5,
+    "body_line_height_max": 1.7,
+    "spacing_scale_px": [
+      8,
+      16,
+      24,
+      32,
+      40,
+      48
+    ]
+  },
+  "logo_system": {
+    "states": [
+      "stationary",
+      "animated"
+    ],
+    "origin_note": "derived from approved Navbar logo code shared by user",
+    "stationary_exact_language": "Build the pomegranate stationary logo as a horizontal lockup. Use a transparent background. Place a dual-hexagon mark on the left and the lowercase wordmark on the right. Outer hexagon: stroke colour #f43f5e, no fill, subtle glow (0 0 8px rgba(244,63,94,0.8)). Inner hexagon: stroke colour #fda4af, no fill, 50% scale, rotated 90 degrees. Wordmark text must be exactly \"pomegranate\" in Outfit 900, lowercase only, tight tracking. Default lockup spacing: 12px gap between mark and wordmark. Do not use uppercase, fruit illustrations, or alternate symbols.",
+    "animated_exact_language": "Build the pomegranate animated logo from the stationary logo baseline. Trigger animation on hover and focus-visible of the full lockup. Animate the outer hexagon with a 180-degree rotation around centre in 700ms ease. Keep the inner hexagon static at 90 degrees. Transition wordmark colour from #fff0f5 to #fda4af in 300ms. Allow a soft glow pulse only as low-amplitude support (slow, non-distracting). Idle state must not continuously spin. If prefers-reduced-motion is active, disable rotation and pulse and keep a static logo.",
+    "code_reference": {
+      "framework": "React + TypeScript + utility classes",
+      "icon_dependency": "lucide-react Hexagon",
+      "outer_hexagon_class_requirements": [
+        "text-pomegranate-500",
+        "group-hover:rotate-180",
+        "duration-700",
+        "drop-shadow-[0_0_8px_rgba(244,63,94,0.8)]"
+      ],
+      "inner_hexagon_class_requirements": [
+        "text-pomegranate-300",
+        "scale-50",
+        "rotate-90"
+      ],
+      "wordmark_requirements": [
+        "text-2xl",
+        "font-logo",
+        "font-black",
+        "tracking-tight",
+        "text-white",
+        "wordmark literal value must be 'pomegranate'"
+      ],
+      "uppercase_transform_forbidden": true,
+      "reduced_motion_requirement": "disable transform animation under prefers-reduced-motion"
+    },
+    "idle_continuous_spin_allowed": false,
+    "reduced_motion_static_required": true
+  },
+  "accessibility_and_responsive_gates": {
+    "wcag_target": "WCAG 2.1 AAA intent",
+    "body_text_contrast_min": "7:1",
+    "keyboard_support_required": true,
+    "visible_focus_required": true,
+    "touch_target_min_px": "44x44",
+    "reduced_motion_required": true,
+    "reduced_motion_query": "prefers-reduced-motion: reduce",
+    "required_width_checks_px": [
+      320,
+      375,
+      768,
+      1024,
+      1440
+    ],
+    "horizontal_scroll_allowed": false
+  },
+  "messaging_and_prompt_rules": {
+    "language": "plain English",
+    "spelling": "British English",
+    "reader_level_note": "understandable for first-time readers, including young teenagers who use search and social platforms",
+    "assume_marketing_background": false,
+    "define_specialist_terms_on_first_use": true,
+    "jargon_buster_section": "when generating whole webpage or presentation content, always include a 'plain english jargon buster' section to explain specialist terms in accessible language",
+    "tone": [
+      "clear",
+      "calm",
+      "practical",
+      "principled"
+    ],
+    "allow_manipulative_urgency": false,
+    "allow_hype_claims": false,
+    "allow_unsupported_guarantees": false,
+    "promotional_prompt_required": false,
+    "prompt_style_rule": "if used, prompts must be plain, non-manipulative, and context-fit",
+    "allow_pressure_tactics": false,
+    "button_shape_rule": "no full-pill buttons; use rounded-lg or rounded-xl"
+  },
+  "output_contract": {
+    "required_return": [
+      "generated asset content",
+      "brief compliance checklist"
+    ],
+    "compliance_checks": [
+      "lowercase pomegranate",
+      "service framing stays Website Design and SEO Services or Digital Marketing Services umbrella plus four core offers",
+      "dark-to-light progression present",
+      "canonical logo implementation and behaviours followed",
+      "prompt policy remains optional, plain, and non-manipulative",
+      "no full-pill button shapes",
+      "single end-position signature",
+      "approved abstract visual language including optional fractal tree motif",
+      "body contrast >= 7:1",
+      "visible focus and >=44x44 targets",
+      "reduced-motion support",
+      "first-time-reader clarity with jargon explained",
+      "jargon buster section included for whole webpage/presentation content",
+      "required responsive widths with no horizontal scroll"
+    ]
+  },
+  "reject_conditions": [
+    "brand appears as non-lowercase variant",
+    "prompt language uses pressure tactics, hype urgency, or manipulation",
+    "signature repeated or not at end",
+    "logo behaviour or geometry deviates from canonical logo rules",
+    "full-pill button shapes used",
+    "body text contrast below 7:1",
+    "marketing jargon used without plain-language explanation",
+    "missing focus states",
+    "touch targets below 44x44",
+    "horizontal overflow at required widths"
+  ],
+  "bootstrap_contract": {
+    "new_project_setup_steps": [
+      "copy this JSON and brand_guidelines_ai_agent_preamble.txt into project root",
+      "load this JSON as hard constraints before generation",
+      "ensure required fonts and icon dependency are available",
+      "implement logo using canonical code rules",
+      "require compliance checklist on every generated output"
+    ]
+  }
+}
