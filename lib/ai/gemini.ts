@@ -329,6 +329,7 @@ interface WritingContext {
   fieldName: string;
   brandTheme?: GlobalTheme | null;
   existingText?: string;
+  contextContent?: string;
 }
 
 export const generateDraftContent = async (ctx: WritingContext): Promise<string> => {
@@ -339,24 +340,34 @@ export const generateDraftContent = async (ctx: WritingContext): Promise<string>
   ` : "Tone: Professional and Authoritative";
 
   const isRichText = ctx.fieldName.toLowerCase().includes('content') || ctx.fieldName.toLowerCase().includes('body');
+  const isMetaDescription = ctx.fieldName.toLowerCase().includes('meta') || ctx.fieldName.toLowerCase().includes('description') || ctx.fieldName.toLowerCase().includes('excerpt');
+
+  let contentContext = '';
+  if (ctx.contextContent && ctx.contextContent.length > 50) {
+    contentContext = `
+    
+    REFERENCE CONTENT (use this to ensure relevance):
+    "${ctx.contextContent.substring(0, 3000)}"
+    `;
+  }
 
   const prompt = `
     You are a professional copywriter for a business.
     Write content for the field: "${ctx.fieldName}".
     Target Keyword: "${ctx.keyword || 'General'}"
-    
+    ${contentContext}
     ${brandVoice}
     
     Instructions:
     - Write specifically for the "${ctx.fieldName}" context.
     - If it's a 'Headline' or 'Title', keep it punchy and under 10 words. NO Markdown. Plain text only.
-    - If it's a 'Description', keep it under 160 characters. NO Markdown. Plain text only.
+    - If it's a 'Description' or 'Meta Description', keep it under135 characters. NO Markdown. Plain text only. MUST be directly relevant to the reference content if provided.
     - If it's 'Body Content', use markdown headers and short paragraphs.
     - Integrate the keyword naturally.
     - Use British English.
     - **CRITICAL**: Return ONLY the text content. No conversational filler like "Here is the text". No quotes around the text.
-    - **CRITICAL**: Do NOT include any meta-commentary or explanations. Just the final copy.
-    ${!isRichText ? "- **STRICTLY PLAIN TEXT**: Do not use bold (**), italics (*), or headers (#). Plain text only." : ""}
+    - **CRITICAL**: DoNOT include any meta-commentary or explanations. Just the final copy.
+    ${!isRichText && !isMetaDescription ? "- **STRICTLY PLAIN TEXT**: Do not use bold (**), italics (*), or headers (#). Plain text only." : ""}
   `;
 
   try {
@@ -378,10 +389,21 @@ export const improveContent = async (ctx: WritingContext): Promise<string> => {
   ` : "";
 
   const isRichText = ctx.fieldName.toLowerCase().includes('content') || ctx.fieldName.toLowerCase().includes('body');
+  const isMetaDescription = ctx.fieldName.toLowerCase().includes('meta') || ctx.fieldName.toLowerCase().includes('description') || ctx.fieldName.toLowerCase().includes('excerpt');
+
+  let contentContext = '';
+  if (ctx.contextContent && ctx.contextContent.length > 50) {
+    contentContext = `
+    
+    REFERENCE CONTENT(for relevance):
+    "${ctx.contextContent.substring(0, 3000)}"
+    `;
+  }
 
   const prompt = `
     Rewrite and improve the following text.
     
+    ${contentContext}
     ${brandVoice}
     
     Goal:
@@ -389,9 +411,10 @@ export const improveContent = async (ctx: WritingContext): Promise<string> => {
     - Correct any grammar issues (Use British English).
     - Ensure the tone matches the brand personality.
     - If a keyword "${ctx.keyword}" is provided, ensure it is naturally included.
+    - ${isMetaDescription ? 'Keep it under 135 characters. MUST be directly relevant to the reference content if provided.' : ''}
     - **CRITICAL**: Return ONLY the improved text. No conversational filler.
     - **CRITICAL**: Do NOT include commentary.
-    ${!isRichText ? "- **STRICTLY PLAIN TEXT**: Remove any markdown formatting." : ""}
+    ${!isRichText && !isMetaDescription ? "- **STRICTLY PLAIN TEXT**: Remove any markdown formatting." : ""}
     
     TEXT TO IMPROVE:
     "${ctx.existingText}"

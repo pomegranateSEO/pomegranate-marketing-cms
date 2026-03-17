@@ -67,13 +67,17 @@ export const updatePost = async (id: string, post: any) => {
       payload.published = true;
     }
   }
-  if (post.content || post.content_body) {
+  if (post.content !== undefined || post.content_body !== undefined) {
     payload.content_body = post.content || post.content_body;
     payload.article_body_raw = post.content || post.content_body;
   }
-  if (post.excerpt || post.seo_meta_desc) payload.seo_meta_desc = post.excerpt || post.seo_meta_desc;
-  if (post.featured_image_url) payload.featured_image_url = post.featured_image_url;
+  if (post.excerpt !== undefined || post.seo_meta_desc !== undefined) payload.seo_meta_desc = post.excerpt || post.seo_meta_desc;
+  if (post.featured_image_url !== undefined) payload.featured_image_url = post.featured_image_url || null;
   if (post.faqs !== undefined) payload.faq_list = post.faqs;
+  if (post.keywords !== undefined) payload.keywords = post.keywords;
+  if (post.about_entities !== undefined) payload.about_entities = post.about_entities;
+  if (post.mentions_entities !== undefined) payload.mentions_entities = post.mentions_entities;
+  if (post.author_person_id !== undefined) payload.author_person_id = post.author_person_id || null;
 
   const { data, error } = await supabase
     .from('blog_posts')

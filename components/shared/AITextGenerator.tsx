@@ -13,6 +13,7 @@ interface Props {
   keyword?: string;
   brandTheme?: GlobalTheme | null;
   className?: string;
+  contextContent?: string;
 }
 
 export const AITextGenerator: React.FC<Props> = ({ 
@@ -21,7 +22,8 @@ export const AITextGenerator: React.FC<Props> = ({
   currentValue = '', 
   keyword = '', 
   brandTheme,
-  className 
+  className,
+  contextContent
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -32,7 +34,8 @@ export const AITextGenerator: React.FC<Props> = ({
       const text = await generateDraftContent({
         fieldName,
         keyword,
-        brandTheme
+        brandTheme,
+        contextContent
       });
       onGenerate(text);
       setIsOpen(false);
@@ -51,7 +54,8 @@ export const AITextGenerator: React.FC<Props> = ({
         fieldName,
         keyword,
         brandTheme,
-        existingText: currentValue
+        existingText: currentValue,
+        contextContent
       });
       onGenerate(text);
       setIsOpen(false);

@@ -142,7 +142,7 @@ export default function PostsPage() {
   };
 
   const startEdit = (post?: BlogPost) => {
-    setActiveTab('content');
+    setActiveTab('semantic');
     if (post) {
       const postFaqs = Array.isArray(post.faqs) 
         ? post.faqs as { question: string; answer: string }[] 
@@ -150,10 +150,10 @@ export default function PostsPage() {
 
       setFormState({
         id: post.id,
-        title: post.headline, // map DB headline to UI title
+        title: post.headline,
         slug: post.slug,
-        content: post.content_body || post.article_body_raw || '', // map DB content_body to UI content
-        excerpt: post.seo_meta_desc || '', // map DB seo_meta_desc to UI excerpt
+        content: post.content_body || post.article_body_raw || '',
+        excerpt: post.seo_meta_desc || '',
         featured_image_url: post.featured_image_url || '',
         status: post.status,
         faqs: postFaqs,
@@ -171,7 +171,22 @@ export default function PostsPage() {
   };
 
   const resetForm = () => {
-    setFormState({ id: '', title: '', slug: '', content: '', excerpt: '', featured_image_url: '', status: 'draft', faqs: [], keywords: [], target_keyword_input: '', custom_head: '', about_entities: [], mentions_entities: [] });
+    setFormState({ 
+      id: '', 
+      title: '', 
+      slug: '', 
+      content: '', 
+      excerpt: '', 
+      featured_image_url: '', 
+      status: 'draft', 
+      faqs: [], 
+      keywords: [], 
+      target_keyword_input: '',
+      custom_head: '',
+      about_entities: [],
+      mentions_entities: [],
+      author_person_id: ''
+    });
   };
 
   const handleImageSelect = (url: string) => {
@@ -180,17 +195,15 @@ export default function PostsPage() {
   };
 
   const handleTopicSelect = (topicId: string) => {
+    if (!topicId) return;
     const topic = topics.find(t => t.id === topicId);
     if (!topic) return;
     
-    // Only update fields if they are empty or user confirms overwrite?
-    // For simplicity, we assume selection means intent to use.
     setFormState(prev => ({
       ...prev,
-      title: topic.name,
-      slug: topic.slug || prev.slug,
-      excerpt: topic.description || prev.excerpt,
-      // Use topic name as target keyword if keyword is empty
+      title: prev.title || topic.name,
+      slug: prev.slug || topic.slug || '',
+      excerpt: prev.excerpt || topic.description || '',
       target_keyword_input: prev.target_keyword_input || topic.name
     }));
   };
@@ -299,6 +312,7 @@ export default function PostsPage() {
                         keyword={formState.target_keyword_input}
                         currentValue={formState.title}
                         brandTheme={brandTheme}
+                        contextContent={formState.content}
                       />
                     </div>
                     <Input 
@@ -349,23 +363,24 @@ export default function PostsPage() {
                   </div>
                   
                   <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <Label>Excerpt (SEO Meta Description)</Label>
-                      <AITextGenerator 
-                        onGenerate={t => setFormState({...formState, excerpt: t})}
-                        fieldName="Meta Description"
-                        keyword={formState.target_keyword_input}
-                        currentValue={formState.excerpt}
-                        brandTheme={brandTheme}
+                      <div className="flex justify-between">
+                        <Label>Excerpt (SEO Meta Description)</Label>
+                        <AITextGenerator 
+                          onGenerate={t => setFormState({...formState, excerpt: t})}
+                          fieldName="Meta Description"
+                          keyword={formState.target_keyword_input}
+                          currentValue={formState.excerpt}
+                          brandTheme={brandTheme}
+                          contextContent={formState.content}
+                        />
+                      </div>
+                      <Textarea 
+                        value={formState.excerpt || ''} 
+                        onChange={e => setFormState({...formState, excerpt: e.target.value})} 
+                        className="h-20"
+                        placeholder="A brief summary for search engines..."
                       />
                     </div>
-                    <Textarea 
-                      value={formState.excerpt || ''} 
-                      onChange={e => setFormState({...formState, excerpt: e.target.value})} 
-                      className="h-20"
-                      placeholder="A brief summary for search engines..."
-                    />
-                  </div>
                   
                   <div className="space-y-2">
                     <Label className="flex items-center gap-2">
