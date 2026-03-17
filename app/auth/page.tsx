@@ -10,28 +10,15 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isSignUp, setIsSignUp] = useState(false);
 
-  const handleAuth = async (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
-      let result;
-      if (isSignUp) {
-        result = await supabase.auth.signUp({ email, password });
-      } else {
-        result = await supabase.auth.signInWithPassword({ email, password });
-      }
-
-      if (result.error) throw result.error;
-      
-      // If sign up successful but no session (email confirmation required), inform user
-      if (isSignUp && !result.data.session) {
-         setError("Please check your email to confirm your account.");
-      }
-
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -57,7 +44,7 @@ export default function LoginPage() {
           </div>
         )}
 
-        <form onSubmit={handleAuth} className="space-y-4">
+        <form onSubmit={handleSignIn} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email Address</Label>
             <Input 
@@ -83,19 +70,9 @@ export default function LoginPage() {
           </div>
 
           <Button type="submit" className="w-full h-11 text-base" disabled={loading}>
-            {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : (isSignUp ? 'Create Account' : 'Sign In')}
+            {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Sign In'}
           </Button>
         </form>
-        
-        <div className="mt-6 text-center">
-            <button 
-                type="button" 
-                onClick={() => { setIsSignUp(!isSignUp); setError(null); }}
-                className="text-sm text-muted-foreground hover:text-primary transition-colors"
-            >
-                {isSignUp ? "Already have an account? Sign In" : "Need an account? Sign Up"}
-            </button>
-        </div>
       </div>
     </div>
   );
