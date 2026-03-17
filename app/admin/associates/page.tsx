@@ -149,7 +149,7 @@ export default function AssociatesPage() {
           )}
         </div>
 
-        <form onSubmit={handleSave} className="space-y-6 bg-white p-6 rounded-lg border shadow-sm">
+        <form onSubmit={handleSave} className="space-y-6 bg-card p-6 rounded-lg border shadow-sm">
           <div className="space-y-2">
             <Label>Organization Name</Label>
             <Input 
@@ -199,7 +199,7 @@ export default function AssociatesPage() {
               </div>
             </div>
             {formState.profile_image_url && (
-              <div className="mt-2 flex items-center gap-2 p-2 border rounded bg-slate-50 w-fit">
+              <div className="mt-2 flex items-center gap-2 p-2 border rounded bg-muted w-fit">
                 <img src={formState.profile_image_url} alt="Preview" className="h-12 w-12 object-cover rounded" />
                 <span className="text-xs text-green-600 font-medium flex items-center"><Check className="h-3 w-3 mr-1"/> Valid Image</span>
               </div>
@@ -249,7 +249,7 @@ export default function AssociatesPage() {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Partner Organizations</h1>
-          <p className="text-slate-500 mt-2">Manage partner organizations and collaborators.</p>
+          <p className="text-muted-foreground mt-2">Manage partner organizations and collaborators.</p>
         </div>
         <div className="flex gap-2">
           {rootBusinessId && associates.length > 0 && (
@@ -266,33 +266,33 @@ export default function AssociatesPage() {
       </div>
 
       {associates.length === 0 ? (
-        <div className="text-center py-12 border-2 border-dashed rounded-lg bg-slate-50">
-          <Building2 className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-slate-900">No partner organizations yet</h3>
-          <Button onClick={() => startEdit()} className="mt-4">Add Partner Organization</Button>
+<div className="text-center py-12 border-2 border-dashed rounded-lg bg-muted">
+           <Building2 className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
+           <h3 className="text-lg font-medium text-foreground">No partner organizations yet</h3>
+           <Button onClick={() => startEdit()} className="mt-4">Add Partner Organization</Button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {associates.map((ass) => (
-            <div key={ass.id} className="bg-white p-5 rounded-lg border shadow-sm flex flex-col justify-between">
-              <div>
-                <div className="flex justify-between items-start mb-2">
-                  <div className="flex items-center gap-3">
-                    {ass.profile_image_url ? (
-                      <img src={ass.profile_image_url} alt={ass.name} className="w-10 h-10 rounded-full object-cover border" />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 border">
-                        <Building2 className="h-5 w-5" />
-                      </div>
-                    )}
-                    <div>
-                      <h3 className="font-bold text-lg text-slate-900 leading-tight">{ass.name}</h3>
-                      <span className="text-[10px] uppercase text-slate-500 font-bold">Partner Organization</span>
-                    </div>
-                  </div>
-                </div>
-                <p className="text-sm font-medium text-purple-600 mb-2">{ass.role}</p>
-                <p className="text-sm text-slate-500 mb-4 line-clamp-3">{ass.bio}</p>
+<div key={ass.id} className="bg-card p-5 rounded-lg border shadow-sm flex flex-col justify-between">
+               <div>
+                 <div className="flex justify-between items-start mb-2">
+                   <div className="flex items-center gap-3">
+                     {ass.profile_image_url ? (
+                       <img src={ass.profile_image_url} alt={ass.name} className="w-10 h-10 rounded-full object-cover border" />
+                     ) : (
+                       <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground border">
+                         <Building2 className="h-5 w-5" />
+                       </div>
+                     )}
+                     <div>
+                       <h3 className="font-bold text-lg text-foreground leading-tight">{ass.name}</h3>
+                       <span className="text-[10px] uppercase text-muted-foreground font-bold">Partner Organization</span>
+                     </div>
+                   </div>
+                 </div>
+                 <p className="text-sm font-medium text-purple-600 mb-2">{ass.role}</p>
+                <p className="text-sm text-muted-foreground mb-4 line-clamp-3">{ass.bio}</p>
               </div>
               <div className="flex justify-end gap-2 pt-4 border-t mt-4">
                 <Button variant="ghost" size="sm" onClick={() => startEdit(ass)}>

@@ -200,11 +200,11 @@ export const LocationForm: React.FC<Props> = ({ initialData, businessId, knowled
         <div className="space-y-2">
           <Label htmlFor="demographics_tag">Demographics Tag</Label>
           <Input id="demographics_tag" {...register('demographics_tag')} placeholder="e.g. urban professionals" />
-          <p className="text-xs text-slate-500">Used in AI content generation: "We help [tag] in [name]..."</p>
-        </div>
+<p className="text-xs text-muted-foreground">Used in AI content generation: "We help [tag] in [name]..."</p>
+         </div>
 
-        {/* Geodata */}
-        <div className="md:col-span-2 space-y-4 p-4 bg-slate-50 rounded-lg border">
+         {/* Geodata */}
+         <div className="md:col-span-2 space-y-4 p-4 bg-muted rounded-lg border">
           <div className="flex justify-between items-center">
              <h4 className="font-semibold text-sm flex items-center gap-2">
                <MapPin className="h-4 w-4" /> Geo-Coordinates
@@ -234,37 +234,37 @@ export const LocationForm: React.FC<Props> = ({ initialData, businessId, knowled
           )}
         </div>
 
-        {/* Landmarks */}
-        <div className="md:col-span-2 space-y-2">
-           <div className="flex justify-between items-center bg-purple-50 p-2 rounded-t-md border-b-0 border border-purple-100">
-              <Label htmlFor="landmarks" className="text-purple-900 font-semibold">Key Landmarks (One per line)</Label>
-              <Button 
-                type="button" 
-                size="sm" 
-                variant="default"
-                onClick={handleGenerateLandmarks} 
-                disabled={generatingLandmarks}
-                className="h-8 bg-purple-600 hover:bg-purple-700 text-white"
-              >
-                 {generatingLandmarks ? <Loader2 className="h-3 w-3 animate-spin mr-2" /> : <Sparkles className="h-3 w-3 mr-2" />}
-                 AI Generate Landmarks
-              </Button>
-           </div>
-           <Textarea 
-             id="landmarks" 
-             {...register('landmarks_text')} 
-              placeholder="Brixton Market&#10;O2 Academy Brixton&#10;Brockwell Park" 
-              className="min-h-[150px] rounded-t-none"
-            />
-            <p className="text-xs text-slate-500">Minimum 3 landmarks required. These power local service hero text and local relevance proof. Use Gemini 3 Flash to generate suggestions.</p>
-         </div>
+{/* Landmarks */}
+         <div className="md:col-span-2 space-y-2">
+            <div className="flex justify-between items-center bg-purple-50 dark:bg-purple-900/20 p-2 rounded-t-md border-b-0 border border-purple-100 dark:border-purple-800">
+               <Label htmlFor="landmarks" className="text-purple-900 dark:text-purple-300 font-semibold">Key Landmarks (One per line)</Label>
+               <Button 
+                 type="button" 
+                 size="sm" 
+                 variant="default"
+                 onClick={handleGenerateLandmarks} 
+                 disabled={generatingLandmarks}
+                 className="h-8 bg-purple-600 hover:bg-purple-700 text-white"
+               >
+                  {generatingLandmarks ? <Loader2 className="h-3 w-3 animate-spin mr-2" /> : <Sparkles className="h-3 w-3 mr-2" />}
+                  AI Generate Landmarks
+               </Button>
+            </div>
+            <Textarea 
+              id="landmarks" 
+              {...register('landmarks_text')} 
+               placeholder="Brixton Market&#10;O2 Academy Brixton&#10;Brockwell Park" 
+               className="min-h-[150px] rounded-t-none"
+             />
+             <p className="text-xs text-muted-foreground">Minimum 3 landmarks required. These power local service hero text and local relevance proof. Use Gemini 3 Flash to generate suggestions.</p>
+          </div>
 
       </div>
 
-       {/* Knowledge Entities */}
-       {knowledgeEntities.length > 0 && (
-         <div className="md:col-span-2 space-y-4 pt-4 border-t">
-           <p className="text-xs text-slate-500">Link this location to knowledge graph entities for enhanced local SEO schema.</p>
+{/* Knowledge Entities */}
+        {knowledgeEntities.length > 0 && (
+          <div className="md:col-span-2 space-y-4 pt-4 border-t">
+            <p className="text-xs text-muted-foreground">Link this location to knowledge graph entities for enhanced local SEO schema.</p>
            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
              <KnowledgeEntitySelector 
                label="About Entities"

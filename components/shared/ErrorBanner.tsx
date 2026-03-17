@@ -27,28 +27,28 @@ export function ErrorBanner({
   return (
     <div 
       className={cn(
-        "bg-red-50 border border-red-200 rounded-lg p-4 mb-6",
+        "bg-destructive/10 border border-destructive/30 rounded-lg p-4 mb-6",
         className
       )}
       role="alert"
       aria-live="polite"
     >
       <div className="flex items-start gap-3">
-        <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
+        <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" aria-hidden="true" />
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-red-800 mb-1">
+          <h3 className="font-semibold text-destructive mb-1">
             Something went wrong
           </h3>
-          <p className="text-sm text-red-700">
+          <p className="text-sm text-destructive/90">
             {errorData.userMessage}
           </p>
           
           {showTechnical && errorData.technicalDetails && (
             <details className="mt-3">
-              <summary className="text-xs text-red-600 cursor-pointer hover:text-red-800">
+              <summary className="text-xs text-destructive/80 cursor-pointer hover:text-destructive">
                 Technical details (for support)
               </summary>
-              <pre className="mt-2 text-xs bg-red-100 p-2 rounded overflow-auto text-red-800">
+              <pre className="mt-2 text-xs bg-destructive/10 p-2 rounded overflow-auto text-destructive">
                 {errorData.technicalDetails}
               </pre>
             </details>
@@ -59,14 +59,14 @@ export function ErrorBanner({
               {onRetry && (
                 <button
                   onClick={onRetry}
-                  className="inline-flex items-center gap-1.5 text-sm font-medium text-red-700 hover:text-red-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded"
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-destructive hover:text-destructive/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive rounded"
                 >
                   <RefreshCw className="h-4 w-4" aria-hidden="true" />
                   Try again
                 </button>
               )}
               {errorData.action && !onRetry && (
-                <span className="inline-flex items-center gap-1.5 text-sm text-red-600">
+                <span className="inline-flex items-center gap-1.5 text-sm text-destructive/80">
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                   {errorData.action}
                 </span>
@@ -78,7 +78,7 @@ export function ErrorBanner({
         {onDismiss && (
           <button
             onClick={onDismiss}
-            className="text-red-400 hover:text-red-600 p-1 rounded hover:bg-red-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+            className="text-destructive/60 hover:text-destructive p-1 rounded hover:bg-destructive/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive"
             aria-label="Dismiss error"
           >
             <X className="h-4 w-4" aria-hidden="true" />
@@ -97,7 +97,7 @@ interface InlineErrorProps {
 export function InlineError({ message, className }: InlineErrorProps) {
   return (
     <span 
-      className={cn("text-sm text-red-600 flex items-center gap-1", className)}
+      className={cn("text-sm text-destructive flex items-center gap-1", className)}
       role="alert"
     >
       <AlertTriangle className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
@@ -119,18 +119,18 @@ export function FormErrorSummary({ errors, className }: FormErrorSummaryProps) {
   return (
     <div 
       className={cn(
-        "bg-red-50 border border-red-200 rounded-lg p-4 mb-6",
+        "bg-destructive/10 border border-destructive/30 rounded-lg p-4 mb-6",
         className
       )}
       role="alert"
     >
       <div className="flex items-start gap-3">
-        <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
+        <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" aria-hidden="true" />
         <div>
-          <h3 className="font-semibold text-red-800 mb-2">
+          <h3 className="font-semibold text-destructive mb-2">
             Please fix the following errors:
           </h3>
-          <ul className="text-sm text-red-700 space-y-1">
+          <ul className="text-sm text-destructive/90 space-y-1">
             {errorEntries.map(([field, message]) => (
               <li key={field} className="flex items-center gap-2">
                 <span aria-hidden="true">•</span>

@@ -74,7 +74,7 @@ export const EntityGenerator: React.FC<Props> = ({ getContent, businessId, sourc
         disabled={loading} 
         variant="secondary" 
         size="sm"
-        className="bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100"
+        className="bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-800 hover:bg-purple-200 dark:hover:bg-purple-900/50"
       >
         {loading ? (
           <Loader2 className="h-4 w-4 animate-spin mr-2" />

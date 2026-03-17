@@ -3,13 +3,18 @@ import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard, Building2, MapPin, Briefcase, BookOpen, Settings,
   FileText, PenTool, Star, Download, Wrench, Layers, LogOut,
-  Factory, Users, Award, Image as ImageIcon, Lightbulb, ArrowRight, AlertTriangle
+  Factory, Users, Award, Image as ImageIcon, Lightbulb, ArrowRight, AlertTriangle, DollarSign,
+  Sun, Moon
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { supabase } from '../../lib/supabaseClient';
+import { useTheme } from '../../lib/theme-provider';
+import { Logo } from '../shared/Logo';
+import { Tooltip } from '../ui/tooltip';
 
 export const Sidebar = () => {
   const [email, setEmail] = useState('User');
+  const { resolvedTheme, toggleTheme } = useTheme();
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -41,6 +46,7 @@ export const Sidebar = () => {
     { href: "/admin/associates", label: "Partner Orgs", icon: Users },
     { href: "/admin/downloads", label: "Downloads", icon: Download },
     { href: "/admin/tools", label: "Free Tools", icon: Wrench },
+    { href: "/admin/pricing", label: "Pricing Plans", icon: DollarSign },
   ];
 
   const systemNavItems = [
@@ -79,13 +85,25 @@ export const Sidebar = () => {
   );
 
   return (
-    <div className="w-64 bg-slate-900 text-white min-h-screen flex flex-col border-r border-slate-800 flex-shrink-0">
+    <nav role="navigation" aria-label="Main navigation" className="w-64 bg-slate-900 text-white min-h-screen flex flex-col border-r border-slate-800 flex-shrink-0">
       <div className="p-6">
-        <h1 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-          <span className="text-primary">Pomegranate</span>
-          <span className="text-slate-400 font-light">v2</span>
-        </h1>
-        <p className="text-xs text-slate-500 mt-1">Production Build</p>
+        <div className="flex items-center justify-between">
+          <Logo size="md" variant="dark" />
+          <Tooltip content={resolvedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+              aria-label={resolvedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {resolvedTheme === 'dark' ? (
+                <Sun className="h-4 w-4" aria-hidden="true" />
+              ) : (
+                <Moon className="h-4 w-4" aria-hidden="true" />
+              )}
+            </button>
+          </Tooltip>
+        </div>
+        <p className="text-xs text-slate-500 mt-3">Production Build</p>
       </div>
       
       <div className="flex-1 px-3 overflow-y-auto">
@@ -100,15 +118,17 @@ export const Sidebar = () => {
             <div className="text-xs text-slate-400 truncate max-w-[140px]" title={email}>
               {email}
             </div>
-            <button 
-              onClick={handleSignOut} 
-              className="text-slate-500 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded p-1" 
-              aria-label="Sign out"
-            >
+            <Tooltip content="Sign out">
+              <button 
+                onClick={handleSignOut} 
+                className="text-slate-500 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded p-1" 
+                aria-label="Sign out"
+              >
                 <LogOut className="h-4 w-4" aria-hidden="true" />
-            </button>
+              </button>
+            </Tooltip>
         </div>
       </div>
-    </div>
+    </nav>
   );
 };

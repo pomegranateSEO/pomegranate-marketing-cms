@@ -243,18 +243,18 @@ export default function GenerationPage() {
         <div className="mb-8 flex justify-between items-start">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Generation Dashboard</h1>
-            <p className="text-slate-500 mt-2">
-              Phase 7: Site Generation & Management
+<p className="text-muted-foreground mt-2">
+               Phase 7: Site Generation & Management
             </p>
           </div>
         </div>
 
         {services.length === 0 ? (
-           <div className="text-center py-20 bg-slate-50 border-2 border-dashed rounded-lg">
-              <Layers className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-slate-900">No Services Found</h3>
-              <p className="text-slate-500 mt-2">Create services in the 'Services' tab to begin generating pages.</p>
-           </div>
+<div className="text-center py-20 bg-muted border-2 border-dashed rounded-lg">
+               <Layers className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
+               <h3 className="text-lg font-medium text-foreground">No Services Found</h3>
+               <p className="text-muted-foreground mt-2">Create services in the 'Services' tab to begin generating pages.</p>
+            </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.map(service => {
@@ -265,36 +265,35 @@ export default function GenerationPage() {
               const isProcessing = actionLoading === service.id;
 
               return (
-                <div key={service.id} className="bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col overflow-hidden">
-                  <div className="p-6 flex-1">
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <h3 className="font-bold text-lg text-slate-900">{service.name}</h3>
-                        <div className="text-xs text-slate-500 font-mono mt-1">/{service.base_slug}</div>
-                      </div>
-                      <div className={`text-2xl font-bold ${count === total ? 'text-green-600' : 'text-slate-700'}`}>
-                        {count}<span className="text-slate-300 text-lg">/{total}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="w-full bg-slate-100 rounded-full h-2 mb-4 overflow-hidden">
-                      <div 
-                        className={`h-2 rounded-full transition-all duration-500 ${count === total ? 'bg-green-500' : 'bg-primary'}`} 
-                        style={{ width: `${progress}%` }}
-                      ></div>
-                    </div>
+<div key={service.id} className="bg-card border rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col overflow-hidden">
+                   <div className="p-6 flex-1">
+                     <div className="flex justify-between items-start mb-4">
+                       <div>
+                         <h3 className="font-bold text-lg text-foreground">{service.name}</h3>
+                         <div className="text-xs text-muted-foreground font-mono mt-1">/{service.base_slug}</div>
+                       </div>
+                       <div className={`text-2xl font-bold ${count === total ? 'text-green-600' : 'text-foreground'}`}>
+                         {count}<span className="text-muted-foreground/50 text-lg">/{total}</span>
+                       </div>
+                     </div>                     
+                     <div className="w-full bg-muted rounded-full h-2 mb-4 overflow-hidden">
+                       <div 
+                         className={`h-2 rounded-full transition-all duration-500 ${count === total ? 'bg-green-500' : 'bg-primary'}`} 
+                         style={{ width: `${progress}%` }}
+                       ></div>
+                     </div>
 
-                    <div className="flex gap-2 text-xs font-medium">
-                       <span className="bg-slate-100 px-2 py-1 rounded text-slate-600">
-                         {total - count} Missing
-                       </span>
-                       <span className="bg-green-50 px-2 py-1 rounded text-green-700">
-                         {pagesForService.filter(p => p.status === 'published').length} Published
-                       </span>
-                    </div>
-                  </div>
+                     <div className="flex gap-2 text-xs font-medium">
+                        <span className="bg-muted px-2 py-1 rounded text-muted-foreground">
+                          {total - count} Missing
+                        </span>
+                        <span className="bg-green-50 dark:bg-green-900/30 px-2 py-1 rounded text-green-700 dark:text-green-400">
+                          {pagesForService.filter(p => p.status === 'published').length} Published
+                        </span>
+                     </div>
+                   </div>
 
-                  <div className="bg-slate-50 p-4 border-t flex gap-3">
+                   <div className="bg-muted p-4 border-t flex gap-3">
                     <Button 
                       variant="outline" 
                       className="flex-1" 
@@ -356,30 +355,30 @@ export default function GenerationPage() {
           </Button>
           <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
              {activeService?.name} 
-             <span className="text-slate-300 font-light">Matrix</span>
+             <span className="text-muted-foreground/50 font-light">Matrix</span>
           </h1>
         </div>
         
-        <div className="flex items-center gap-6 bg-white px-4 py-2 rounded-lg border shadow-sm">
-           <div className="text-center">
-              <span className="block font-bold text-xl text-slate-700">{locations.length}</span>
-              <span className="text-[10px] uppercase text-slate-500 font-bold">Total</span>
-           </div>
-           <div className="h-8 w-px bg-slate-200"></div>
-           <div className="text-center">
-              <span className="block font-bold text-xl text-green-600">{generatedCount}</span>
-              <span className="text-[10px] uppercase text-slate-500 font-bold">Created</span>
-           </div>
-           <div className="h-8 w-px bg-slate-200"></div>
-           <div className="text-center">
-              <span className="block font-bold text-xl text-amber-600">{missingCount}</span>
-              <span className="text-[10px] uppercase text-slate-500 font-bold">Missing</span>
-           </div>
+<div className="flex items-center gap-6 bg-card px-4 py-2 rounded-lg border shadow-sm">
+            <div className="text-center">
+               <span className="block font-bold text-xl text-foreground">{locations.length}</span>
+               <span className="text-[10px] uppercase text-muted-foreground font-bold">Total</span>
+            </div>
+            <div className="h-8 w-px bg-border"></div>
+            <div className="text-center">
+               <span className="block font-bold text-xl text-green-600">{generatedCount}</span>
+               <span className="text-[10px] uppercase text-muted-foreground font-bold">Created</span>
+            </div>
+            <div className="h-8 w-px bg-border"></div>
+            <div className="text-center">
+               <span className="block font-bold text-xl text-amber-600">{missingCount}</span>
+               <span className="text-[10px] uppercase text-muted-foreground font-bold">Missing</span>
+            </div>
         </div>
       </div>
 
       {/* Toolbar */}
-      <div className="flex justify-between items-center mb-4 sticky top-0 bg-slate-50/95 backdrop-blur z-10 py-2 border-b">
+      <div className="flex justify-between items-center mb-4 sticky top-0 bg-muted/95 backdrop-blur z-10 py-2 border-b">
          <div className="flex gap-2">
             <Button 
               variant={viewMode === 'matrix' ? 'default' : 'outline'} 
@@ -411,7 +410,7 @@ export default function GenerationPage() {
          
          {viewMode === 'list' && (
             <div className="relative w-64">
-               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-400" />
+               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                <Input 
                  placeholder="Search pages..." 
                  className="pl-9 h-9" 
@@ -424,13 +423,13 @@ export default function GenerationPage() {
 
       {/* MATRIX VIEW */}
       {viewMode === 'matrix' && (
-        <div className="bg-white border rounded-lg shadow-sm overflow-hidden">
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 divide-y md:divide-y-0 md:divide-x border-b bg-slate-50 text-xs font-bold text-slate-500 uppercase tracking-wider">
-               <div className="p-3">Location</div>
-               <div className="p-3">Slug Preview</div>
-               <div className="p-3 text-right">Status</div>
-           </div>
-           <div className="divide-y">
+<div className="bg-card border rounded-lg shadow-sm overflow-hidden">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 divide-y md:divide-y-0 md:divide-x border-b bg-muted text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                <div className="p-3">Location</div>
+                <div className="p-3">Slug Preview</div>
+                <div className="p-3 text-right">Status</div>
+            </div>
+            <div className="divide-y">
              {locations.map(loc => {
                const page = servicePages.get(loc.id);
                const isSelected = selection.has(loc.id);
@@ -465,8 +464,8 @@ export default function GenerationPage() {
                              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${page.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}>
                                 {page.status === 'published' ? 'Published' : 'Draft'}
                              </span>
-                              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setEditingPage(page)} aria-label={`Edit ${page.url_slug}`}>
-                                <Edit className="h-3 w-3" aria-hidden="true" />
+<Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => setEditingPage(page)} aria-label={`Edit ${page.url_slug}`}>
+                                 <Edit className="h-4 w-4" aria-hidden="true" />
                               </Button>
                           </div>
                        ) : (
@@ -484,9 +483,9 @@ export default function GenerationPage() {
 
       {/* LIST VIEW */}
       {viewMode === 'list' && (
-         <div className="bg-white border rounded-lg shadow-sm">
-            <table className="w-full text-sm text-left">
-               <thead className="bg-slate-50 border-b font-medium text-slate-500">
+<div className="bg-card border rounded-lg shadow-sm">
+             <table className="w-full text-sm text-left">
+                <thead className="bg-muted border-b font-medium text-muted-foreground">
                   <tr>
                      <th className="px-6 py-3">Location / Title</th>
                      <th className="px-6 py-3">Slug</th>
@@ -503,44 +502,44 @@ export default function GenerationPage() {
                     .map((page: PseoPageInstance) => {
                       const loc = locations.find(l => l.id === page.location_id);
                       return (
-                         <tr key={page.id} className="hover:bg-slate-50 transition-colors">
-                            <td className="px-6 py-3">
-                               <div className="font-medium text-slate-900">{loc?.name || 'Unknown Location'}</div>
-                               <div className="text-xs text-slate-500">{page.seo_title}</div>
-                            </td>
-                            <td className="px-6 py-3 font-mono text-xs text-slate-500">
-                               /{page.url_slug}
-                            </td>
-                            <td className="px-6 py-3">
-                               <button 
-                                 onClick={() => handleTogglePublish(page)}
-                                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium transition-colors ${
-                                   page.status === 'published' 
-                                     ? 'bg-green-100 text-green-800 hover:bg-green-200' 
-                                     : 'bg-amber-100 text-amber-800 hover:bg-amber-200'
-                                 }`}
-                               >
-                                  {page.status === 'published' ? 'Published' : 'Draft'}
-                               </button>
-                            </td>
-                            <td className="px-6 py-3 text-right">
-                               <div className="flex justify-end gap-2">
-                                   <Button variant="ghost" size="icon" onClick={() => setEditingPage(page)} aria-label={`Edit ${page.url_slug}`}>
-                                      <Edit className="h-4 w-4 text-slate-500" aria-hidden="true" />
-                                   </Button>
-                                   <Button variant="ghost" size="icon" onClick={() => handleDeletePage(page.id)} aria-label={`Delete ${page.url_slug}`}>
-                                      <Trash2 className="h-4 w-4 text-red-500" aria-hidden="true" />
-                                   </Button>
-                               </div>
-                            </td>
-                         </tr>
+<tr key={page.id} className="hover:bg-muted/50 transition-colors">
+                             <td className="px-6 py-3">
+                                <div className="font-medium text-foreground">{loc?.name || 'Unknown Location'}</div>
+                                <div className="text-xs text-muted-foreground">{page.seo_title}</div>
+                             </td>
+                             <td className="px-6 py-3 font-mono text-xs text-muted-foreground">
+                                /{page.url_slug}
+                             </td>
+                             <td className="px-6 py-3">
+                                <button 
+                                  onClick={() => handleTogglePublish(page)}
+                                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium transition-colors ${
+                                    page.status === 'published' 
+                                      ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50' 
+                                      : 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400 hover:bg-amber-200 dark:hover:bg-amber-900/50'
+                                  }`}
+                                >
+                                   {page.status === 'published' ? 'Published' : 'Draft'}
+                                </button>
+                             </td>
+                             <td className="px-6 py-3 text-right">
+                                <div className="flex justify-end gap-2">
+                                    <Button variant="ghost" size="icon" onClick={() => setEditingPage(page)} aria-label={`Edit ${page.url_slug}`}>
+                                       <Edit className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                                    </Button>
+                                    <Button variant="ghost" size="icon" onClick={() => handleDeletePage(page.id)} aria-label={`Delete ${page.url_slug}`}>
+                                       <Trash2 className="h-4 w-4 text-red-500" aria-hidden="true" />
+                                    </Button>
+                                </div>
+                             </td>
+                          </tr>
                       );
                   })}
                   {servicePages.size === 0 && (
                      <tr>
-                        <td colSpan={4} className="px-6 py-12 text-center text-slate-500">
-                           No pages generated yet. Switch to "Matrix View" to create them.
-                        </td>
+<td colSpan={4} className="px-6 py-12 text-center text-muted-foreground">
+                            No pages generated yet. Switch to "Matrix View" to create them.
+                         </td>
                      </tr>
                   )}
                </tbody>

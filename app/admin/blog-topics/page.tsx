@@ -39,10 +39,10 @@ const TopicNode: React.FC<TopicNodeProps> = ({
   const hasChildren = topic.children && topic.children.length > 0;
   
   const nodeStyles = {
-    pillar: "border-l-4 border-purple-500 bg-purple-50",
-    cluster: "border-l-4 border-blue-500 bg-white",
-    "sub-cluster": "border-l-4 border-cyan-400 bg-slate-50",
-    "micro-topic": "border-l-4 border-slate-300 bg-white opacity-90"
+    pillar: "border-l-4 border-purple-500 bg-purple-50 dark:bg-purple-950/30",
+    cluster: "border-l-4 border-blue-500 bg-card",
+    "sub-cluster": "border-l-4 border-cyan-400 bg-muted",
+    "micro-topic": "border-l-4 border-border bg-card opacity-90"
   };
 
   const styleClass = nodeStyles[topic.topic_type as keyof typeof nodeStyles] || nodeStyles['micro-topic'];
@@ -50,7 +50,7 @@ const TopicNode: React.FC<TopicNodeProps> = ({
   return (
     <div className="relative">
       {depth > 0 && (
-        <div className="absolute -left-4 top-6 w-4 h-px bg-slate-300"></div>
+        <div className="absolute -left-4 top-6 w-4 h-px bg-border"></div>
       )}
       
       <div 
@@ -68,28 +68,28 @@ const TopicNode: React.FC<TopicNodeProps> = ({
         <div className="flex justify-between items-start">
           <div className="flex-1">
              <div className="flex items-center gap-2">
-                {hasChildren && (
-                  <div 
-                    className="text-slate-400 hover:text-slate-600 p-1"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setExpanded(!expanded);
-                    }}
-                  >
-                    {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                  </div>
-                )}
-                <h4 className="font-bold text-slate-800 text-sm md:text-base">
+{hasChildren && (
+<div 
+                      className="text-muted-foreground hover:text-foreground p-1 cursor-pointer"
+                     onClick={(e) => {
+                       e.stopPropagation();
+                       setExpanded(!expanded);
+                     }}
+                   >
+                     {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                   </div>
+                 )}
+                <h4 className="font-bold text-foreground text-sm md:text-base">
                   {topic.name}
                 </h4>
-                <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-white/50 border text-slate-500">
+                <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-card/50 border text-muted-foreground">
                   {topic.topic_type}
                 </span>
              </div>
              
              {expanded && (
                <div className="mt-3 text-sm text-slate-600 animate-in fade-in">
-                  <p className="mb-2 text-xs">{topic.description}</p>
+                  <p className="mb-2 text-xs text-muted-foreground">{topic.description}</p>
                </div>
              )}
           </div>
@@ -97,7 +97,7 @@ const TopicNode: React.FC<TopicNodeProps> = ({
       </div>
 
       {expanded && hasChildren && (
-        <div className="border-l-2 border-slate-200 ml-4 pl-0 py-1">
+        <div className="border-l-2 border-border ml-4 pl-0 py-1">
            {topic.children?.map(child => (
              <TopicNode 
                 key={child.id} 
@@ -390,23 +390,23 @@ export default function BlogTopicsPage() {
               <Lightbulb className="h-8 w-8 text-yellow-500" />
               Blog Topic Hub
             </h1>
-            <p className="text-slate-500 mt-2">
-              Semantic mindmap of your topical authority.
+<p className="text-muted-foreground mt-2">
+               Semantic mindmap of your topical authority.
             </p>
           </div>
 
           {/* REFINEMENT BOX */}
-          <div className="bg-slate-50 border p-4 rounded-lg flex flex-col gap-3 shadow-sm">
-             <div className="flex items-center gap-2 text-sm font-bold text-slate-700">
-                <MessageSquare className="h-4 w-4" />
-                AI Refinement & Feedback
-             </div>
-             <Textarea 
-               value={instructions}
-               onChange={(e) => setInstructions(e.target.value)}
-               placeholder="e.g. 'Brixton is in South West London, not East', or 'Focus more on high-ticket commercial services'..."
-               className="bg-white min-h-[60px] text-sm"
-             />
+<div className="bg-muted border p-4 rounded-lg flex flex-col gap-3 shadow-sm">
+              <div className="flex items-center gap-2 text-sm font-bold text-foreground">
+                 <MessageSquare className="h-4 w-4" />
+                 AI Refinement & Feedback
+              </div>
+              <Textarea 
+                value={instructions}
+                onChange={(e) => setInstructions(e.target.value)}
+                placeholder="e.g. 'Brixton is in South West London, not East', or 'Focus more on high-ticket commercial services'..."
+                className="bg-card min-h-[60px] text-sm"
+              />
              <div className="flex justify-end gap-2">
                {topics.length > 0 && (
                  <Button 
@@ -430,12 +430,12 @@ export default function BlogTopicsPage() {
         </div>
 
         {generating && !isRefining && (
-          <div className="mb-8 bg-blue-50 border border-blue-200 rounded-lg p-4 animate-in fade-in">
+          <div className="mb-8 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4 animate-in fade-in">
              <div className="flex items-start gap-3">
                 <Loader2 className="h-5 w-5 text-blue-600 mt-0.5 animate-spin" />
                 <div>
-                   <h3 className="font-bold text-blue-800">Generating Roadmap...</h3>
-                   <p className="text-sm text-blue-700">Analyzing Knowledge Graph & Services (2-3 mins).</p>
+                   <h3 className="font-bold text-blue-800 dark:text-blue-300">Generating Roadmap...</h3>
+                   <p className="text-sm text-blue-700 dark:text-blue-400">Analyzing Knowledge Graph & Services (2-3 mins).</p>
                 </div>
              </div>
           </div>
@@ -443,9 +443,9 @@ export default function BlogTopicsPage() {
 
         <div className="space-y-4">
            {topics.length === 0 && !generating ? (
-              <div className="text-center py-20 text-slate-400">
-                 <p>No topics generated yet.</p>
-              </div>
+<div className="text-center py-20 text-muted-foreground">
+                  <p>No topics generated yet.</p>
+               </div>
            ) : (
               topics.map(rootTopic => (
                  <TopicNode 
@@ -462,14 +462,14 @@ export default function BlogTopicsPage() {
 
       {/* SIDE PANEL (DETAILS & ACTIONS) */}
       {selectedTopic && (
-        <div className="w-80 border-l bg-white shadow-xl overflow-y-auto animate-in slide-in-from-right-10 flex flex-col">
-           <div className="p-4 border-b bg-slate-50 flex justify-between items-start">
-              <div>
-                 <h3 className="font-bold text-lg text-slate-800 leading-tight">{selectedTopic.name}</h3>
-                 <span className="text-[10px] uppercase font-bold text-slate-500">{selectedTopic.topic_type}</span>
-              </div>
-              <Button variant="ghost" size="sm" onClick={() => setSelectedTopicId(null)}>×</Button>
-           </div>
+<div className="w-80 border-l bg-card shadow-xl overflow-y-auto animate-in slide-in-from-right-10 flex flex-col">
+            <div className="p-4 border-b bg-muted flex justify-between items-start">
+               <div>
+                  <h3 className="font-bold text-lg text-foreground leading-tight">{selectedTopic.name}</h3>
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground">{selectedTopic.topic_type}</span>
+               </div>
+               <Button variant="ghost" size="sm" onClick={() => setSelectedTopicId(null)}>×</Button>
+            </div>
            
            <div className="p-4 space-y-6 flex-1">
               <div className="space-y-2">
@@ -495,19 +495,19 @@ export default function BlogTopicsPage() {
                     Create Wider Parent
                  </Button>
 
-                 <Button 
-                   className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50" 
-                   variant="ghost"
-                   onClick={handleDeleteTopic}
-                 >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete Topic
-                 </Button>
+<Button 
+                    className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950" 
+                    variant="ghost"
+                    onClick={handleDeleteTopic}
+                  >
+                     <Trash2 className="h-4 w-4 mr-2" />
+                     Delete Topic
+                  </Button>
               </div>
 
-              <div className="space-y-3 pt-4 border-t">
-                 <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Details</h4>
-                 <p className="text-sm text-slate-600">{selectedTopic.description}</p>
+<div className="space-y-3 pt-4 border-t">
+                  <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Details</h4>
+                  <p className="text-sm text-muted-foreground">{selectedTopic.description}</p>
                  
                  {selectedTopic.seo_notes && (
                     <div className="bg-amber-50 p-3 rounded border border-amber-100 text-xs text-amber-800">
@@ -515,16 +515,16 @@ export default function BlogTopicsPage() {
                     </div>
                  )}
                  
-                 <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className="bg-slate-50 p-2 rounded">
-                       <span className="block text-slate-400">Intent</span>
-                       <span className="font-medium capitalize">{selectedTopic.content_intent || '-'}</span>
-                    </div>
-                    <div className="bg-slate-50 p-2 rounded">
-                       <span className="block text-slate-400">Volume</span>
-                       <span className="font-medium">{selectedTopic.estimated_search_volume || 'Unknown'}</span>
-                    </div>
-                 </div>
+<div className="grid grid-cols-2 gap-2 text-xs">
+                     <div className="bg-muted p-2 rounded">
+                        <span className="block text-muted-foreground">Intent</span>
+                        <span className="font-medium capitalize">{selectedTopic.content_intent || '-'}</span>
+                     </div>
+                     <div className="bg-muted p-2 rounded">
+                        <span className="block text-muted-foreground">Volume</span>
+                        <span className="font-medium">{selectedTopic.estimated_search_volume || 'Unknown'}</span>
+                     </div>
+                  </div>
               </div>
            </div>
          </div>

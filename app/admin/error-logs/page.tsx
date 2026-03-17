@@ -92,12 +92,12 @@ export default function ErrorLogsPage() {
           </Button>
           <h1 className="text-2xl font-bold">Create Redirect for 404</h1>
         </div>
-        <div className="bg-white p-6 rounded-lg border shadow-sm">
-          <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-            <p className="text-sm text-amber-800">
-              <strong>404 Path:</strong> <code className="bg-amber-100 px-2 py-0.5 rounded">{creatingRedirect.path}</code>
+        <div className="bg-card p-6 rounded-lg border shadow-sm">
+          <div className="mb-4 p-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg">
+            <p className="text-sm text-amber-800 dark:text-amber-300">
+              <strong>404 Path:</strong> <code className="bg-amber-100 dark:bg-amber-900 px-2 py-0.5 rounded">{creatingRedirect.path}</code>
             </p>
-            <p className="text-xs text-amber-600 mt-1">
+            <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
               Hit {creatingRedirect.hit_count} times since {new Date(creatingRedirect.first_seen_at).toLocaleDateString()}
             </p>
           </div>
@@ -134,7 +134,7 @@ export default function ErrorLogsPage() {
               </span>
             )}
           </h1>
-          <p className="text-slate-500 mt-2">
+          <p className="text-muted-foreground mt-2">
             Track 404 errors and create redirects to fix broken links.
           </p>
         </div>
@@ -176,21 +176,21 @@ export default function ErrorLogsPage() {
       </div>
 
       {filteredLogs.length === 0 ? (
-        <div className="text-center py-12 border-2 border-dashed rounded-lg bg-slate-50">
+        <div className="text-center py-12 border-2 border-dashed rounded-lg bg-muted">
           <CheckCircle className="h-12 w-12 text-green-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-slate-900">
+          <h3 className="text-lg font-medium text-foreground">
             {filterResolved === 'unresolved' ? 'No unresolved 404s' : 'No error logs'}
           </h3>
-          <p className="text-slate-500">
+          <p className="text-muted-foreground">
             {filterResolved === 'unresolved' 
               ? 'All 404 errors have been resolved. Great job!'
               : '404 errors will appear here when visitors hit missing pages.'}
           </p>
         </div>
       ) : (
-        <div className="bg-white border rounded-lg shadow-sm overflow-hidden">
+        <div className="bg-card border rounded-lg shadow-sm overflow-hidden">
           <table className="w-full text-sm text-left">
-            <thead className="bg-slate-50 border-b font-medium text-slate-500">
+            <thead className="bg-muted border-b font-medium text-muted-foreground">
               <tr>
                 <th className="px-6 py-4">Path</th>
                 <th className="px-6 py-4 w-20 text-center">Hits</th>
@@ -202,30 +202,30 @@ export default function ErrorLogsPage() {
             </thead>
             <tbody className="divide-y">
               {filteredLogs.map((log) => (
-                <tr key={log.id} className={`hover:bg-slate-50 ${log.resolved ? 'bg-slate-50/50' : ''}`}>
+                <tr key={log.id} className={`hover:bg-muted/50 ${log.resolved ? 'bg-muted/30' : ''}`}>
                   <td className="px-6 py-4">
-                    <code className="text-xs bg-slate-100 px-2 py-1 rounded font-mono">
+                    <code className="text-xs bg-muted px-2 py-1 rounded font-mono">
                       {log.path}
                     </code>
                     {log.referrer && (
-                      <p className="text-xs text-slate-400 mt-1 truncate max-w-xs">
+                      <p className="text-xs text-muted-foreground mt-1 truncate max-w-xs">
                         Referrer: {log.referrer}
                       </p>
                     )}
                   </td>
                   <td className="px-6 py-4 text-center">
                     <span className={`text-xs font-medium px-2 py-1 rounded ${
-                      log.hit_count > 10 ? 'bg-red-100 text-red-700' :
-                      log.hit_count > 5 ? 'bg-amber-100 text-amber-700' :
-                      'text-slate-600'
+                      log.hit_count > 10 ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400' :
+                      log.hit_count > 5 ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400' :
+                      'text-muted-foreground'
                     }`}>
                       {log.hit_count}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-slate-500 text-xs">
+                  <td className="px-6 py-4 text-muted-foreground text-xs">
                     {new Date(log.first_seen_at).toLocaleDateString()}
                   </td>
-                  <td className="px-6 py-4 text-slate-500 text-xs">
+                  <td className="px-6 py-4 text-muted-foreground text-xs">
                     <div className="flex items-center gap-1">
                       <Clock className="h-3 w-3" />
                       {new Date(log.last_seen_at).toLocaleDateString()}
@@ -233,11 +233,11 @@ export default function ErrorLogsPage() {
                   </td>
                   <td className="px-6 py-4 text-center">
                     {log.resolved ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium bg-green-50 text-green-700">
+                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400">
                         <CheckCircle className="h-3 w-3" /> Resolved
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium bg-amber-50 text-amber-700">
+                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400">
                         <AlertTriangle className="h-3 w-3" /> Unresolved
                       </span>
                     )}
@@ -258,7 +258,7 @@ export default function ErrorLogsPage() {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleResolve(log)}
-                          className="h-8 text-slate-500 hover:text-slate-700 hover:bg-slate-100"
+                          className="h-8 text-muted-foreground hover:text-foreground hover:bg-muted"
                         >
                           <CheckCircle className="h-4 w-4 mr-1" />
                           Ignore
@@ -266,7 +266,7 @@ export default function ErrorLogsPage() {
                       </>
                     )}
                     {log.resolved && log.resolved_by_redirect && (
-                      <span className="text-xs text-slate-400">Redirect created</span>
+                      <span className="text-xs text-muted-foreground">Redirect created</span>
                     )}
                   </td>
                 </tr>

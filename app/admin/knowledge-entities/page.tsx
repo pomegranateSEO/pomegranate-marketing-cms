@@ -219,7 +219,7 @@ export default function KnowledgeEntitiesPage() {
       <div className="flex justify-between items-center mb-8 border-b pb-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Knowledge Entities</h1>
-          <p className="text-slate-500 mt-2">
+          <p className="text-muted-foreground mt-2">
             Research and map external entities (Wikipedia/Wikidata) to establish semantic authority.
           </p>
         </div>
@@ -249,7 +249,7 @@ export default function KnowledgeEntitiesPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* LEFT COLUMN: Research Tool */}
         <div className="lg:col-span-1 space-y-6">
-          <div className="bg-slate-50 p-6 rounded-lg border shadow-sm sticky top-6">
+          <div className="bg-muted p-6 rounded-lg border shadow-sm sticky top-6">
             <h2 className="font-bold text-lg mb-4 flex items-center gap-2">
               <Search className="h-5 w-5 text-primary" />
               Research Entities
@@ -259,7 +259,7 @@ export default function KnowledgeEntitiesPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search Wikipedia..."
-                className="bg-white"
+                className="bg-card"
                 disabled={!rootBusinessId}
               />
                <Button type="submit" disabled={isSearching || !rootBusinessId} size="icon" aria-label="Search entities">
@@ -269,21 +269,21 @@ export default function KnowledgeEntitiesPage() {
 
             <div className="space-y-3 max-h-[600px] overflow-y-auto pr-1">
               {searchResults.length === 0 && !isSearching && searchQuery && (
-                <p className="text-sm text-slate-400 text-center py-4">No results found.</p>
+                <p className="text-sm text-muted-foreground text-center py-4">No results found.</p>
               )}
               {searchResults.map((result) => (
-                <div key={result.id} className="bg-white p-3 rounded border hover:shadow-md transition-shadow">
+                <div key={result.id} className="bg-card p-3 rounded border hover:shadow-md transition-shadow">
                   <div className="flex gap-3">
                     {result.thumbnail && (
                       <img 
                         src={result.thumbnail.url} 
                         alt={result.title} 
-                        className="w-12 h-12 object-cover rounded bg-slate-100 flex-shrink-0"
+                        className="w-12 h-12 object-cover rounded bg-muted flex-shrink-0"
                       />
                     )}
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-bold text-sm text-slate-900 truncate">{result.title}</h4>
-                      <p className="text-xs text-slate-500 line-clamp-2 mt-1">{result.description}</p>
+                      <h4 className="font-bold text-sm text-foreground truncate">{result.title}</h4>
+                      <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{result.description}</p>
                       
                       <div className="flex gap-2 mt-2">
                           <Button 
@@ -298,8 +298,8 @@ export default function KnowledgeEntitiesPage() {
                           </Button>
                           {result.url && (
                              <a href={result.url} target="_blank" rel="noopener noreferrer">
-                                <Button size="icon" variant="outline" className="h-7 w-7" aria-label="View source">
-                                   <Eye className="h-3 w-3" aria-hidden="true" />
+<Button size="icon" variant="outline" className="h-9 w-9" aria-label="View source">
+                                    <Eye className="h-4 w-4" aria-hidden="true" />
                                 </Button>
                              </a>
                           )}
@@ -315,33 +315,33 @@ export default function KnowledgeEntitiesPage() {
         {/* RIGHT COLUMN: Saved Entities (Grouped) */}
         <div className="lg:col-span-2 space-y-8">
            <div className="flex justify-between items-center">
-             <h2 className="font-bold text-lg flex items-center gap-2">
-               <BookOpen className="h-5 w-5 text-slate-600" />
-               Saved Entities ({entities.length})
-             </h2>
+<h2 className="font-bold text-lg flex items-center gap-2">
+                <BookOpen className="h-5 w-5 text-muted-foreground" />
+                Saved Entities ({entities.length})
+              </h2>
            </div>
 
           {entities.length === 0 ? (
-            <div className="text-center py-12 border-2 border-dashed rounded-lg bg-slate-50">
-              <BookOpen className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-              <p className="text-slate-500">No knowledge entities found.</p>
-              <p className="text-xs text-slate-400 mt-2">Use the search tool on the left to add your first entity.</p>
+            <div className="text-center py-12 border-2 border-dashed rounded-lg bg-muted">
+              <BookOpen className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
+              <p className="text-muted-foreground">No knowledge entities found.</p>
+              <p className="text-xs text-muted-foreground/70 mt-2">Use the search tool on the left to add your first entity.</p>
             </div>
           ) : (
             <div className="space-y-8">
               {sortedGroups.map((group) => (
                 <div key={group}>
-                  <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-2 border-b pb-2">
+<h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-2 border-b pb-2">
                     <FolderOpen className="h-4 w-4" />
                     {group} ({groupedEntities[group].length})
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {groupedEntities[group].map((entity) => (
-                      <div key={entity.id} className="bg-white p-4 rounded-lg border shadow-sm group hover:border-primary/50 transition-colors relative flex flex-col">
+                       <div key={entity.id} className="bg-card p-4 rounded-lg border shadow-sm group hover:border-primary/50 transition-colors relative flex flex-col">
                         
                         {/* Header: Actions */}
                         <div className="absolute top-3 right-3">
-                          <Button 
+                           <Button 
                               variant="ghost" 
                               size="icon"
                               onClick={(e) => {
@@ -349,21 +349,21 @@ export default function KnowledgeEntitiesPage() {
                                   e.stopPropagation();
                                   handleDelete(entity.id, entity.name);
                               }}
-                              className="h-7 w-7 text-slate-400 hover:text-red-500 hover:bg-red-50"
+                              className="h-9 w-9 text-muted-foreground hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950"
                               aria-label={`Delete ${entity.name}`}
-                          >
+                           >
                               <Trash2 className="h-4 w-4" />
-                          </Button>
+                           </Button>
                         </div>
                         
                         {/* Content */}
                         <div className="flex gap-4 items-start flex-1 mb-3">
-                           <div className="w-10 h-10 rounded bg-slate-100 flex items-center justify-center border flex-shrink-0 text-slate-400 font-bold text-xs uppercase">
+                           <div className="w-10 h-10 rounded bg-muted flex items-center justify-center border flex-shrink-0 text-muted-foreground font-bold text-xs uppercase">
                               {group.substring(0,2)}
                            </div>
                            <div className="min-w-0 pr-6">
-                              <h3 className="font-bold text-md text-slate-900 line-clamp-1" title={entity.name}>{entity.name}</h3>
-                              <p className="text-xs text-slate-500 line-clamp-2 mt-1 leading-relaxed">
+                              <h3 className="font-bold text-md text-foreground line-clamp-1" title={entity.name}>{entity.name}</h3>
+                              <p className="text-xs text-muted-foreground line-clamp-2 mt-1 leading-relaxed">
                                   {entity.description || "No description available."}
                               </p>
                            </div>
@@ -376,12 +376,12 @@ export default function KnowledgeEntitiesPage() {
                                       href={entity.wikipedia_url} 
                                       target="_blank" 
                                       rel="noopener noreferrer"
-                                      className="flex items-center gap-1 text-xs text-blue-600 hover:underline"
+                                      className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:underline"
                                    >
                                       <Globe className="h-3 w-3" /> Wikipedia
                                    </a>
                               ) : (
-                                  <span className="flex items-center gap-1 text-xs text-slate-300 cursor-not-allowed">
+                                  <span className="flex items-center gap-1 text-xs text-muted-foreground/50 cursor-not-allowed">
                                       <Globe className="h-3 w-3" /> No Wiki
                                   </span>
                               )}
@@ -391,14 +391,14 @@ export default function KnowledgeEntitiesPage() {
                                       href={entity.wikidata_url} 
                                       target="_blank" 
                                       rel="noopener noreferrer"
-                                      className="flex items-center gap-1 text-xs text-purple-600 hover:underline"
+                                      className="flex items-center gap-1 text-xs text-purple-600 dark:text-purple-400 hover:underline"
                                    >
                                       <Database className="h-3 w-3" /> Wikidata
                                    </a>
                               ) : (
-                                   <span className="flex items-center gap-1 text-xs text-slate-300 cursor-not-allowed" title="Use 'Sync Wikidata IDs' button">
+                                  <span className="flex items-center gap-1 text-xs text-muted-foreground/50 cursor-not-allowed" title="Use 'Sync Wikidata IDs' button">
                                       <Database className="h-3 w-3" /> No ID
-                                   </span>
+                                  </span>
                               )}
                         </div>
                       </div>

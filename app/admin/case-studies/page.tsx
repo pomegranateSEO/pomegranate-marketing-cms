@@ -139,7 +139,7 @@ export default function CaseStudiesPage() {
            )}
         </div>
 
-        <form onSubmit={handleSave} className="space-y-6 bg-white p-6 rounded-lg border shadow-sm">
+        <form onSubmit={handleSave} className="space-y-6 bg-card p-6 rounded-lg border shadow-sm">
            <div className="grid grid-cols-2 gap-4">
              <div className="space-y-2">
                <Label>Case Study Title</Label>
@@ -219,7 +219,7 @@ export default function CaseStudiesPage() {
        <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Case Studies</h1>
-          <p className="text-slate-500 mt-2">Showcase your success stories linked to services and industries.</p>
+          <p className="text-muted-foreground mt-2">Showcase your success stories linked to services and industries.</p>
         </div>
         <div className="flex gap-2">
            {rootBusinessId && studies.length > 0 && (
@@ -232,32 +232,32 @@ export default function CaseStudiesPage() {
       </div>
 
       {studies.length === 0 ? (
-        <div className="text-center py-12 border-2 border-dashed rounded-lg bg-slate-50">
-          <Award className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-slate-900">No case studies yet</h3>
-          <Button onClick={() => startEdit()}>Add Case Study</Button>
+<div className="text-center py-12 border-2 border-dashed rounded-lg bg-muted">
+           <Award className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
+           <h3 className="text-lg font-medium text-foreground">No case studies yet</h3>
+           <Button onClick={() => startEdit()}>Add Case Study</Button>
         </div>
       ) : (
         <div className="space-y-4">
           {studies.map((study) => (
-             <div key={study.id} className="bg-white p-5 rounded-lg border shadow-sm flex items-center justify-between">
-                <div>
-                   <h3 className="font-bold text-lg text-slate-900">{study.title}</h3>
-                   <div className="flex gap-2 text-xs text-slate-500 mt-1">
-                      {study.services?.name && <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded">{study.services.name}</span>}
-                      {study.industries?.name && <span className="bg-purple-50 text-purple-700 px-2 py-0.5 rounded">{study.industries.name}</span>}
-                      {study.client_name && <span>Client: {study.client_name}</span>}
-                   </div>
-                </div>
-                <div className="flex gap-2">
-                   <Button variant="ghost" size="sm" onClick={() => startEdit(study)}>
-                      <Edit2 className="h-4 w-4 mr-2" /> Edit
-                   </Button>
-                    <Button variant="ghost" size="icon" onClick={() => handleDelete(study.id, study.title)} className="text-red-500 hover:bg-red-50" aria-label={`Delete ${study.title}`}>
-                       <Trash2 className="h-4 w-4" aria-hidden="true" />
+<div key={study.id} className="bg-card p-5 rounded-lg border shadow-sm flex items-center justify-between">
+                 <div>
+                    <h3 className="font-bold text-lg text-foreground">{study.title}</h3>
+                    <div className="flex gap-2 text-xs text-muted-foreground mt-1">
+                       {study.services?.name && <span className="bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded">{study.services.name}</span>}
+                       {study.industries?.name && <span className="bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-400 px-2 py-0.5 rounded">{study.industries.name}</span>}
+                       {study.client_name && <span>Client: {study.client_name}</span>}
+                    </div>
+                 </div>
+                 <div className="flex gap-2">
+                    <Button variant="ghost" size="sm" onClick={() => startEdit(study)}>
+                       <Edit2 className="h-4 w-4 mr-2" /> Edit
                     </Button>
-                </div>
-             </div>
+                     <Button variant="ghost" size="icon" onClick={() => handleDelete(study.id, study.title)} className="text-red-500 hover:bg-red-50 dark:hover:bg-red-950" aria-label={`Delete ${study.title}`}>
+                        <Trash2 className="h-4 w-4" aria-hidden="true" />
+                     </Button>
+                 </div>
+              </div>
           ))}
         </div>
       )}

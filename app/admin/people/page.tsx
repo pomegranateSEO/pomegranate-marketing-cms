@@ -223,14 +223,14 @@ export default function PeoplePage() {
         {/* Media Picker Modal */}
         {showMediaPicker && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-6">
-            <div className="w-full max-w-4xl h-[700px] bg-white rounded-lg shadow-2xl overflow-hidden flex flex-col">
-              <div className="flex justify-between items-center p-4 border-b">
-                <h3 className="font-bold text-lg">Select Profile Image</h3>
-                 <Button variant="ghost" size="icon" onClick={() => setShowMediaPicker(false)} aria-label="Close media picker">
-                   <X className="h-5 w-5" aria-hidden="true" />
-                 </Button>
-              </div>
-              <div className="flex-1 min-h-0 bg-slate-50 p-4">
+<div className="w-full max-w-4xl h-[700px] bg-card rounded-lg shadow-2xl overflow-hidden flex flex-col">
+               <div className="flex justify-between items-center p-4 border-b">
+                 <h3 className="font-bold text-lg">Select Profile Image</h3>
+                  <Button variant="ghost" size="icon" onClick={() => setShowMediaPicker(false)} aria-label="Close media picker">
+                    <X className="h-5 w-5" aria-hidden="true" />
+                  </Button>
+               </div>
+               <div className="flex-1 min-h-0 bg-muted p-4">
                 <MediaManager
                   mode="picker"
                   onSelect={handleImageSelect}
@@ -248,7 +248,7 @@ export default function PeoplePage() {
           <h2 className="text-2xl font-bold">{formState.id ? 'Edit Person' : 'New Person'}</h2>
         </div>
 
-        <form onSubmit={handleSave} className="space-y-6 bg-white p-6 rounded-lg border shadow-sm">
+        <form onSubmit={handleSave} className="space-y-6 bg-card p-6 rounded-lg border shadow-sm">
           {/* Basic Info */}
           <div className="grid grid-cols-2 gap-6">
             <div className="space-y-2">
@@ -312,7 +312,7 @@ export default function PeoplePage() {
                 <img
                   src={formState.profile_image_url}
                   alt="Preview"
-                  className="h-24 w-24 object-cover rounded-full border bg-slate-50"
+                  className="h-24 w-24 object-cover rounded-full border bg-muted"
                 />
                 <button
                   type="button"
@@ -390,11 +390,11 @@ export default function PeoplePage() {
             </div>
             <div className="flex flex-wrap gap-2">
               {formState.expertise_areas.map((area, i) => (
-                <span key={i} className="bg-slate-100 px-3 py-1 rounded-full text-sm flex items-center gap-2">
+<span key={i} className="bg-muted px-3 py-1 rounded-full text-sm flex items-center gap-2">
                   {area}
-                  <button type="button" onClick={() => removeExpertise(i)} className="text-slate-400 hover:text-red-500">
-                    <X className="h-3 w-3" />
-                  </button>
+                   <button type="button" onClick={() => removeExpertise(i)} className="text-muted-foreground hover:text-red-500">
+                     <X className="h-3 w-3" />
+                   </button>
                 </span>
               ))}
             </div>
@@ -414,11 +414,11 @@ export default function PeoplePage() {
             </div>
             <div className="flex flex-wrap gap-2">
               {formState.credentials.map((cred, i) => (
-                <span key={i} className="bg-slate-100 px-3 py-1 rounded-full text-sm flex items-center gap-2">
+<span key={i} className="bg-muted px-3 py-1 rounded-full text-sm flex items-center gap-2">
                   {cred}
-                  <button type="button" onClick={() => removeCredential(i)} className="text-slate-400 hover:text-red-500">
-                    <X className="h-3 w-3" />
-                  </button>
+                   <button type="button" onClick={() => removeCredential(i)} className="text-muted-foreground hover:text-red-500">
+                     <X className="h-3 w-3" />
+                   </button>
                 </span>
               ))}
             </div>
@@ -472,7 +472,7 @@ export default function PeoplePage() {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">People & Authors</h1>
-          <p className="text-slate-500 mt-2">Manage team members and blog authors.</p>
+          <p className="text-muted-foreground mt-2">Manage team members and blog authors.</p>
         </div>
         <Button onClick={() => startEdit()}>
           <Plus className="h-4 w-4 mr-2" /> Add Person
@@ -480,49 +480,49 @@ export default function PeoplePage() {
       </div>
 
       {people.length === 0 ? (
-        <div className="text-center py-12 border-2 border-dashed rounded-lg bg-slate-50">
-          <User className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-slate-900">No people yet</h3>
-          <p className="text-slate-500 mb-6">Add team members and authors for blog posts.</p>
-          <Button onClick={() => startEdit()}>Add Person</Button>
+<div className="text-center py-12 border-2 border-dashed rounded-lg bg-muted">
+           <User className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
+           <h3 className="text-lg font-medium text-foreground">No people yet</h3>
+           <p className="text-muted-foreground mb-6">Add team members and authors for blogposts.</p>
+           <Button onClick={() => startEdit()}>Add Person</Button>
         </div>
       ) : (
         <div className="space-y-4">
           {people.map(person => (
-            <div key={person.id} className="bg-white p-4 rounded-lg border shadow-sm flex justify-between items-center hover:bg-slate-50 transition-colors">
-              <div className="flex items-center gap-4">
-                <div className="p-2 bg-slate-100 rounded text-slate-500 relative overflow-hidden h-12 w-12 flex-shrink-0 flex items-center justify-center">
-                  {person.profile_image_url ? (
-                    <img src={person.profile_image_url} alt="" className="absolute inset-0 w-full h-full object-cover rounded" />
-                  ) : (
-                    <User className="h-6 w-6" />
-                  )}
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg text-slate-900">{person.full_name}</h3>
-                  <div className="flex gap-2 text-xs text-slate-500">
-                    <span>{person.job_title || 'No title'}</span>
-                    <span>•</span>
-                    <span className={`capitalize ${person.published ? 'text-green-600' : 'text-amber-600'}`}>
-                      {person.published ? 'Published' : 'Draft'}
-                    </span>
-                    {person.is_author && (
-                      <>
-                        <span>•</span>
-                        <span className="text-blue-600">Author</span>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                 <Button variant="ghost" size="icon" onClick={() => startEdit(person)} aria-label={`Edit ${person.full_name}`}>
-                   <Edit2 className="h-4 w-4 text-slate-500" aria-hidden="true" />
-                 </Button>
-                 <Button variant="ghost" size="icon" onClick={() => handleDelete(person.id, person.full_name)} aria-label={`Delete ${person.full_name}`}>
-                   <Trash2 className="h-4 w-4 text-red-500" aria-hidden="true" />
-                 </Button>
-              </div>
+<div key={person.id} className="bg-card p-4 rounded-lg border shadow-sm flex justify-between items-center hover:bg-muted/50 transition-colors">
+               <div className="flex items-center gap-4">
+                 <div className="p-2 bg-muted rounded text-muted-foreground relative overflow-hidden h-12 w-12 flex-shrink-0 flex items-center justify-center">
+                   {person.profile_image_url ? (
+                     <img src={person.profile_image_url} alt="" className="absolute inset-0 w-full h-full object-cover rounded" />
+                   ) : (
+                     <User className="h-6 w-6" />
+                   )}
+                 </div>
+                 <div>
+                   <h3 className="font-bold text-lg text-foreground">{person.full_name}</h3>
+                   <div className="flex gap-2 text-xs text-muted-foreground">
+                     <span>{person.job_title || 'No title'}</span>
+                     <span>•</span>
+                     <span className={`capitalize ${person.published ? 'text-green-600' : 'text-amber-600'}`}>
+                       {person.published ? 'Published' : 'Draft'}
+                     </span>
+                     {person.is_author && (
+                       <>
+                         <span>•</span>
+                         <span className="text-blue-600">Author</span>
+                       </>
+                     )}
+                   </div>
+                 </div>
+               </div>
+               <div className="flex gap-2">
+                  <Button variant="ghost" size="icon" onClick={() => startEdit(person)} aria-label={`Edit ${person.full_name}`}>
+                    <Edit2 className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                  </Button>
+                  <Button variant="ghost" size="icon" onClick={() => handleDelete(person.id, person.full_name)} aria-label={`Delete ${person.full_name}`}>
+                    <Trash2 className="h-4 w-4 text-red-500" aria-hidden="true" />
+                  </Button>
+               </div>
             </div>
           ))}
         </div>

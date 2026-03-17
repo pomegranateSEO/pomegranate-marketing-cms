@@ -107,15 +107,14 @@ export default function DashboardPage() {
         <div className="p-8 max-w-6xl mx-auto">
             <header className="mb-10">
                 <h1 className="text-3xl font-bold tracking-tight mb-2">Pomegranate Dashboard</h1>
-                <p className="text-slate-500">
+                <p className="text-muted-foreground">
                     Welcome to the Knowledge Graph CMS. Follow the steps below to build your programmatic SEO site.
                 </p>
             </header>
 
-            {/* Progress Overview */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                <div className="bg-white p-6 rounded-lg border shadow-sm">
-                    <h3 className="text-sm font-medium text-slate-500 uppercase tracking-wider">Current Phase</h3>
+                <div className="bg-card p-6 rounded-lg border shadow-sm">
+                    <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Current Phase</h3>
                     <div className="mt-2 text-2xl font-bold text-primary">
                         {stats.businesses === 0 ? "Phase 1: Setup" : "Phase 2: Content"}
                     </div>
@@ -129,39 +128,38 @@ export default function DashboardPage() {
                     </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-lg border shadow-sm col-span-2">
-                    <h3 className="text-sm font-medium text-slate-500 uppercase tracking-wider mb-4">Site Architecture</h3>
+                <div className="bg-card p-6 rounded-lg border shadow-sm col-span-2">
+                    <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-4">Site Architecture</h3>
                     <div className="grid grid-cols-5 gap-4 text-center">
-                        <div className="p-4 bg-slate-50 rounded border">
-                            <div className="text-2xl font-bold text-slate-800">{stats.businesses}</div>
-                            <div className="text-xs text-slate-500 mt-1">Root Entity</div>
+                        <div className="p-4 bg-muted rounded border">
+                            <div className="text-2xl font-bold text-foreground">{stats.businesses}</div>
+                            <div className="text-xs text-muted-foreground mt-1">Root Entity</div>
                         </div>
-                        <div className="p-4 bg-slate-50 rounded border">
-                            <div className="text-2xl font-bold text-slate-800">{stats.services}</div>
-                            <div className="text-xs text-slate-500 mt-1">Services</div>
+                        <div className="p-4 bg-muted rounded border">
+                            <div className="text-2xl font-bold text-foreground">{stats.services}</div>
+                            <div className="text-xs text-muted-foreground mt-1">Services</div>
                         </div>
-                        <div className="p-4 bg-slate-50 rounded border">
-                            <div className="text-2xl font-bold text-slate-800">{stats.locations}</div>
-                            <div className="text-xs text-slate-500 mt-1">Locations</div>
+                        <div className="p-4 bg-muted rounded border">
+                            <div className="text-2xl font-bold text-foreground">{stats.locations}</div>
+                            <div className="text-xs text-muted-foreground mt-1">Locations</div>
                         </div>
-                        <div className="p-4 bg-yellow-50 rounded border border-yellow-100">
-                            <div className="text-2xl font-bold text-yellow-700">{stats.topics}</div>
-                            <div className="text-xs text-yellow-600 mt-1">Blog Topics</div>
+                        <div className="p-4 bg-yellow-100/50 dark:bg-yellow-900/20 rounded border border-yellow-200 dark:border-yellow-800">
+                            <div className="text-2xl font-bold text-yellow-700 dark:text-yellow-400">{stats.topics}</div>
+                            <div className="text-xs text-yellow-600 dark:text-yellow-500 mt-1">Blog Topics</div>
                         </div>
-                         <div className="p-4 bg-purple-50 rounded border border-purple-100">
-                            <div className="text-2xl font-bold text-purple-700">{stats.pages}</div>
-                            <div className="text-xs text-purple-600 mt-1">Generated Pages</div>
+                         <div className="p-4 bg-purple-100/50 dark:bg-purple-900/20 rounded border border-purple-200 dark:border-purple-800">
+                            <div className="text-2xl font-bold text-purple-700 dark:text-purple-400">{stats.pages}</div>
+                            <div className="text-xs text-purple-600 dark:text-purple-500 mt-1">Generated Pages</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Steps Timeline */}
-            <div className="bg-white rounded-lg border shadow-sm overflow-hidden">
-                <div className="px-6 py-4 border-b bg-slate-50">
+            <div className="bg-card rounded-lg border shadow-sm overflow-hidden">
+                <div className="px-6 py-4 border-b bg-muted">
                     <h2 className="font-semibold text-lg">Build Progress</h2>
                 </div>
-                <div className="divide-y">
+                <div className="divide-y divide-border">
                     {steps.map((step) => {
                         const Icon = step.icon;
                         const isNext = step.id === nextStep.id && !step.completed;
@@ -170,16 +168,16 @@ export default function DashboardPage() {
                             <div 
                                 key={step.id} 
                                 className={`p-6 flex items-start gap-4 transition-colors ${
-                                    step.completed ? 'bg-white opacity-50' : isNext ? 'bg-blue-50/50' : 'bg-white'
+                                    step.completed ? 'bg-card opacity-60' : isNext ? 'bg-primary/5' : 'bg-card'
                                 }`}
                             >
                                 <div className={`
                                     flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center border
                                     ${step.completed 
-                                        ? 'bg-green-100 border-green-200 text-green-700' 
+                                        ? 'bg-green-100 dark:bg-green-900/30 border-green-200 dark:border-green-800 text-green-700 dark:text-green-400' 
                                         : isNext 
-                                            ? 'bg-primary text-white border-primary shadow-md ring-4 ring-blue-50' 
-                                            : 'bg-white border-slate-200 text-slate-400'}
+                                            ? 'bg-primary text-primary-foreground border-primary shadow-md ring-4 ring-primary/20' 
+                                            : 'bg-card border-border text-muted-foreground'}
                                 `}>
                                     {step.completed ? <CheckCircle2 className="h-6 w-6" /> : <span className="font-bold">{step.id}</span>}
                                 </div>
@@ -187,14 +185,14 @@ export default function DashboardPage() {
                                 <div className="flex-1">
                                     <div className="flex justify-between items-start">
                                         <div>
-                                            <h3 className={`font-semibold text-lg ${step.completed ? 'text-slate-800' : isNext ? 'text-primary' : 'text-slate-500'}`}>
+                                            <h3 className={`font-semibold text-lg ${step.completed ? 'text-foreground' : isNext ? 'text-primary' : 'text-muted-foreground'}`}>
                                                 {step.title}
                                             </h3>
-                                            <p className="text-slate-600 mt-1 max-w-2xl">{step.description}</p>
+                                            <p className="text-muted-foreground mt-1 max-w-2xl">{step.description}</p>
                                         </div>
                                         <div>
                                             {step.completed ? (
-                                                <span className="text-xs font-medium text-green-700 bg-green-100 px-2 py-1 rounded">Completed</span>
+                                                <span className="text-xs font-medium text-green-700 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded">Completed</span>
                                             ) : (
                                                 <Link to={step.link}>
                                                     <Button variant={isNext ? "default" : "outline"} size="sm">

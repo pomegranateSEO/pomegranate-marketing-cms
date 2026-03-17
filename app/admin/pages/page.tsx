@@ -360,14 +360,14 @@ export default function PagesPage() {
            )}
         </div>
 
-         <div className="flex border-b bg-slate-50 mb-4 rounded-t-lg" role="tablist" aria-label="Page settings tabs">
+         <div className="flex border-b bg-muted mb-4 rounded-t-lg" role="tablist" aria-label="Page settings tabs">
             <button
               id="tab-content"
               role="tab"
               aria-selected={activeTab === 'content'}
               aria-controls="panel-content"
               onClick={() => setActiveTab('content')}
-              className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'content' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}
+              className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'content' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground'}`}
             >
               Content
             </button>
@@ -377,7 +377,7 @@ export default function PagesPage() {
               aria-selected={activeTab === 'semantic'}
               aria-controls="panel-semantic"
               onClick={() => setActiveTab('semantic')}
-              className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'semantic' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}
+              className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'semantic' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground'}`}
             >
               Semantic Markup
             </button>
@@ -387,13 +387,13 @@ export default function PagesPage() {
               aria-selected={activeTab === 'settings'}
               aria-controls="panel-settings"
               onClick={() => setActiveTab('settings')}
-              className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'settings' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}
+              className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'settings' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground'}`}
             >
               Settings & Head
             </button>
          </div>
 
-         <form onSubmit={handleSave} className="space-y-6 bg-white p-6 rounded-lg border shadow-sm rounded-tr-none">
+         <form onSubmit={handleSave} className="space-y-6 bg-card p-6 rounded-lg border shadow-sm rounded-tr-none">
 
             {/* CONTENT TAB */}
             <div
@@ -409,7 +409,7 @@ export default function PagesPage() {
                      value={formState.target_keyword}
                      onChange={(e) => setFormState({...formState, target_keyword: e.target.value})}
                      placeholder="Enter Target Keyword for AI Generation (e.g. 'About Our Company')"
-                     className="bg-white border-blue-200 focus:ring-blue-500"
+                     className="bg-background border-blue-200 focus:ring-blue-500"
                    />
                    {!formState.target_keyword && (
                       <p className="text-xs text-amber-600 mt-2 flex items-center gap-1 font-medium">
@@ -421,152 +421,152 @@ export default function PagesPage() {
 
                 {/* KEYWORD CYCLING SECTION */}
                 <div className="mb-6 p-4 bg-gradient-to-r from-rose-50 to-orange-50 rounded-lg border border-rose-200">
-                   <h4 className="text-sm font-semibold text-slate-800 flex items-center gap-2 mb-3">
-                     <span className="w-6 h-6 bg-rose-500 text-white rounded flex items-center justify-center text-xs font-bold">K</span>
-                     Keyword Typewriter (Homepage Hero)
-                   </h4>
-                   <p className="text-xs text-slate-500 mb-3">
-                     Creates animated hero text: <code className="bg-white px-1.5 py-0.5 rounded text-rose-600">[Start] + [keyword1] + [keyword2] +...</code>
-                   </p>
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                     <div className="space-y-2">
-                       <Label className="font-medium">Start of sentence</Label>
-                       <Input 
-                         value={formState.keyword_prefix_text}
-                         onChange={(e) => setFormState({...formState, keyword_prefix_text: e.target.value})}
-                         placeholder="We are a"
-                         className="bg-white"
-                       />
-                       <p className="text-xs text-slate-400">e.g., "We are a", "pomegranate is your", "Grow with"</p>
-                     </div>
-                     <div className="md:col-span-2 space-y-2">
-                       <Label className="font-medium">Keywords <span className="text-slate-400 font-normal">(comma-separated)</span></Label>
-                       <Input
-                         value={formState.keyword_terms}
-                         onChange={(e) => setFormState({...formState, keyword_terms: e.target.value})}
-                         placeholder="seo agency, digital performance team, search engine optimisation company"
-                         className="bg-white"
-                       />
-                       <p className="text-xs text-slate-400">Each keyword will cycle through in the hero section. Add 2-5 keywords for best effect.</p>
-                     </div>
-                   </div>
-                   {formState.keyword_terms && (
-                     <div className="mt-3 p-3 bg-white rounded border border-slate-200">
-                       <p className="text-xs text-slate-500 mb-1">Preview:</p>
-                       <p className="text-lg font-semibold text-slate-800">
-                         {formState.keyword_prefix_text || 'We are a'}{' '}
-                         <span className="text-rose-500">
-                           {formState.keyword_terms.split(',').map(k => k.trim()).filter(Boolean).join('</span>, <span className="text-rose-500">')}
-                         </span>
-                       </p>
-                     </div>
-                   )}
+<h4 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
+                      <span className="w-6 h-6 bg-rose-500 text-white rounded flex items-center justify-center text-xs font-bold">K</span>
+                      Keyword Typewriter (Homepage Hero)
+                    </h4>
+                    <p className="text-xs text-muted-foreground mb-3">
+                      Creates animated hero text: <code className="bg-background px-1.5 py-0.5 rounded text-rose-600">[Start] + [keyword1] + [keyword2] +...</code>
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className="font-medium">Start of sentence</Label>
+                        <Input 
+                          value={formState.keyword_prefix_text}
+                          onChange={(e) => setFormState({...formState, keyword_prefix_text: e.target.value})}
+                          placeholder="We are a"
+                          className="bg-background"
+                        />
+                        <p className="text-xs text-muted-foreground">e.g., "We are a", "pomegranate is your", "Grow with"</p>
+                      </div>
+                      <div className="md:col-span-2 space-y-2">
+                        <Label className="font-medium">Keywords <span className="text-muted-foreground font-normal">(comma-separated)</span></Label>
+                        <Input
+                          value={formState.keyword_terms}
+                          onChange={(e) => setFormState({...formState, keyword_terms: e.target.value})}
+                          placeholder="seo agency, digital performance team, search engine optimisation company"
+                          className="bg-background"
+                        />
+                        <p className="text-xs text-muted-foreground">Each keyword will cycle through in the hero section. Add 2-5 keywords for best effect.</p>
+                      </div>
+                    </div>
+                    {formState.keyword_terms && (
+                      <div className="mt-3 p-3 bg-background rounded border border-border">
+                        <p className="text-xs text-muted-foreground mb-1">Preview:</p>
+                        <p className="text-lg font-semibold text-foreground">
+                          {formState.keyword_prefix_text || 'We are a'}{' '}
+                          <span className="text-rose-500">
+                            {formState.keyword_terms.split(',').map(k => k.trim()).filter(Boolean).join('</span>, <span className="text-rose-500">')}
+                          </span>
+                        </p>
+                      </div>
+                    )}
                 </div>
 
                {/* HERO FIELDS */}
                <div className="bg-gradient-to-r from-rose-50 to-orange-50 p-4 rounded-lg border border-rose-200 mb-6">
-                 <h4 className="text-sm font-semibold text-slate-800 flex items-center gap-2 mb-3">
-                   <span className="w-6 h-6 bg-rose-500 text-white rounded flex items-center justify-center text-xs font-bold">H</span>
-                   Hero Section
-                 </h4>
-                 <p className="text-xs text-slate-500 mb-3">
-                   All hero section fields. Fill only the ones your page uses — empty fields are ignored on save.
-                 </p>
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                   <div className="space-y-1">
-                     <Label className="text-xs">Eyebrow / Label <span className="text-slate-400">(contact, about)</span></Label>
-                     <Input
-                       value={formState.hero_eyebrow}
-                       onChange={e => setFormState({ ...formState, hero_eyebrow: e.target.value })}
-                       placeholder="pomegranate marketing"
-                       className="bg-white text-sm"
-                     />
-                   </div>
-                   <div className="space-y-1 md:col-span-2">
-                     <Label className="text-xs">Hero Title (H1) <span className="text-slate-400">(all pages)</span></Label>
-                     <Input
-                       value={formState.hero_title}
-                       onChange={e => setFormState({ ...formState, hero_title: e.target.value })}
-                       placeholder="Main page heading..."
-                       className="bg-white text-sm"
-                     />
-                   </div>
-                   <div className="space-y-1 md:col-span-2">
-                     <Label className="text-xs">Subtitle <span className="text-slate-400">(contact, about — line directly under title)</span></Label>
-                     <Input
-                       value={formState.hero_subtitle}
-                       onChange={e => setFormState({ ...formState, hero_subtitle: e.target.value })}
-                       placeholder="Supporting line below the main heading..."
-                       className="bg-white text-sm"
-                     />
-                   </div>
-                   <div className="space-y-1 md:col-span-2">
-                     <Label className="text-xs">Subtext <span className="text-slate-400">(home — e.g. "We take small businesses from darkness to light.")</span></Label>
-                     <Input
-                       value={formState.hero_subtext}
-                       onChange={e => setFormState({ ...formState, hero_subtext: e.target.value })}
-                       placeholder="We take small businesses from darkness to light."
-                       className="bg-white text-sm"
-                     />
-                   </div>
-                   <div className="space-y-1 md:col-span-2">
-                     <Label className="text-xs">Tagline <span className="text-slate-400">(home — small line below subtext)</span></Label>
-                     <Input
-                       value={formState.hero_tagline}
-                       onChange={e => setFormState({ ...formState, hero_tagline: e.target.value })}
-                       placeholder="AI agents are here now but don't worry; we speak their language."
-                       className="bg-white text-sm"
-                     />
-                   </div>
-                   <div className="space-y-1">
-                     <Label className="text-xs">Primary CTA Text <span className="text-slate-400">(home)</span></Label>
-                     <Input
-                       value={formState.hero_primary_cta_text}
-                       onChange={e => setFormState({ ...formState, hero_primary_cta_text: e.target.value })}
-                       placeholder="Begin Seeding"
-                       className="bg-white text-sm"
-                     />
-                   </div>
-                   <div className="space-y-1">
-                     <Label className="text-xs">Secondary CTA Text <span className="text-slate-400">(home)</span></Label>
-                     <Input
-                       value={formState.hero_secondary_cta_text}
-                       onChange={e => setFormState({ ...formState, hero_secondary_cta_text: e.target.value })}
-                       placeholder="FREE SEO TOOLS"
-                       className="bg-white text-sm"
-                     />
-                   </div>
-                   <div className="space-y-1 md:col-span-2">
-                     <Label className="text-xs">Secondary CTA Link <span className="text-slate-400">(home)</span></Label>
-                     <Input
-                       value={formState.hero_secondary_cta_link}
-                       onChange={e => setFormState({ ...formState, hero_secondary_cta_link: e.target.value })}
-                       placeholder="/free-tools"
-                       className="bg-white text-sm"
-                     />
-                   </div>
-                 </div>
-               </div>
+<h4 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
+                    <span className="w-6 h-6 bg-rose-500 text-white rounded flex items-center justify-center text-xs font-bold">H</span>
+                    Hero Section
+                  </h4>
+                  <p className="text-xs text-muted-foreground mb-3">
+                    All hero section fields. Fill only the ones your page uses — empty fields are ignored on save.
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <Label className="text-xs">Eyebrow / Label <span className="text-muted-foreground">(contact, about)</span></Label>
+                      <Input
+                        value={formState.hero_eyebrow}
+                        onChange={e => setFormState({ ...formState, hero_eyebrow: e.target.value })}
+                        placeholder="pomegranate marketing"
+                        className="bg-background text-sm"
+                      />
+                    </div>
+                    <div className="space-y-1 md:col-span-2">
+                      <Label className="text-xs">Hero Title (H1) <span className="text-muted-foreground">(all pages)</span></Label>
+                      <Input
+                        value={formState.hero_title}
+                        onChange={e => setFormState({ ...formState, hero_title: e.target.value })}
+                        placeholder="Main page heading..."
+                        className="bg-background text-sm"
+                      />
+                    </div>
+                    <div className="space-y-1 md:col-span-2">
+                      <Label className="text-xs">Subtitle <span className="text-muted-foreground">(contact, about — line directly under title)</span></Label>
+                      <Input
+                        value={formState.hero_subtitle}
+                        onChange={e => setFormState({ ...formState, hero_subtitle: e.target.value })}
+                        placeholder="Supporting line below the main heading..."
+                        className="bg-background text-sm"
+                      />
+                    </div>
+                    <div className="space-y-1 md:col-span-2">
+                      <Label className="text-xs">Subtext <span className="text-muted-foreground">(home — e.g. "We take small businesses from darkness to light.")</span></Label>
+                      <Input
+                        value={formState.hero_subtext}
+                        onChange={e => setFormState({ ...formState, hero_subtext: e.target.value })}
+                        placeholder="We take small businesses from darkness to light."
+                        className="bg-background text-sm"
+                      />
+                    </div>
+                    <div className="space-y-1 md:col-span-2">
+                      <Label className="text-xs">Tagline <span className="text-muted-foreground">(home — small line below subtext)</span></Label>
+                      <Input
+                        value={formState.hero_tagline}
+                        onChange={e => setFormState({ ...formState, hero_tagline: e.target.value })}
+                        placeholder="AI agents are here now but don't worry; we speak their language."
+                        className="bg-background text-sm"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs">Primary CTA Text <span className="text-muted-foreground">(home)</span></Label>
+                      <Input
+                        value={formState.hero_primary_cta_text}
+                        onChange={e => setFormState({ ...formState, hero_primary_cta_text: e.target.value })}
+                        placeholder="Begin Seeding"
+                        className="bg-background text-sm"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs">Secondary CTA Text <span className="text-muted-foreground">(home)</span></Label>
+                      <Input
+                        value={formState.hero_secondary_cta_text}
+                        onChange={e => setFormState({ ...formState, hero_secondary_cta_text: e.target.value })}
+                        placeholder="FREE SEO TOOLS"
+                        className="bg-background text-sm"
+                      />
+                    </div>
+                    <div className="space-y-1 md:col-span-2">
+                      <Label className="text-xs">Secondary CTA Link <span className="text-muted-foreground">(home)</span></Label>
+                      <Input
+                        value={formState.hero_secondary_cta_link}
+                        onChange={e => setFormState({ ...formState, hero_secondary_cta_link: e.target.value })}
+                        placeholder="/free-tools"
+                        className="bg-background text-sm"
+                      />
+</div>
+                  </div>
+                </div>
 
-               {/* CONTENT SECTIONS JSON EDITOR */}
-               <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-6">
-                 <h4 className="text-sm font-semibold text-slate-800 flex items-center gap-2 mb-2">
-                   <span className="w-6 h-6 bg-slate-600 text-white rounded flex items-center justify-center text-xs font-bold">C</span>
-                   Content Sections
-                 </h4>
-                 <p className="text-xs text-slate-500 mb-3">
-                   All page body content (services, who we are, contact details, mission, values, timeline, etc.) stored as JSON.
-                   Edit carefully — must be valid JSON. Changes here update what's displayed on the live website.
-                 </p>
-                 <textarea
-                   value={formState.content_sections_json}
-                   onChange={e => setFormState({ ...formState, content_sections_json: e.target.value })}
-                   className="w-full h-64 font-mono text-xs bg-white border border-slate-300 rounded p-3 resize-y focus:outline-none focus:ring-2 focus:ring-rose-400"
-                   placeholder="{}"
-                   spellCheck={false}
-                 />
-                 <p className="text-xs text-amber-600 mt-1">⚠ Invalid JSON will block saving. Use a JSON validator if unsure.</p>
-               </div>
+                {/* CONTENT SECTIONS JSON EDITOR */}
+                <div className="bg-muted p-4 rounded-lg border border-border mb-6">
+                  <h4 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-2">
+                    <span className="w-6 h-6 bg-muted-foreground/50 text-white rounded flex items-center justify-center text-xs font-bold">C</span>
+                    Content Sections
+                  </h4>
+                  <p className="text-xs text-muted-foreground mb-3">
+                    All page body content (services, who we are, contact details, mission, values, timeline, etc.) stored as JSON.
+                    Edit carefully — must be valid JSON. Changes here update what's displayed on the live website.
+                  </p>
+                  <textarea
+                    value={formState.content_sections_json}
+                    onChange={e => setFormState({ ...formState, content_sections_json: e.target.value })}
+                    className="w-full h-64 font-mono text-xs bg-background border border-border rounded p-3 resize-y focus:outline-none focus:ring-2 focus:ring-rose-400"
+                    placeholder="{}"
+                    spellCheck={false}
+                  />
+                  <p className="text-xs text-amber-600 mt-1">Invalid JSON will block saving. Use a JSON validator if unsure.</p>
+                </div>
 
                <div className="space-y-6">
                    <div className="space-y-2">
@@ -697,15 +697,15 @@ export default function PagesPage() {
 
                <div className="space-y-2">
                  <Label className="flex items-center gap-2">
-                    <Code className="h-4 w-4 text-slate-500" />
-                    Custom &lt;head&gt; Code
-                 </Label>
-                 <Textarea 
-                    value={formState.custom_head}
-                    onChange={e => setFormState({...formState, custom_head: e.target.value})}
-                    placeholder="<script>...</script> or <meta name='...'>" 
-                    className="font-mono text-xs h-32 bg-slate-50"
-                 />
+<Code className="h-4 w-4 text-muted-foreground" />
+                     Custom &lt;head&gt; Code
+                  </Label>
+                  <Textarea 
+                     value={formState.custom_head}
+                     onChange={e => setFormState({...formState, custom_head: e.target.value})}
+                     placeholder="<script>...</script> or <meta name='...'>" 
+                     className="font-mono text-xs h-32 bg-muted"
+                  />
                  <p className="text-xs text-amber-600">Note: This code is currently UI-only and may not persist without database schema updates.</p>
               </div>
            </div>
@@ -727,7 +727,7 @@ export default function PagesPage() {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Static Pages</h1>
-          <p className="text-slate-500 mt-2">
+          <p className="text-muted-foreground mt-2">
             Manage core website pages (Home, About, Contact, Policies). 
           </p>
         </div>
@@ -754,20 +754,20 @@ export default function PagesPage() {
         </div>
       </div>
 
-      {pages.length === 0 ? (
-        <div className="text-center py-12 border-2 border-dashed rounded-lg bg-slate-50">
-          <Layers className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-slate-900">No pages yet</h3>
-          <p className="text-slate-500 mb-6">Create your first static page (e.g., ContactPage).</p>
-          <div className="flex justify-center gap-4">
-             <Button onClick={() => startEdit()}>Create Page</Button>
-             <Button variant="outline" onClick={handleGenerateCorePages}>Auto-Generate Defaults</Button>
-          </div>
+{pages.length === 0 ? (
+        <div className="text-center py-12 border-2 border-dashed rounded-lg bg-muted">
+           <Layers className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
+           <h3 className="text-lg font-medium text-foreground">No pages yet</h3>
+           <p className="text-muted-foreground mb-6">Create your first static page (e.g., ContactPage).</p>
+           <div className="flex justify-center gap-4">
+              <Button onClick={() => startEdit()}>Create Page</Button>
+              <Button variant="outline" onClick={handleGenerateCorePages}>Auto-Generate Defaults</Button>
+           </div>
         </div>
       ) : (
-        <div className="bg-white border rounded-lg shadow-sm overflow-hidden">
+        <div className="bg-card border rounded-lg shadow-sm overflow-hidden">
           <table className="w-full text-sm text-left">
-            <thead className="bg-slate-50 border-b font-medium text-slate-500">
+            <thead className="bg-muted border-b font-medium text-muted-foreground">
               <tr>
                 <th className="px-6 py-4">Title</th>
                 <th className="px-6 py-4">Slug</th>
@@ -778,31 +778,31 @@ export default function PagesPage() {
             </thead>
             <tbody className="divide-y">
               {pages.map((page) => (
-                <tr key={page.id} className="hover:bg-slate-50 transition-colors">
-                  <td className="px-6 py-4 font-medium text-slate-900">{page.title}</td>
-                  <td className="px-6 py-4 text-slate-500 font-mono text-xs">/{page.slug}</td>
-                  <td className="px-6 py-4 text-slate-500 text-xs uppercase">{page.page_type}</td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${
-                      page.status === 'published' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
-                    }`}>
-                      {page.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right flex justify-end gap-2">
-                      <Button variant="ghost" size="icon" onClick={() => startEdit(page)} aria-label={`Edit ${page.title}`}>
-                         <Edit2 className="h-4 w-4 text-slate-500" aria-hidden="true" />
-                      </Button>
-                       <Button variant="ghost" size="icon" onClick={() => handleDelete(page.id, page.title)} className="text-red-500 hover:bg-red-50" aria-label={`Delete ${page.title}`}>
-                         <Trash2 className="h-4 w-4" aria-hidden="true" />
-                      </Button>
-                  </td>
-                </tr>
-              ))}
+                <tr key={page.id} className="hover:bg-muted/50 transition-colors">
+                   <td className="px-6 py-4 font-medium text-foreground">{page.title}</td>
+                   <td className="px-6 py-4 text-muted-foreground font-mono text-xs">/{page.slug}</td>
+                   <td className="px-6 py-4 text-muted-foreground text-xs uppercase">{page.page_type}</td>
+                   <td className="px-6 py-4">
+                     <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${
+                       page.status === 'published' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
+                     }`}>
+                       {page.status}
+                     </span>
+                   </td>
+                   <td className="px-6 py-4 text-right flex justify-end gap-2">
+                       <Button variant="ghost" size="icon" onClick={() => startEdit(page)} aria-label={`Edit ${page.title}`}>
+                          <Edit2 className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                       </Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleDelete(page.id, page.title)} className="text-red-500 hover:bg-red-50 dark:hover:bg-red-950" aria-label={`Delete ${page.title}`}>
+                          <Trash2 className="h-4 w-4" aria-hidden="true" />
+                       </Button>
+                   </td>
+                 </tr>
+               ))}
              </tbody>
            </table>
          </div>
-       )}
+        )}
        <ConfirmDialog />
      </div>
    );

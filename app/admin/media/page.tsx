@@ -8,8 +8,8 @@ export default function MediaPage() {
       <div className="flex justify-between items-center mb-6 flex-shrink-0">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Media Library</h1>
-          <p className="text-slate-500 mt-2">
-            Upload and manage images for your blog posts and pages.
+          <p className="text-muted-foreground mt-2">
+            Upload and manage images for your blogposts and pages.
           </p>
         </div>
         {/* Placeholder for future entity gen from images if needed */}

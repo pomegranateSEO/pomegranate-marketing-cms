@@ -226,12 +226,12 @@ export const PseoPageEditor: React.FC<Props> = ({ page, business, service, locat
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white w-full max-w-4xl rounded-lg shadow-2xl flex flex-col max-h-[90vh]">
+      <div className="bg-card w-full max-w-4xl rounded-lg shadow-2xl flex flex-col max-h-[90vh]">
         
         <div className="flex justify-between items-center p-4 border-b">
           <div>
             <h3 className="text-xl font-bold">Edit Page Instance</h3>
-            <div className="text-xs text-slate-500 font-mono mt-1 flex items-center gap-1">
+            <div className="text-xs text-muted-foreground font-mono mt-1 flex items-center gap-1">
                <Globe className="h-3 w-3" />
                /{getValues('url_slug')}
             </div>
@@ -245,10 +245,10 @@ export const PseoPageEditor: React.FC<Props> = ({ page, business, service, locat
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b bg-slate-50">
-           <button onClick={() => setActiveTab('content')} className={`px-4 py-2 text-sm font-medium border-b-2 ${activeTab === 'content' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}>Content</button>
-           <button onClick={() => setActiveTab('semantic')} className={`px-4 py-2 text-sm font-medium border-b-2 ${activeTab === 'semantic' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}>Semantic Markup</button>
-           <button onClick={() => setActiveTab('schema')} className={`px-4 py-2 text-sm font-medium border-b-2 ${activeTab === 'schema' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}>Schema & Publish</button>
+        <div className="flex border-b bg-muted">
+           <button onClick={() => setActiveTab('content')} className={`px-4 py-2 text-sm font-medium border-b-2 ${activeTab === 'content' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground'}`}>Content</button>
+           <button onClick={() => setActiveTab('semantic')} className={`px-4 py-2 text-sm font-medium border-b-2 ${activeTab === 'semantic' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground'}`}>Semantic Markup</button>
+           <button onClick={() => setActiveTab('schema')} className={`px-4 py-2 text-sm font-medium border-b-2 ${activeTab === 'schema' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground'}`}>Schema & Publish</button>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="overflow-y-auto p-6 space-y-6 flex-1">
@@ -259,7 +259,7 @@ export const PseoPageEditor: React.FC<Props> = ({ page, business, service, locat
               {/* KEYWORD FIRST */}
               <div className="bg-blue-50/50 p-4 rounded border border-blue-100">
                  <Label className="text-blue-800 font-semibold mb-1 block">Target Keyword (Primary)</Label>
-                 <Input {...register('keywords')} placeholder="e.g. SEO Services London" className="bg-white border-blue-200 focus:ring-blue-500" />
+                 <Input {...register('keywords')} placeholder="e.g. SEO Services London" className="bg-card border-blue-200 dark:border-blue-800 focus:ring-blue-500" />
                  {!hasKeywords && (
                     <p className="text-xs text-amber-600 mt-1 flex items-center gap-1 font-medium">
                        <AlertTriangle className="h-3 w-3" />
@@ -333,16 +333,16 @@ export const PseoPageEditor: React.FC<Props> = ({ page, business, service, locat
                     </div>
                     <div className="space-y-2">
                       <Label>Local Landmarks (3 required)</Label>
-                      <p className="text-xs text-slate-500">Add exactly 3 landmarks used for this local service page.</p>
+                      <p className="text-xs text-muted-foreground">Add exactly 3 landmarks used for this local service page.</p>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <Input {...register('landmark_one')} placeholder="Landmark 1" required />
                         <Input {...register('landmark_two')} placeholder="Landmark 2" required />
                         <Input {...register('landmark_three')} placeholder="Landmark 3" required />
                       </div>
                     </div>
-                    <div className="space-y-3 p-4 bg-slate-50 rounded border border-slate-200">
+                    <div className="space-y-3 p-4 bg-muted rounded border">
                       <Label>Keyword Cycling (Required on Local Service Pages)</Label>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-muted-foreground">
                         Local service pages must include a keyword cycling block. The hero landmarks animation appears first, then this keyword cycling section.
                       </p>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -451,16 +451,16 @@ export const PseoPageEditor: React.FC<Props> = ({ page, business, service, locat
                </div>
 
                <div className="space-y-2">
-                  <Label className="flex items-center gap-2">
-                     <Code className="h-4 w-4 text-slate-500" />
+<Label className="flex items-center gap-2">
+                     <Code className="h-4 w-4 text-muted-foreground" />
                      Custom &lt;head&gt; Code
-                  </Label>
-                  <Textarea 
-                     {...register('custom_head')} 
-                     placeholder="<script>...</script> or <meta name='...'>" 
-                     className="font-mono text-xs h-32 bg-slate-50"
-                  />
-                  <p className="text-xs text-slate-400">Injected into the head of this specific page instance.</p>
+                   </Label>
+                   <Textarea 
+                      {...register('custom_head')} 
+                      placeholder="<script>...</script> or <meta name='...'>" 
+                      className="font-mono text-xs h-32 bg-muted"
+                   />
+                  <p className="text-xs text-muted-foreground">Injected into the head of this specific page instance.</p>
                </div>
 
                <div className="space-y-2">
@@ -471,17 +471,17 @@ export const PseoPageEditor: React.FC<Props> = ({ page, business, service, locat
                      Generate/Update Schema
                    </Button>
                 </div>
-                <Textarea 
+<Textarea 
                    {...register('schema_json_ld')}
-                   className="font-mono text-xs h-96 bg-slate-50"
-                   readOnly
-                />
+                    className="font-mono text-xs h-96 bg-muted"
+                    readOnly
+                 />
               </div>
           </div>
 
         </form>
 
-        <div className="p-4 border-t bg-slate-50 flex justify-end gap-2 rounded-b-lg">
+        <div className="p-4 border-t bg-muted flex justify-end gap-2 rounded-b-lg">
            <Button variant="ghost" onClick={onClose}>Cancel</Button>
            <Button onClick={handleSubmit(onSubmit)} disabled={saving}>
              {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}

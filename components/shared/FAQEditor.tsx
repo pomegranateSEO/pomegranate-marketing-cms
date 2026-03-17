@@ -61,11 +61,11 @@ export const FAQEditor: React.FC<Props> = ({ value = [], onChange, sourceText })
   };
 
   return (
-    <div className="space-y-4 border rounded-md p-4 bg-slate-50">
+    <div className="space-y-4 border rounded-md p-4 bg-muted">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
             <HelpCircle className="h-5 w-5 text-primary" />
-            <h3 className="font-semibold text-slate-800">Frequently Asked Questions</h3>
+            <h3 className="font-semibold text-foreground">Frequently Asked Questions</h3>
         </div>
         
         <div className="flex gap-2">
@@ -75,7 +75,7 @@ export const FAQEditor: React.FC<Props> = ({ value = [], onChange, sourceText })
              size="sm"
              onClick={handleAutoGenerate}
              disabled={generating}
-             className="text-purple-600 border-purple-200 hover:bg-purple-50"
+             className="text-purple-600 border-purple-200 hover:bg-purple-50 dark:bg-purple-900/30 dark:border-purple-800 dark:hover:bg-purple-900/50"
            >
              {generating ? <Loader2 className="h-3 w-3 animate-spin mr-2" /> : <Sparkles className="h-3 w-3 mr-2" />}
              AI Scan & Generate
@@ -86,26 +86,26 @@ export const FAQEditor: React.FC<Props> = ({ value = [], onChange, sourceText })
         </div>
       </div>
 
-      <p className="text-xs text-slate-500">
+      <p className="text-xs text-muted-foreground">
         These FAQs will be added to the page Schema (JSON-LD) and displayed in the content.
       </p>
 
       {value.length === 0 && (
-        <div className="text-center py-8 border-2 border-dashed border-slate-200 rounded-lg bg-white">
-           <p className="text-slate-400 text-sm">No FAQs added yet.</p>
+        <div className="text-center py-8 border-2 border-dashed rounded-lg bg-card">
+           <p className="text-muted-foreground text-sm">No FAQs added yet.</p>
         </div>
       )}
 
       <div className="space-y-3">
         {value.map((faq, index) => (
-          <div key={index} className="bg-white p-3 rounded border shadow-sm relative group animate-in fade-in slide-in-from-bottom-2">
+          <div key={index} className="bg-card p-3 rounded border shadow-sm relative group animate-in fade-in slide-in-from-bottom-2">
              <div className="absolute top-2 right-2">
                 <Button 
                   type="button" 
                   variant="ghost" 
                   size="icon" 
                   onClick={() => removeFAQ(index)}
-                  className="h-6 w-6 text-slate-400 hover:text-red-500"
+                  className="h-6 w-6 text-muted-foreground hover:text-red-500"
                   aria-label="Delete FAQ item"
                 >
                    <Trash2 className="h-3 w-3" aria-hidden="true" />
@@ -114,7 +114,7 @@ export const FAQEditor: React.FC<Props> = ({ value = [], onChange, sourceText })
              
              <div className="space-y-3">
                 <div>
-                   <Label className="text-xs text-slate-400 uppercase tracking-wider">Question</Label>
+                   <Label className="text-xs text-muted-foreground uppercase tracking-wider">Question</Label>
                    <Input 
                       value={faq.question} 
                       onChange={(e) => updateFAQ(index, 'question', e.target.value)}
@@ -123,7 +123,7 @@ export const FAQEditor: React.FC<Props> = ({ value = [], onChange, sourceText })
                    />
                 </div>
                 <div>
-                   <Label className="text-xs text-slate-400 uppercase tracking-wider">Answer</Label>
+                   <Label className="text-xs text-muted-foreground uppercase tracking-wider">Answer</Label>
                    <Textarea 
                       value={faq.answer} 
                       onChange={(e) => updateFAQ(index, 'answer', e.target.value)}

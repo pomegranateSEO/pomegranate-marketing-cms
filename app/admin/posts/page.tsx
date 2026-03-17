@@ -7,6 +7,8 @@ import { Textarea } from '../../../components/ui/textarea';
 import { Label } from '../../../components/ui/label';
 import { fetchPosts, createPost, updatePost, deletePost } from '../../../lib/db/posts';
 import { fetchBusinesses } from '../../../lib/db/businesses';
+import { fetchPeople } from '../../../lib/db/people';
+import type { Person } from '../../../lib/types';
 import { fetchKnowledgeEntities } from '../../../lib/db/knowledge';
 import { fetchBlogTopics } from '../../../lib/db/blog-topics';
 import type { BlogPost, Business, GlobalTheme, KnowledgeEntity, BlogTopic } from '../../../lib/types';
@@ -25,6 +27,7 @@ export default function PostsPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [knowledgeEntities, setKnowledgeEntities] = useState<KnowledgeEntity[]>([]);
   const [topics, setTopics] = useState<BlogTopic[]>([]);
+  const [people, setPeople] = useState<Person[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [rootBusiness, setRootBusiness] = useState<Business | null>(null);
@@ -49,21 +52,24 @@ export default function PostsPage() {
     target_keyword_input: '', // For UI/AI only
     custom_head: '', // Not persisted in standard schema
     about_entities: [] as string[],
-    mentions_entities: [] as string[]
+    mentions_entities: [] as string[],
+    author_person_id: '' as string,
   });
 
   const loadData = async () => {
     try {
       setLoading(true);
-      const [postsData, businessesData, keData, topicsData] = await Promise.all([
+      const [postsData, businessesData, keData, topicsData, peopleData] = await Promise.all([
         fetchPosts(),
         fetchBusinesses(),
         fetchKnowledgeEntities(),
-        fetchBlogTopics()
+        fetchBlogTopics(),
+        fetchPeople(),
       ]);
       setPosts(postsData);
       setKnowledgeEntities(keData);
       setTopics(topicsData);
+      setPeople(peopleData);
       if (businessesData.length > 0) {
         setRootBusiness(businessesData[0]);
       }
@@ -96,7 +102,8 @@ export default function PostsPage() {
         faqs: formState.faqs,
         keywords: formState.target_keyword_input ? [formState.target_keyword_input] : [], // Simplistic mapping
         about_entities: formState.about_entities,
-        mentions_entities: formState.mentions_entities
+        mentions_entities: formState.mentions_entities,
+        author_person_id: formState.author_person_id || null,
       };
 
       if (formState.id) {
@@ -154,7 +161,8 @@ export default function PostsPage() {
         target_keyword_input: post.keywords?.[0] || '',
         custom_head: '',
         about_entities: post.about_entities || [],
-        mentions_entities: post.mentions_entities || []
+        mentions_entities: post.mentions_entities || [],
+        author_person_id: post.author_person_id || '',
       });
     } else {
       resetForm();
@@ -218,7 +226,7 @@ export default function PostsPage() {
               <DialogTitle id="media-picker-title">Select Featured Image</DialogTitle>
               <DialogClose onClose={() => setShowMediaPicker(false)} />
             </DialogHeader>
-            <DialogBody className="p-0 flex-1 min-h-0 bg-slate-50">
+            <DialogBody className="p-0 flex-1 min-h-0 bg-muted">
               <MediaManager 
                 mode="picker" 
                 onSelect={handleImageSelect} 
@@ -240,7 +248,7 @@ export default function PostsPage() {
            )}
         </div>
 
-<form onSubmit={handleSave} className="space-y-6 bg-white p-6 rounded-lg border shadow-sm">
+<form onSubmit={handleSave} className="space-y-6 bg-card p-6 rounded-lg border shadow-sm">
           
               {/* TOPIC SELECTOR */}
               <div className="space-y-2 mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
@@ -250,7 +258,7 @@ export default function PostsPage() {
                 </Label>
                 <div className="flex gap-2">
                    <select 
-                      className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm"
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                       onChange={(e) => handleTopicSelect(e.target.value)}
                       defaultValue=""
                    >
@@ -270,7 +278,7 @@ export default function PostsPage() {
                     value={formState.target_keyword_input}
                     onChange={(e) => setFormState({...formState, target_keyword_input: e.target.value})}
                     placeholder="Target Keyword (e.g. 'Digital Marketing Strategies')"
-                    className="bg-white"
+                    className="bg-background"
                   />
                   {!formState.target_keyword_input && (
                      <p className="text-xs text-amber-600 mt-2 flex items-center gap-1 font-medium">
@@ -326,7 +334,7 @@ export default function PostsPage() {
                            <img 
                               src={formState.featured_image_url} 
                               alt="Preview" 
-                              className="h-32 w-auto object-cover rounded border bg-slate-50" 
+                              className="h-32 w-auto object-cover rounded border bg-muted" 
                            />
                             <button 
                               type="button"
@@ -362,7 +370,7 @@ export default function PostsPage() {
                   <div className="space-y-2">
                     <Label className="flex items-center gap-2">
                        Body Content (Visual Builder)
-                       <span className="text-xs text-slate-400 font-normal">(Compartments supported)</span>
+                       <span className="text-xs text-muted-foreground font-normal">(Compartments supported)</span>
                     </Label>
                     <VisualContentEditor 
                       value={formState.content || ''} 
@@ -375,7 +383,7 @@ export default function PostsPage() {
               </div>
 
               {/* STATUS & SLUG - Always visible */}
-              <div className="grid grid-cols-2 gap-6 p-4 bg-slate-50 rounded-lg border">
+              <div className="grid grid-cols-2 gap-6 p-4 bg-muted rounded-lg border">
                   <div className="space-y-2">
                     <Label>Slug (URL)</Label>
                     <Input 
@@ -400,7 +408,7 @@ export default function PostsPage() {
 
           {/* SECONDARY TABS - Semantic & Advanced Settings */}
           <div className="border-t pt-6 mt-6">
-            <div className="flex border-b bg-slate-50 mb-4 rounded-t-lg" role="tablist" aria-label="Post settings tabs">
+            <div className="flex border-b bg-muted mb-4 rounded-t-lg" role="tablist" aria-label="Post settings tabs">
                <button
                  type="button"
                  id="tab-semantic"
@@ -408,7 +416,7 @@ export default function PostsPage() {
                  aria-selected={activeTab === 'semantic'}
                  aria-controls="panel-semantic"
                  onClick={() => setActiveTab('semantic')}
-                 className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'semantic' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}
+                 className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'semantic' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground'}`}
                >
                  Semantic Markup
                </button>
@@ -419,7 +427,7 @@ export default function PostsPage() {
                  aria-selected={activeTab === 'settings'}
                  aria-controls="panel-settings"
                  onClick={() => setActiveTab('settings')}
-                 className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'settings' ? 'border-primary text-primary' : 'border-transparent text-slate-500'}`}
+                 className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'settings' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground'}`}
                >
                  Advanced Settings
                </button>
@@ -464,18 +472,34 @@ export default function PostsPage() {
               aria-labelledby="tab-settings"
               className={activeTab === 'settings' ? 'block' : 'hidden'}
             >
+                {/* Author selector */}
+                <div className="space-y-2 mb-6">
+                  <Label htmlFor="author_person_id">Author</Label>
+                  <select
+                    id="author_person_id"
+                    value={formState.author_person_id}
+                    onChange={(e) => setFormState({ ...formState, author_person_id: e.target.value })}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  >
+                    <option value="">— no author assigned —</option>
+                    {people.map((p) => (
+                      <option key={p.id} value={p.id}>{p.name}{p.job_title ? ` — ${p.job_title}` : ''}</option>
+                    ))}
+                  </select>
+                </div>
+
                 <div className="space-y-2">
                    <Label className="flex items-center gap-2">
-                      <Code className="h-4 w-4 text-slate-500" />
+                      <Code className="h-4 w-4 text-muted-foreground" />
                       Custom &lt;head&gt; Code
                    </Label>
                    <Textarea
                       value={formState.custom_head}
                       onChange={e => setFormState({...formState, custom_head: e.target.value})}
                       placeholder="<script>...</script> or <meta name='...'>"
-                      className="font-mono text-xs h-32 bg-slate-50"
+                      className="font-mono text-xs h-32 bg-muted"
                    />
-                   <p className="text-xs text-slate-500">Note: This code is currently UI-only and may not persist without database schema updates.</p>
+                   <p className="text-xs text-muted-foreground">Note: This code is currently UI-only and may not persist without database schema updates.</p>
                 </div>
             </div>
           </div>
@@ -497,7 +521,7 @@ export default function PostsPage() {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Blog Posts</h1>
-          <p className="text-slate-500 mt-2">Create articles to build topical authority.</p>
+          <p className="text-muted-foreground mt-2">Create articles to build topical authority.</p>
         </div>
         <div className="flex gap-2">
             {rootBusiness && posts.length > 0 && (
@@ -514,44 +538,44 @@ export default function PostsPage() {
       </div>
 
       {posts.length === 0 ? (
-        <div className="text-center py-12 border-2 border-dashed rounded-lg bg-slate-50">
-          <PenTool className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-slate-900">No posts yet</h3>
-          <p className="text-slate-500 mb-6">Create your first blog post.</p>
-          <Button onClick={() => startEdit()}>Create Post</Button>
+<div className="text-center py-12 border-2 border-dashed rounded-lg bg-muted">
+           <PenTool className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
+           <h3 className="text-lg font-medium text-foreground">No posts yet</h3>
+           <p className="text-muted-foreground mb-6">Create your first blog post.</p>
+           <Button onClick={() => startEdit()}>Create Post</Button>
         </div>
       ) : (
         <div className="space-y-4">
           {posts.map(post => (
-            <div key={post.id} className="bg-white p-4 rounded-lg border shadow-sm flex justify-between items-center hover:bg-slate-50 transition-colors">
-              <div className="flex items-center gap-4">
-                 <div className="p-2 bg-slate-100 rounded text-slate-500 relative overflow-hidden h-12 w-12 flex-shrink-0 flex items-center justify-center">
-                    {post.featured_image_url ? (
-                       <img src={post.featured_image_url} alt="" className="absolute inset-0 w-full h-full object-cover" />
-                    ) : (
-                       <FileText className="h-6 w-6" />
-                    )}
-                 </div>
-                 <div>
-                    <h3 className="font-bold text-lg text-slate-900">{post.headline}</h3>
-                    <div className="flex gap-2 text-xs text-slate-500">
-                       <span className={`capitalize font-medium ${post.status === 'published' ? 'text-green-600' : 'text-amber-600'}`}>
-                         {post.status}
-                       </span>
-                       <span>•</span>
-                       <span className="font-mono">/{post.slug}</span>
-                    </div>
-                 </div>
-              </div>
-              <div className="flex gap-2">
-                  <Button variant="ghost" size="icon" onClick={() => startEdit(post)} aria-label={`Edit ${post.title}`}>
-                     <Edit2 className="h-4 w-4 text-slate-500" aria-hidden="true" />
-                  </Button>
-                   <Button variant="ghost" size="icon" onClick={() => handleDelete(post.id, post.title)} aria-label={`Delete ${post.title}`}>
-                     <Trash2 className="h-4 w-4 text-red-500" aria-hidden="true" />
-                  </Button>
-              </div>
-            </div>
+<div key={post.id} className="bg-card p-4 rounded-lg border shadow-sm flex justify-between items-center hover:bg-muted/50 transition-colors">
+               <div className="flex items-center gap-4">
+                  <div className="p-2 bg-muted rounded text-muted-foreground relative overflow-hidden h-12 w-12 flex-shrink-0 flex items-center justify-center">
+                     {post.featured_image_url ? (
+                        <img src={post.featured_image_url} alt="" className="absolute inset-0 w-full h-full object-cover" />
+                     ) : (
+                        <FileText className="h-6 w-6" />
+                     )}
+                  </div>
+                  <div>
+                     <h3 className="font-bold text-lg text-foreground">{post.headline}</h3>
+                     <div className="flex gap-2 text-xs text-muted-foreground">
+                        <span className={`capitalize font-medium ${post.status === 'published' ? 'text-green-600' : 'text-amber-600'}`}>
+                          {post.status}
+                        </span>
+                        <span>•</span>
+                        <span className="font-mono">/{post.slug}</span>
+                     </div>
+                  </div>
+               </div>
+               <div className="flex gap-2">
+                   <Button variant="ghost" size="icon" onClick={() => startEdit(post)} aria-label={`Edit ${post.title}`}>
+                      <Edit2 className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                   </Button>
+                    <Button variant="ghost" size="icon" onClick={() => handleDelete(post.id, post.title)} aria-label={`Delete ${post.title}`}>
+                      <Trash2 className="h-4 w-4 text-red-500" aria-hidden="true" />
+                   </Button>
+               </div>
+             </div>
            ))}
          </div>
        )}

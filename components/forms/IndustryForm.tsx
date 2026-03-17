@@ -160,8 +160,8 @@ export const IndustryForm: React.FC<IndustryFormProps> = ({
     <form onSubmit={handleSubmit} className="space-y-6">
 
       {/* Core Details — always visible */}
-      <div className="bg-white border border-slate-200 rounded-lg p-6 space-y-6">
-        <h3 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+      <div className="bg-card border rounded-lg p-6 space-y-6">
+        <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
           <Factory className="h-5 w-5" />
           Core Details
         </h3>
@@ -178,7 +178,7 @@ export const IndustryForm: React.FC<IndustryFormProps> = ({
           <div className="space-y-2">
             <Label>Slug</Label>
             <div className="flex items-center">
-              <span className="bg-slate-100 border border-r-0 rounded-l px-3 py-2 text-sm text-slate-500">/industries/</span>
+              <span className="bg-muted border border-r-0 rounded-l px-3 py-2 text-sm text-muted-foreground">/industries/</span>
               <Input
                 value={formState.slug}
                 onChange={e => set('slug', e.target.value)}
@@ -201,20 +201,20 @@ export const IndustryForm: React.FC<IndustryFormProps> = ({
       </div>
 
       {/* Hero Section */}
-      <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+      <div className="bg-card border rounded-lg overflow-hidden">
         <button type="button" onClick={() => toggleSection('hero')}
-          className="w-full p-4 flex items-center justify-between bg-gradient-to-r from-rose-50 to-orange-50 hover:from-rose-100 hover:to-orange-100 transition-colors">
+          className="w-full p-4 flex items-center justify-between bg-gradient-to-r from-rose-50 to-orange-50 dark:from-rose-950/30 dark:to-orange-950/30 hover:from-rose-100 hover:to-orange-100 dark:hover:from-rose-900/40 dark:hover:to-orange-900/40 transition-colors">
           <div className="flex items-center gap-3">
             <Sparkles className="h-5 w-5 text-rose-500" />
             <div className="text-left">
-              <h3 className="text-lg font-semibold text-slate-800">Hero Section</h3>
-              <p className="text-xs text-slate-500">Page title, body copy, CTA, and animated landmark phrases</p>
+              <h3 className="text-lg font-semibold text-foreground">Hero Section</h3>
+              <p className="text-xs text-muted-foreground">Page title, body copy, CTA, and animated landmark phrases</p>
             </div>
           </div>
-          {expandedSections.hero ? <ChevronUp className="h-5 w-5 text-slate-400" /> : <ChevronDown className="h-5 w-5 text-slate-400" />}
+          {expandedSections.hero ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 w-5 text-muted-foreground" />}
         </button>
         {expandedSections.hero && (
-          <div className="p-6 space-y-4 border-t border-slate-200">
+          <div className="p-6 space-y-4 border-t">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label>Hero Title (H1)</Label>
@@ -225,13 +225,13 @@ export const IndustryForm: React.FC<IndustryFormProps> = ({
                 />
               </div>
               <div className="space-y-2">
-                <Label>Hero Keyword</Label>
-                <Input
-                  value={formState.hero_keyword}
-                  onChange={e => set('hero_keyword', e.target.value)}
-                  placeholder="Enterprise"
-                />
-                <p className="text-xs text-slate-400">Single-word industry keyword (shown in animated background)</p>
+<Label>Hero Keyword</Label>
+                  <Input
+                    value={formState.hero_keyword}
+                    onChange={e => set('hero_keyword', e.target.value)}
+                    placeholder="Enterprise"
+                  />
+                  <p className="text-xs text-muted-foreground">Single-word industry keyword (shown in animated background)</p>
               </div>
             </div>
             <div className="space-y-2">
@@ -252,27 +252,27 @@ export const IndustryForm: React.FC<IndustryFormProps> = ({
               />
             </div>
             <div className="space-y-2">
-              <Label>Landmark Phrases <span className="text-slate-400 font-normal">(comma-separated)</span></Label>
+              <Label>Landmark Phrases <span className="text-muted-foreground font-normal">(comma-separated)</span></Label>
               <Textarea
                 value={formState.hero_landmarks}
                 onChange={e => set('hero_landmarks', e.target.value)}
                 className="min-h-[80px]"
                 placeholder="Nationwide Enterprise SEO, Multi-Location Authority Building, Technical SEO at Scale"
               />
-              <p className="text-xs text-slate-400">Phrases displayed in the animated hero background. Separate with commas.</p>
+              <p className="text-xs text-muted-foreground">Phrases displayed in the animated hero background. Separate with commas.</p>
             </div>
           </div>
         )}
       </div>
 
       {/* Keyword Cycling — always visible */}
-      <div className="bg-gradient-to-r from-rose-50 to-orange-50 p-6 rounded-lg border border-rose-200">
-        <h3 className="text-lg font-semibold text-slate-800 flex items-center gap-2 mb-4">
+      <div className="bg-gradient-to-r from-rose-50 to-orange-50 dark:from-rose-950/30 dark:to-orange-950/30 p-6 rounded-lg border border-rose-200 dark:border-rose-800">
+        <h3 className="text-lg font-semibold text-foreground flex items-center gap-2 mb-4">
           <span className="w-8 h-8 bg-rose-500 text-white rounded flex items-center justify-center text-sm font-bold">K</span>
           Keyword Typewriter
         </h3>
-        <p className="text-sm text-slate-500 mb-4">
-          Creates animated hero text: <code className="bg-white px-2 py-1 rounded text-rose-600">[Start] + [keyword1] + [keyword2]...</code>
+        <p className="text-sm text-muted-foreground mb-4">
+          Creates animated hero text: <code className="bg-card px-2 py-1 rounded text-rose-600 dark:text-rose-400">[Start] + [keyword1] + [keyword2]...</code>
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
@@ -281,23 +281,23 @@ export const IndustryForm: React.FC<IndustryFormProps> = ({
               value={formState.keyword_prefix_text}
               onChange={e => set('keyword_prefix_text', e.target.value)}
               placeholder="We serve the"
-              className="bg-white"
+              className="bg-card"
             />
           </div>
           <div className="space-y-2">
-            <Label>Keywords <span className="text-slate-400 font-normal">(comma-separated)</span></Label>
+            <Label>Keywords <span className="text-muted-foreground font-normal">(comma-separated)</span></Label>
             <Input
               value={formState.keyword_terms}
               onChange={e => set('keyword_terms', e.target.value)}
               placeholder="enterprise sector, corporate market, large-scale businesses"
-              className="bg-white"
+              className="bg-card"
             />
           </div>
         </div>
         {formState.keyword_terms && (
-          <div className="mt-4 p-4 bg-white rounded border border-slate-200">
-            <p className="text-xs text-slate-500 mb-1">Preview:</p>
-            <p className="text-lg font-semibold text-slate-800">
+          <div className="mt-4 p-4 bg-card rounded border">
+            <p className="text-xs text-muted-foreground mb-1">Preview:</p>
+            <p className="text-lg font-semibold text-foreground">
               {formState.keyword_prefix_text || 'We serve the'}{' '}
               <span className="text-rose-500">
                 {formState.keyword_terms.split(',')[0]?.trim() || ''}
@@ -308,19 +308,19 @@ export const IndustryForm: React.FC<IndustryFormProps> = ({
       </div>
 
       {/* Deliverables Section */}
-      <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
-        <button type="button" onClick={() => toggleSection('deliverables')}className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+      <div className="bg-card border rounded-lg overflow-hidden">
+        <button type="button" onClick={() => toggleSection('deliverables')}className="w-full p-4 flex items-center justify-between hover:bg-muted transition-colors">
           <div className="flex items-center gap-3">
-            <ListChecks className="h-5 w-5 text-slate-600" />
+            <ListChecks className="h-5 w-5 text-muted-foreground" />
             <div className="text-left">
-              <h3 className="text-lg font-semibold text-slate-800">Deliverables</h3>
-              <p className="text-xs text-slate-500">"What You Get" section items with icons</p>
+              <h3 className="text-lg font-semibold text-foreground">Deliverables</h3>
+              <p className="text-xs text-muted-foreground">"What You Get" section items with icons</p>
             </div>
           </div>
-          {expandedSections.deliverables ? <ChevronUp className="h-5 w-5 text-slate-400" /> : <ChevronDown className="h-5 w-5text-slate-400" />}
+          {expandedSections.deliverables ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 text-muted-foreground" />}
         </button>
         {expandedSections.deliverables && (
-          <div className="p-6 border-t border-slate-200">
+          <div className="p-6 border-t">
             <DeliverablesEditor
               value={deliverablesItems}
               onChange={setDeliverablesItems}
@@ -332,20 +332,20 @@ export const IndustryForm: React.FC<IndustryFormProps> = ({
       </div>
 
       {/* CTA Section */}
-      <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+      <div className="bg-card border rounded-lg overflow-hidden">
         <button type="button" onClick={() => toggleSection('cta')}
-          className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+          className="w-full p-4 flex items-center justify-between hover:bg-muted transition-colors">
           <div className="flex items-center gap-3">
-            <Layout className="h-5 w-5 text-slate-600" />
+            <Layout className="h-5 w-5 text-muted-foreground" />
             <div className="text-left">
-              <h3 className="text-lg font-semibold text-slate-800">Call to Action</h3>
-              <p className="text-xs text-slate-500">"Work With Us" section heading and subheading</p>
+              <h3 className="text-lg font-semibold text-foreground">Call to Action</h3>
+              <p className="text-xs text-muted-foreground">"Work With Us" section heading and subheading</p>
             </div>
           </div>
-          {expandedSections.cta ? <ChevronUp className="h-5 w-5 text-slate-400" /> : <ChevronDown className="h-5 w-5 text-slate-400" />}
+          {expandedSections.cta ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 w-5 text-muted-foreground" />}
         </button>
         {expandedSections.cta && (
-          <div className="p-6 space-y-4 border-t border-slate-200">
+          <div className="p-6 space-y-4 border-t">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label>CTA Heading</Label>
@@ -369,20 +369,20 @@ export const IndustryForm: React.FC<IndustryFormProps> = ({
       </div>
 
       {/* FAQ Section */}
-      <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+      <div className="bg-card border rounded-lg overflow-hidden">
         <button type="button" onClick={() => toggleSection('faq')}
-          className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+          className="w-full p-4 flex items-center justify-between hover:bg-muted transition-colors">
           <div className="flex items-center gap-3">
-            <MessageSquare className="h-5 w-5 text-slate-600" />
+            <MessageSquare className="h-5 w-5 text-muted-foreground" />
             <div className="text-left">
-              <h3 className="text-lg font-semibold text-slate-800">FAQs</h3>
-              <p className="text-xs text-slate-500">Frequently Asked Questions for this industry</p>
+              <h3 className="text-lg font-semibold text-foreground">FAQs</h3>
+              <p className="text-xs text-muted-foreground">Frequently Asked Questions for this industry</p>
             </div>
           </div>
-          {expandedSections.faq ? <ChevronUp className="h-5 w-5 text-slate-400" /> : <ChevronDown className="h-5 w-5 text-slate-400" />}
+          {expandedSections.faq ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 w-5 text-muted-foreground" />}
         </button>
         {expandedSections.faq && (
-          <div className="p-6 border-t border-slate-200">
+          <div className="p-6 border-t">
             <FAQEditor
               value={faqs}
               onChange={setFaqs}
@@ -393,39 +393,39 @@ export const IndustryForm: React.FC<IndustryFormProps> = ({
       </div>
 
       {/* SEO Section */}
-      <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+      <div className="bg-card border rounded-lg overflow-hidden">
         <button type="button" onClick={() => toggleSection('seo')}
-          className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+          className="w-full p-4 flex items-center justify-between hover:bg-muted transition-colors">
           <div className="flex items-center gap-3">
-            <Globe className="h-5 w-5 text-slate-600" />
+            <Globe className="h-5 w-5 text-muted-foreground" />
             <div className="text-left">
-              <h3 className="text-lg font-semibold text-slate-800">SEO & Metadata</h3>
-              <p className="text-xs text-slate-500">Title tags, descriptions, canonical URLs</p>
+              <h3 className="text-lg font-semibold text-foreground">SEO & Metadata</h3>
+              <p className="text-xs text-muted-foreground">Title tags, descriptions, canonical URLs</p>
             </div>
           </div>
-          {expandedSections.seo ? <ChevronUp className="h-5 w-5 text-slate-400" /> : <ChevronDown className="h-5 w-5 text-slate-400" />}
+          {expandedSections.seo ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 w-5 text-muted-foreground" />}
         </button>
         {expandedSections.seo && (
-          <div className="p-6 space-y-4 border-t border-slate-200">
+          <div className="p-6 space-y-4 border-t">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label>SEO Title</Label>
-                <Input
-                  value={formState.seo_title}
-                  onChange={e => set('seo_title', e.target.value)}
-                  placeholder="Enterprise SEO | pomegranate"
-                />
-                <p className="text-xs text-slate-400">{formState.seo_title?.length || 0}/60 characters recommended</p>
-              </div>
-              <div className="space-y-2">
-                <Label>Meta Description</Label>
-                <Textarea
-                  value={formState.seo_meta_desc || ''}
-                  onChange={e => set('seo_meta_desc', e.target.value)}
-                  placeholder="Comprehensive SEO and digital marketing for enterprise businesses..."
-                  className="h-[80px]"
-                />
-                <p className="text-xs text-slate-400">{formState.seo_meta_desc?.length || 0}/160 characters recommended</p>
+<Label>SEO Title</Label>
+                  <Input
+                    value={formState.seo_title}
+                    onChange={e => set('seo_title', e.target.value)}
+                    placeholder="Enterprise SEO |pomegranate"
+                  />
+                 <p className="text-xs text-muted-foreground">{formState.seo_title?.length || 0}/60 characters recommended</p>
+               </div>
+               <div className="space-y-2">
+                 <Label>Meta Description</Label>
+                 <Textarea
+                   value={formState.seo_meta_desc || ''}
+                   onChange={e => set('seo_meta_desc', e.target.value)}
+                   placeholder="Comprehensive SEO and digital marketing for enterprise businesses..."
+                   className="h-[80px]"
+                 />
+                 <p className="text-xs text-muted-foreground">{formState.seo_meta_desc?.length || 0}/160 characters recommended</p>
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -452,20 +452,20 @@ export const IndustryForm: React.FC<IndustryFormProps> = ({
 
       {/* Entities Section */}
       {knowledgeEntities.length > 0 && (
-        <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+        <div className="bg-card border rounded-lg overflow-hidden">
           <button type="button" onClick={() => toggleSection('entities')}
-            className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+            className="w-full p-4 flex items-center justify-between hover:bg-muted transition-colors">
             <div className="flex items-center gap-3">
-              <Globe className="h-5 w-5 text-slate-600" />
+              <Globe className="h-5 w-5 text-muted-foreground" />
               <div className="text-left">
-                <h3 className="text-lg font-semibold text-slate-800">Knowledge Entities</h3>
-                <p className="text-xs text-slate-500">Link to Wikidata for enhanced SEO schema</p>
+                <h3 className="text-lg font-semibold text-foreground">Knowledge Entities</h3>
+                <p className="text-xs text-muted-foreground">Link to Wikidata for enhanced SEO schema</p>
               </div>
             </div>
-            {expandedSections.entities ? <ChevronUp className="h-5 w-5 text-slate-400" /> : <ChevronDown className="h-5 w-5 text-slate-400" />}
+            {expandedSections.entities ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 w-5 text-muted-foreground" />}
           </button>
           {expandedSections.entities && (
-            <div className="p-6 border-t border-slate-200">
+            <div className="p-6 border-t">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <KnowledgeEntitySelector
                   label="About Entities"
@@ -487,7 +487,7 @@ export const IndustryForm: React.FC<IndustryFormProps> = ({
         </div>
       )}
 
-      <div className="flex justify-end gap-3 pt-6 border-t bg-slate-50 -mx-6 -mb-6 px-6 py-4 rounded-b-lg" style={{ marginLeft: 0, marginBottom: 0 }}>
+      <div className="flex justify-end gap-3 pt-6 border-t bg-muted -mx-6 -mb-6 px-6 py-4 rounded-b-lg" style={{ marginLeft: 0, marginBottom: 0 }}>
         <Button type="button" variant="ghost" onClick={onCancel}>Cancel</Button>
         <Button type="submit" disabled={isLoading} className="w-48">
           {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}

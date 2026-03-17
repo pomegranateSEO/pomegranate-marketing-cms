@@ -141,7 +141,7 @@ export const RedirectForm: React.FC<RedirectFormProps> = ({
             placeholder="/old-page"
             required
           />
-          <p className="text-xs text-slate-500">The URL path to redirect from (e.g., /old-blog-post)</p>
+          <p className="text-xs text-muted-foreground">The URL path to redirect from (e.g., /old-blog-post)</p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="to_path">To Path *</Label>
@@ -166,8 +166,8 @@ export const RedirectForm: React.FC<RedirectFormProps> = ({
               </Button>
             </div>
             {showDropdown && (
-              <div className="absolute z-50 mt-2 w-full bg-white border rounded-lg shadow-lg max-h-80 overflow-auto">
-                <div className="sticky top-0 bg-white p-2 border-b">
+              <div className="absolute z-50 mt-2 w-full bg-card border rounded-lg shadow-lg max-h-80 overflow-auto">
+                <div className="sticky top-0 bg-card p-2 border-b">
                   <Input
                     placeholder="Search pages..."
                     value={searchTerm}
@@ -177,12 +177,12 @@ export const RedirectForm: React.FC<RedirectFormProps> = ({
                   />
                 </div>
                 {loadingPages ? (
-                  <div className="p-4 text-center text-slate-500">Loading pages...</div>
+                  <div className="p-4 text-center text-muted-foreground">Loading pages...</div>
                 ) : (
                   <div className="py-1">
                     {Object.entries(groupedPages).map(([category, items]) => (
                       <div key={category}>
-                        <div className="px-3 py-1.5 text-xs font-semibold text-slate-500 bg-slate-50">
+                        <div className="px-3 py-1.5 text-xs font-semibold text-muted-foreground bg-muted">
                           {category}
                         </div>
                         {(items as PageOption[]).map((page) => (
@@ -190,16 +190,16 @@ export const RedirectForm: React.FC<RedirectFormProps> = ({
                             key={page.path}
                             type="button"
                             onClick={() => handleSelectPage(page.path)}
-                            className="w-full px-3 py-2 text-left hover:bg-slate-50 flex items-center justify-between group"
+                            className="w-full px-3 py-2 text-left hover:bg-muted flex items-center justify-between group"
                           >
                             <span className="text-sm">{page.label}</span>
-                            <code className="text-xs text-slate-400 group-hover:text-slate-600">{page.path}</code>
+                            <code className="text-xs text-muted-foreground group-hover:text-foreground">{page.path}</code>
                           </button>
                         ))}
                       </div>
                     ))}
                     {filteredPages.length === 0 && (
-                      <div className="p-4 text-center text-slate-500">No pages found</div>
+                      <div className="p-4 text-center text-muted-foreground">No pages found</div>
                     )}
                   </div>
                 )}
@@ -274,7 +274,7 @@ export const RedirectForm: React.FC<RedirectFormProps> = ({
       </div>
 
       {initialData && (
-        <div className="text-xs text-slate-500 space-y-1">
+        <div className="text-xs text-muted-foreground space-y-1">
           <p>Hit Count: {initialData.hit_count || 0}</p>
           {initialData.last_hit_at && (
             <p>Last Hit: {new Date(initialData.last_hit_at).toLocaleString()}</p>

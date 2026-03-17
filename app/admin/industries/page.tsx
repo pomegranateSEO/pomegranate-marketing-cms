@@ -123,7 +123,7 @@ export default function IndustriesPage() {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Industries</h1>
-          <p className="text-slate-500 mt-2">Define target verticals for service pages and case studies.</p>
+          <p className="text-muted-foreground mt-2">Define target verticals for service pages and case studies.</p>
         </div>
         <div className="flex gap-2">
           {rootBusiness && industries.length > 0 && (
@@ -140,39 +140,39 @@ export default function IndustriesPage() {
       </div>
 
       {industries.length === 0 ? (
-        <div className="text-center py-12 border-2 border-dashed rounded-lg bg-slate-50">
-          <Factory className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-slate-900">No industries yet</h3>
-          <Button onClick={() => setEditingIndustry(null)}>Add Industry</Button>
+<div className="text-center py-12 border-2 border-dashed rounded-lg bg-muted">
+           <Factory className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
+           <h3 className="text-lg font-medium text-foreground">No industries yet</h3>
+           <Button onClick={() => setEditingIndustry(null)}>Add Industry</Button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {industries.map((ind) => (
-            <div key={ind.id} className="bg-white p-5 rounded-lg border shadow-sm flex flex-col justify-between">
-              <div>
-                <h3 className="font-bold text-lg text-slate-900 mb-2">{ind.name}</h3>
-                <p className="text-sm text-slate-500 mb-4 line-clamp-3">{ind.description}</p>
-                <code className="text-xs bg-slate-100 px-2 py-1 rounded">/{ind.slug}</code>
-                <div className="mt-2 flex gap-2 flex-wrap">
-                  {ind.hero_data && (
-                    <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Hero ✓</span>
-                  )}
-                  {ind.keyword_cycling_blocks && (
-                    <span className="text-xs bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full">Keywords ✓</span>
-                  )}
-                  {Array.isArray(ind.faq_list) && (ind.faq_list as any[]).length > 0 && (
-                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">FAQs ✓</span>
-                  )}
-                </div>
-              </div>
-              <div className="flex justify-end gap-2 pt-4 border-t mt-4">
-                <Button variant="ghost" size="sm" onClick={() => setEditingIndustry(ind)}>
-                  <Edit2 className="h-4 w-4 mr-2" /> Edit
-                </Button>
-                 <Button variant="ghost" size="icon" onClick={() => handleDelete(ind.id, ind.name)} className="text-red-500 hover:bg-red-50" aria-label={`Delete ${ind.name}`}>
-                   <Trash2 className="h-4 w-4" aria-hidden="true" />
+<div key={ind.id} className="bg-card p-5 rounded-lg border shadow-sm flex flex-col justify-between">
+               <div>
+                 <h3 className="font-bold text-lg text-foreground mb-2">{ind.name}</h3>
+                 <p className="text-sm text-muted-foreground mb-4 line-clamp-3">{ind.description}</p>
+                 <code className="text-xs bg-muted px-2 py-1 rounded">/{ind.slug}</code>
+                 <div className="mt-2 flex gap-2 flex-wrap">
+                   {ind.hero_data && (
+                     <span className="text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-2 py-0.5 rounded-full">Hero ✓</span>
+                   )}
+                   {ind.keyword_cycling_blocks && (
+                     <span className="text-xs bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 px-2 py-0.5 rounded-full">Keywords ✓</span>
+                   )}
+                   {Array.isArray(ind.faq_list) && (ind.faq_list as any[]).length > 0 && (
+                     <span className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded-full">FAQs ✓</span>
+                   )}
+                 </div>
+               </div>
+               <div className="flex justify-end gap-2 pt-4 border-t mt-4">
+                 <Button variant="ghost" size="sm" onClick={() => setEditingIndustry(ind)}>
+                   <Edit2 className="h-4 w-4 mr-2" /> Edit
                  </Button>
-              </div>
+                  <Button variant="ghost" size="icon" onClick={() => handleDelete(ind.id, ind.name)} className="text-red-500 hover:bg-red-50 dark:hover:bg-red-950" aria-label={`Delete ${ind.name}`}>
+                    <Trash2 className="h-4 w-4" aria-hidden="true" />
+                  </Button>
+               </div>
             </div>
           ))}
         </div>

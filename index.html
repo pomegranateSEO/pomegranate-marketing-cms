@@ -122,6 +122,40 @@
           transition-duration: 0.01ms !important;
         }
       }
+
+      /* Dark mode variables */
+      .dark {
+        --background: 340 20% 8%;
+        --foreground: 340 20% 98%;
+        --card: 340 20% 10%;
+        --card-foreground: 340 20% 98%;
+        --popover: 340 20% 10%;
+        --popover-foreground: 340 20% 98%;
+        --primary: 350 89% 60%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 340 20% 15%;
+        --secondary-foreground: 340 20% 98%;
+        --muted: 340 20% 15%;
+        --muted-foreground: 340 20% 65%;
+        --accent: 340 20% 15%;
+        --accent-foreground: 340 20% 98%;
+        --destructive: 0 84% 60%;
+        --destructive-foreground: 0 0% 100%;
+        --border: 340 20% 20%;
+        --input: 340 20% 20%;
+        --ring: 350 89% 60%;
+        --success: 142 76% 45%;
+        --success-foreground: 0 0% 100%;
+      }
+
+      /* Prevent flash of wrong theme */
+      html {
+        color-scheme: light;
+      }
+      
+      html.dark {
+        color-scheme: dark;
+      }
     </style>
   <script type="importmap">
 {

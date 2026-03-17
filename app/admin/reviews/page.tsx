@@ -108,7 +108,7 @@ export default function ReviewsPage() {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Reviews</h1>
-          <p className="text-slate-500 mt-2">Manage customer testimonials for social proof and Schema.org.</p>
+          <p className="text-muted-foreground mt-2">Manage customer testimonials for social proof and Schema.org.</p>
         </div>
         <div className="flex gap-2">
            {rootBusinessId && reviews.length > 0 && (
@@ -125,8 +125,8 @@ export default function ReviewsPage() {
       </div>
 
       {isCreating && (
-        <div className="bg-slate-50 border p-6 rounded-lg mb-8 shadow-inner">
-          <h3 className="font-bold mb-4">Add New Review</h3>
+<div className="bg-muted border p-6 rounded-lg mb-8 shadow-inner">
+           <h3 className="font-bold mb-4">Add New Review</h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -187,37 +187,37 @@ export default function ReviewsPage() {
       )}
 
       {reviews.length === 0 ? (
-        <div className="text-center py-12 border-2 border-dashed rounded-lg bg-slate-50">
-          <Star className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-slate-900">No reviews yet</h3>
-          <p className="text-slate-500">Add your first review to display on your site.</p>
+<div className="text-center py-12 border-2 border-dashed rounded-lg bg-muted">
+           <Star className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
+           <h3 className="text-lg font-medium text-foreground">No reviews yet</h3>
+           <p className="text-muted-foreground">Add your first review to display on your site.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {reviews.map(review => (
-            <div key={review.id} className="bg-white p-4 rounded-lg border shadow-sm relative group">
-              <div className="flex justify-between items-start mb-2">
-                 <div className="flex items-center gap-1 text-amber-400">
-                    {Array.from({ length: review.rating_value || 5 }).map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-current" />
-                    ))}
-                 </div>
-                   <Button variant="ghost" size="icon" className="h-6 w-6 text-slate-300 hover:text-red-500" onClick={() => handleDelete(review.id, review.author_name)} aria-label={`Delete review from ${review.author_name}`}>
-                     <Trash2 className="h-3 w-3" aria-hidden="true" />
-                  </Button>
-              </div>
-              <p className="text-sm text-slate-700 italic mb-3 line-clamp-3">"{review.review_body}"</p>
-              <div className="flex justify-between items-end">
-                  <div className="text-xs text-slate-500 font-medium">
-                     <span>— {review.author_name}</span>
-                     {review.publisher_name && <span className="text-slate-400"> on {review.publisher_name}</span>}
+<div key={review.id} className="bg-card p-4 rounded-lg border shadow-sm relative group">
+               <div className="flex justify-between items-start mb-2">
+                  <div className="flex items-center gap-1 text-amber-400">
+                     {Array.from({ length: review.rating_value || 5 }).map((_, i) => (
+                       <Star key={i} className="h-4 w-4 fill-current" />
+                     ))}
                   </div>
-                  {review.publisher_url && (
-                   <a href={review.publisher_url} target="_blank" className="text-blue-400 hover:text-blue-600">
-                     <LinkIcon className="h-3 w-3" />
-                   </a>
-                 )}
-              </div>
+<Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground/50 hover:text-red-500" onClick={() => handleDelete(review.id, review.author_name)} aria-label={`Delete review from ${review.author_name}`}>
+                       <Trash2 className="h-4 w-4" aria-hidden="true" />
+                   </Button>
+               </div>
+               <p className="text-sm text-foreground/80 italic mb-3 line-clamp-3">"{review.review_body}"</p>
+               <div className="flex justify-between items-end">
+                   <div className="text-xs text-muted-foreground font-medium">
+                      <span>— {review.author_name}</span>
+                      {review.publisher_name && <span className="text-muted-foreground/70"> on {review.publisher_name}</span>}
+                   </div>
+                   {review.publisher_url && (
+                    <a href={review.publisher_url} target="_blank" className="text-blue-400 hover:text-blue-600">
+                      <LinkIcon className="h-3 w-3" />
+                    </a>
+                  )}
+               </div>
             </div>
           ))}
         </div>

@@ -2,10 +2,9 @@ import * as React from "react"
 import { cn } from "../../lib/utils"
 import { Skeleton } from "../ui/skeleton";
 
-// Card Skeleton - for entity cards or content cards
 export function CardSkeleton() {
   return (
-    <div className="bg-white p-6 rounded-lg border shadow-sm space-y-4">
+    <div className="bg-card p-6 rounded-lg border shadow-sm space-y-4">
       <div className="flex justify-between items-start">
         <Skeleton className="h-6 w-1/2" />
         <Skeleton className="h-4 w-4" />
@@ -20,12 +19,10 @@ export function CardSkeleton() {
   );
 }
 
-// Table Skeleton - for data tables
 export function TableSkeleton({ rows = 5, columns = 4 }: { rows?: number; columns?: number }) {
   return (
-    <div className="bg-white border rounded-lg shadow-sm overflow-hidden">
-      {/* Header */}
-      <div className="bg-slate-50 border-b">
+    <div className="bg-card border rounded-lg shadow-sm overflow-hidden">
+      <div className="bg-muted border-b">
         <div className="flex">
           {Array.from({ length: columns }).map((_, i) => (
             <div key={i} className="flex-1 px-6 py-4">
@@ -34,8 +31,7 @@ export function TableSkeleton({ rows = 5, columns = 4 }: { rows?: number; column
           ))}
         </div>
       </div>
-      {/* Rows */}
-      <div className="divide-y">
+      <div className="divide-y divide-border">
         {Array.from({ length: rows }).map((_, rowIndex) => (
           <div key={rowIndex} className="flex">
             {Array.from({ length: columns }).map((_, colIndex) => (
@@ -53,7 +49,6 @@ export function TableSkeleton({ rows = 5, columns = 4 }: { rows?: number; column
   );
 }
 
-// Page Header Skeleton - for page titles and action buttons
 export function PageHeaderSkeleton() {
   return (
     <div className="flex justify-between items-center mb-8">
@@ -66,10 +61,9 @@ export function PageHeaderSkeleton() {
   );
 }
 
-// Form Skeleton - for edit/create forms
 export function FormSkeleton({ fields = 6 }: { fields?: number }) {
   return (
-    <div className="bg-white p-6 rounded-lg border shadow-sm space-y-6">
+    <div className="bg-card p-6 rounded-lg border shadow-sm space-y-6">
       {Array.from({ length: fields }).map((_, i) => (
         <div key={i} className="space-y-2">
           <Skeleton className="h-4 w-24" />
@@ -83,20 +77,19 @@ export function FormSkeleton({ fields = 6 }: { fields?: number }) {
   );
 }
 
-// Dashboard Stats Skeleton - for dashboard page
 export function DashboardStatsSkeleton() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-      <div className="bg-white p-6 rounded-lg border shadow-sm space-y-4">
+      <div className="bg-card p-6 rounded-lg border shadow-sm space-y-4">
         <Skeleton className="h-4 w-32" />
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-10 w-full" />
       </div>
-      <div className="bg-white p-6 rounded-lg border shadow-sm col-span-2">
+      <div className="bg-card p-6 rounded-lg border shadow-sm col-span-2">
         <Skeleton className="h-4 w-32 mb-4" />
         <div className="grid grid-cols-5 gap-4">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="p-4 bg-slate-50 rounded border space-y-2">
+            <div key={i} className="p-4 bg-muted rounded border space-y-2">
               <Skeleton className="h-8 w-full" />
               <Skeleton className="h-3 w-16" />
             </div>
@@ -107,12 +100,11 @@ export function DashboardStatsSkeleton() {
   );
 }
 
-// List Skeleton - for simple lists (like entity lists)
 export function ListSkeleton({ items = 5 }: { items?: number }) {
   return (
     <div className="space-y-4">
       {Array.from({ length: items }).map((_, i) => (
-        <div key={i} className="flex justify-between items-center p-4 bg-white rounded-lg border shadow-sm">
+        <div key={i} className="flex justify-between items-center p-4 bg-card rounded-lg border shadow-sm">
           <div className="space-y-2 flex-1">
             <Skeleton className="h-5 w-48" />
             <Skeleton className="h-4 w-3/4" />
@@ -127,7 +119,6 @@ export function ListSkeleton({ items = 5 }: { items?: number }) {
   );
 }
 
-// Simple Page Skeleton - generic page layout with header + table
 export function PageSkeleton() {
   return (
     <div className="p-6">

@@ -11,6 +11,7 @@ import { toast } from '../../../lib/toast';
 import { useConfirm } from '../../../lib/confirm-dialog';
 import { TableSkeleton, PageHeaderSkeleton } from '../../../components/shared/skeletons';
 import { useTable, TableSearch, TablePagination, SortIcon, EmptySearchState } from '../../../components/ui/data-table';
+import { EmptyList } from '../../../components/shared/EmptyState';
 
 export default function ServicesPage() {
   const [services, setServices] = useState<(Service & { businesses: { name: string } | null })[]>([]);
@@ -147,7 +148,7 @@ export default function ServicesPage() {
             {editingService ? 'Edit Service' : 'Add New Service'}
           </h1>
         </div>
-<div className="bg-white p-6 rounded-lg border shadow-sm">
+<div className="bg-card p-6 rounded-lg border shadow-sm">
             <ServiceForm 
                initialData={editingService || undefined}
                businessId={rootBusinessId} 
@@ -166,7 +167,7 @@ export default function ServicesPage() {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Services</h1>
-          <p className="text-slate-500 mt-2">
+          <p className="text-muted-foreground mt-2">
             The "80%" of your pSEO content. Define service keyword cycling here for both national service pages and generated local service pages.
           </p>
         </div>
@@ -184,15 +185,11 @@ export default function ServicesPage() {
         </div>
       </div>
 
-      {services.length === 0 ? (
-        <div className="text-center py-12 border-2 border-dashed rounded-lg bg-slate-50">
-          <Briefcase className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-slate-900">No services yet</h3>
-          <p className="text-slate-500 mb-6">Create your first service to begin Phase 2.</p>
-          <Button onClick={() => setIsCreating(true)}>
-             Create Service
-          </Button>
-        </div>
+{services.length === 0 ? (
+        <EmptyList
+          entityName="Services"
+          onAdd={() => setIsCreating(true)}
+        />
       ) : (
         <>
           <TableSearch
@@ -204,14 +201,14 @@ export default function ServicesPage() {
             isFiltered={isFiltered}
           />
           
-          <div className="bg-white border rounded-lg shadow-sm overflow-hidden">
+          <div className="bg-card border rounded-lg shadow-sm overflow-hidden">
             <table className="w-full text-sm text-left">
-              <thead className="bg-slate-50 border-b font-medium text-slate-500">
+              <thead className="bg-muted border-b font-medium text-muted-foreground">
                 <tr>
                   <th className="px-6 py-4">
                     <button
                       onClick={() => handleSort('name')}
-                      className="flex items-center gap-1 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+                      className="flex items-center gap-1 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
                       aria-label={`Sort by name ${sortConfig.key === 'name' ? (sortConfig.direction === 'asc' ? 'descending' : 'ascending') : ''}`}
                     >
                       Service Name
@@ -221,7 +218,7 @@ export default function ServicesPage() {
                   <th className="px-6 py-4">
                     <button
                       onClick={() => handleSort('base_slug')}
-                      className="flex items-center gap-1 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+                      className="flex items-center gap-1 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
                       aria-label={`Sort by slug ${sortConfig.key === 'base_slug' ? (sortConfig.direction === 'asc' ? 'descending' : 'ascending') : ''}`}
                     >
                       Base Slug
@@ -231,7 +228,7 @@ export default function ServicesPage() {
                   <th className="px-6 py-4">
                     <button
                       onClick={() => handleSort('category')}
-                      className="flex items-center gap-1 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+                      className="flex items-center gap-1 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
                       aria-label={`Sort by category ${sortConfig.key === 'category' ? (sortConfig.direction === 'asc' ? 'descending' : 'ascending') : ''}`}
                     >
                       Category
@@ -250,21 +247,21 @@ export default function ServicesPage() {
                   </tr>
                 ) : (
                   paginatedServices.map((service) => (
-                    <tr key={service.id} className="hover:bg-slate-50 transition-colors">
-                      <td className="px-6 py-4 font-medium text-slate-900">{service.name}</td>
-                      <td className="px-6 py-4 text-slate-500 font-mono bg-slate-50/50 rounded inline-block my-2 mx-6 px-2 py-0.5 text-xs">
-                        /{service.base_slug}
-                      </td>
-                      <td className="px-6 py-4 text-slate-500">{service.category || '-'}</td>
-                      <td className="px-6 py-4 text-right flex justify-end gap-2">
-                        <Button variant="ghost" size="icon" onClick={() => handleEdit(service)} className="text-slate-500 hover:text-primary hover:bg-slate-100" aria-label={`Edit ${service.name}`}>
-                          <Pencil className="h-4 w-4" aria-hidden="true" />
-                        </Button>
-                        <Button variant="ghost" size="icon" onClick={() => handleDelete(service.id, service.name)} className="text-slate-400 hover:text-red-600 hover:bg-red-50" aria-label={`Delete ${service.name}`}>
-                          <Trash2 className="h-4 w-4" aria-hidden="true" />
-                        </Button>
-                      </td>
-                    </tr>
+<tr key={service.id} className="hover:bg-muted/50 transition-colors">
+                      <td className="px-6 py-4 font-medium text-foreground">{service.name}</td>
+                       <td className="px-6 py-4 text-muted-foreground font-mono bg-muted/50 rounded inline-block my-2 mx-6 px-2 py-0.5 text-xs">
+                         /{service.base_slug}
+                       </td>
+                       <td className="px-6 py-4 text-muted-foreground">{service.category || '-'}</td>
+                       <td className="px-6 py-4 text-right flex justify-end gap-2">
+                         <Button variant="ghost" size="icon" onClick={() => handleEdit(service)} className="text-muted-foreground hover:text-primary hover:bg-muted" aria-label={`Edit ${service.name}`}>
+                           <Pencil className="h-4 w-4" aria-hidden="true" />
+                         </Button>
+                         <Button variant="ghost" size="icon" onClick={() => handleDelete(service.id, service.name)} className="text-muted-foreground hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950" aria-label={`Delete ${service.name}`}>
+                           <Trash2 className="h-4 w-4" aria-hidden="true" />
+                         </Button>
+                       </td>
+                     </tr>
                   ))
                 )}
               </tbody>

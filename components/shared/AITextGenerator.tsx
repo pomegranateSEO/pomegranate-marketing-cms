@@ -68,7 +68,7 @@ export const AITextGenerator: React.FC<Props> = ({
         type="button" 
         size="sm" 
         variant="ghost" 
-        className="h-6 w-6 p-0 text-purple-500 hover:text-purple-700 hover:bg-purple-50"
+        className="h-6 w-6 p-0 text-purple-500 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/30"
         onClick={() => setIsOpen(!isOpen)}
         title="AI Writing Assistant"
       >
@@ -76,18 +76,18 @@ export const AITextGenerator: React.FC<Props> = ({
       </Button>
 
       {isOpen && (
-        <div className="absolute z-50 right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-slate-200 p-3 animate-in fade-in zoom-in-95 duration-200">
+        <div className="absolute z-50 right-0 mt-2 w-64 bg-card rounded-lg shadow-xl border p-3 animate-in fade-in zoom-in-95 duration-200">
           <div className="flex justify-between items-center mb-2 pb-2 border-b">
-             <h4 className="text-xs font-bold text-slate-700 flex items-center gap-1">
-               <Sparkles className="h-3 w-3 text-purple-600" />
+             <h4 className="text-xs font-bold text-foreground flex items-center gap-1">
+               <Sparkles className="h-3 w-3 text-purple-500" />
                AI Assistant
              </h4>
-             <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-slate-600">×</button>
+             <button onClick={() => setIsOpen(false)} className="text-muted-foreground hover:text-foreground">×</button>
           </div>
           
           <div className="space-y-2">
              {!keyword && (
-               <div className="bg-amber-50 text-amber-800 text-[10px] p-2 rounded flex items-start gap-1">
+               <div className="bg-amber-100/50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-400 text-[10px] p-2 rounded flex items-start gap-1">
                   <AlertCircle className="h-3 w-3 mt-0.5 flex-shrink-0" />
                   No keyword set. AI will write generally.
                </div>

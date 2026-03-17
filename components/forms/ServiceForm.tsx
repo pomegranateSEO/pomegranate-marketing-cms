@@ -6,12 +6,14 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { Label } from '../ui/label';
-import { Loader2, FileText, Info, Globe, MapPin, ChevronDown, ChevronUp, Plus, Trash2, Sparkles, Layout, TypeIcon, ListChecks, MessageSquare } from 'lucide-react';
+import { Loader2, FileText, Info, Globe, MapPin, ChevronDown, ChevronUp, Plus, Trash2, Sparkles, Layout, TypeIcon, ListChecks, MessageSquare, HelpCircle } from 'lucide-react';
 import type { Service } from '../../lib/types';
 import { EntityGenerator } from '../shared/EntityGenerator';
 import { AudienceSelector, AudienceEntity } from '../shared/AudienceSelector';
 import { KnowledgeEntitySelector } from '../shared/KnowledgeEntitySelector';
 import { DeliverablesEditor } from '../shared/DeliverablesEditor';
+import { ProcessStepsEditor, ProcessStepItem } from '../shared/ProcessStepsEditor';
+import { FAQEditor } from '../shared/FAQEditor';
 import type { KnowledgeEntity } from '../../lib/types';
 
 const SERVICE_CATEGORIES = [
@@ -89,6 +91,7 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, knowledg
     content: false,
     deliverables: false,
     process: false,
+    faq: false,
     seo: false,
     entities: false,
   });
@@ -111,6 +114,12 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, knowledg
   const [mentionsEntities, setMentionsEntities] = useState<string[]>(initialData?.mentions_entities || []);
   const [deliverablesItems, setDeliverablesItems] = useState<{ icon: string; title: string; description: string }[]>(
     deliverablesData?.items || []
+  );
+  const [processItems, setProcessItems] = useState<ProcessStepItem[]>(
+    processData?.items || []
+  );
+  const [faqItems, setFaqItems] = useState<{ question: string; answer: string }[]>(
+    Array.isArray(initialData?.faq_list) ? (initialData.faq_list as any) : []
   );
 
   const primaryKeywordBlock = Array.isArray(initialData?.keyword_cycling_blocks)
@@ -231,6 +240,11 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, knowledg
 
     const { keyword_prefix_text, keyword_terms, hero_title, hero_subtitle, hero_body, hero_cta_primary_text, hero_cta_primary_link, why_heading, why_body, deliverables_heading, process_heading, cta_heading, cta_subheading, environments_scroll_text, ...dbValues } = values;
 
+    const processPayload = {
+      heading: values.process_heading || 'Our Process',
+      items: processItems,
+    };
+
     onSubmit({
       ...dbValues,
       audience_type: audienceString,
@@ -238,6 +252,8 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, knowledg
       hero_data: heroData,
       content_sections: contentSections,
       deliverables: deliverablesData,
+      process: processPayload,
+      faq_list: faqItems,
       cta: ctaData,
       business_id: businessId,
       about_entities: aboutEntities,
@@ -264,15 +280,15 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, knowledg
     <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
       
       {/* Core Details Section - Always Expanded */}
-      <div className="bg-white border border-slate-200 rounded-lg">
-        <div className="p-4 border-b border-slate-200 bg-slate-50">
+      <div className="bg-card border rounded-lg">
+        <div className="p-4 border-b bg-muted">
           <div className="flex justify-between items-center">
             <div>
-              <h3 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
                 <FileText className="h-5 w-5" />
                 Core Service Details
               </h3>
-              <p className="text-sm text-slate-500">Define the service parameters.</p>
+              <p className="text-sm text-muted-foreground">Define the service parameters.</p>
             </div>
             <EntityGenerator 
               getContent={getFullContent} 
@@ -330,21 +346,21 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, knowledg
              </div>
           </div>
 
-          <div className="bg-slate-50 p-4 rounded border border-slate-200">
-            <h4 className="text-xs font-bold uppercase text-slate-500 mb-2">URL Structure Preview</h4>
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-sm">
-                <Globe className="h-4 w-4 text-blue-500" />
-                <span className="font-semibold text-slate-700">National:</span>
-                <code className="bg-white px-2 py-0.5 rounded border text-slate-600">website.com/{slug || 'service-slug'}</code>
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <MapPin className="h-4 w-4 text-green-600" />
-                <span className="font-semibold text-slate-700">Local:</span>
-                <code className="bg-white px-2 py-0.5 rounded border text-slate-600">website.com/locations/london/{slug || 'service-slug'}</code>
-              </div>
-            </div>
-          </div>
+<div className="bg-muted p-4 rounded border">
+             <h4 className="text-xs font-bold uppercase text-muted-foreground mb-2">URL Structure Preview</h4>
+             <div className="space-y-2">
+               <div className="flex items-center gap-2 text-sm">
+                 <Globe className="h-4 w-4 text-blue-500" />
+                 <span className="font-semibold text-foreground">National:</span>
+                 <code className="bg-card px-2 py-0.5 rounded border text-foreground">website.com/{slug || 'service-slug'}</code>
+               </div>
+               <div className="flex items-center gap-2 text-sm">
+                 <MapPin className="h-4 w-4 text-green-600" />
+                 <span className="font-semibold text-foreground">Local:</span>
+                 <code className="bg-card px-2 py-0.5 rounded border text-foreground">website.com/locations/london/{slug || 'service-slug'}</code>
+               </div>
+             </div>
+           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
@@ -393,30 +409,30 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, knowledg
               placeholder="Briefly describe this service (used for meta descriptions and cards)..."
               className="h-[100px]"
             />
-            <p className="text-xs text-slate-400">{watch('short_description')?.length || 0}/500 characters</p>
+            <p className="text-xs text-muted-foreground">{watch('short_description')?.length || 0}/500 characters</p>
           </div>
         </div>
       </div>
 
       {/* Hero Section */}
-      <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+      <div className="bg-card border rounded-lg overflow-hidden">
         <button
           type="button"
           onClick={() => toggleSection('hero')}
-          className="w-full p-4 flex items-center justify-between bg-gradient-to-r from-rose-50 to-orange-50 hover:from-rose-100 hover:to-orange-100 transition-colors"
+          className="w-full p-4 flex items-center justify-between bg-gradient-to-r from-rose-50 to-orange-50 dark:from-rose-950/30 dark:to-orange-950/30 hover:from-rose-100 hover:to-orange-100 dark:hover:from-rose-900/40 dark:hover:to-orange-900/40 transition-colors"
         >
           <div className="flex items-center gap-3">
             <Sparkles className="h-5 w-5 text-rose-500" />
             <div className="text-left">
-              <h3 className="text-lg font-semibold text-slate-800">Hero Section</h3>
-              <p className="text-xs text-slate-500">Title, subtitle, body text, and CTA</p>
+              <h3 className="text-lg font-semibold text-foreground">Hero Section</h3>
+              <p className="text-xs text-muted-foreground">Title, subtitle, body text, and CTA</p>
             </div>
           </div>
-          {expandedSections.hero ? <ChevronUp className="h-5 w-5 text-slate-400" /> : <ChevronDown className="h-5 w-5 text-slate-400" />}
+          {expandedSections.hero ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 w-5 text-muted-foreground" />}
         </button>
         
         {expandedSections.hero && (
-          <div className="p-6 space-y-4 border-t border-slate-200">
+          <div className="p-6 space-y-4 border-t">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="hero_title">Hero Title (H1)</Label>
@@ -425,7 +441,7 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, knowledg
                   {...register('hero_title')} 
                   placeholder="SEO Services That Drive Real Results"
                 />
-                <p className="text-xs text-slate-400">Main headline displayed at top of service page</p>
+                <p className="text-xs text-muted-foreground">Main headline displayed at top of service page</p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="hero_subtitle">Hero Subtitle</Label>
@@ -469,12 +485,12 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, knowledg
 
       {/* Keyword Cycling Section */}
       <div className="bg-gradient-to-r from-rose-50 to-orange-50 p-6 rounded-lg border border-rose-200">
-        <h3 className="text-lg font-semibold text-slate-800 flex items-center gap-2 mb-4">
-          <span className="w-8 h-8 bg-rose-500 text-white rounded flex items-center justify-center text-sm font-bold">K</span>
-          Keyword Typewriter
-        </h3>
-        <p className="text-sm text-slate-500 mb-4">
-          Creates an animated hero text: <code className="bg-white px-2 py-1 rounded text-rose-600">[Start] + [keyword1] + [keyword2] +...</code>
+<h3 className="text-lg font-semibold text-foreground flex items-center gap-2 mb-4">
+         <span className="w-8 h-8 bg-rose-500 text-white rounded flex items-center justify-center text-sm font-bold">K</span>
+         Keyword Typewriter
+       </h3>
+       <p className="text-sm text-muted-foreground mb-4">
+          Creates an animated hero text: <code className="bg-card px-2 py-1 rounded text-rose-600 dark:text-rose-400">[Start] + [keyword1] + [keyword2]...</code>
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
@@ -483,47 +499,47 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, knowledg
               id="keyword_prefix_text" 
               {...register('keyword_prefix_text')} 
               placeholder="We are a"
-              className="bg-white"
+              className="bg-card"
             />
-            <p className="text-xs text-slate-400">e.g., "We are a", "pomegranate is your", "Grow with"</p>
+            <p className="text-xs text-muted-foreground">e.g., "We are a", "pomegranate is your", "Grow with"</p>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="keyword_terms">Keywords <span className="text-slate-400 font-normal">(comma-separated)</span></Label>
+            <Label htmlFor="keyword_terms">Keywords <span className="text-muted-foreground font-normal">(comma-separated)</span></Label>
             <Input
               id="keyword_terms"
               {...register('keyword_terms')}
               placeholder="seo agency, digital performance team, search engine optimisation company"
-              className="bg-white"
+              className="bg-card"
             />
           </div>
         </div>
-        <div className="mt-4 p-4 bg-white rounded border border-slate-200">
-          <p className="text-xs text-slate-500 mb-1">Preview:</p>
-          <p className="text-lg font-semibold text-slate-800">
+<div className="mt-4 p-4 bg-card rounded border">
+           <p className="text-xs text-muted-foreground mb-1">Preview:</p>
+           <p className="text-lg font-semibold text-foreground">
             {watch('keyword_prefix_text') || 'We are a'} <span className="text-rose-500">{watch('keyword_terms')?.split(',').map(k => k.trim()).filter(Boolean).join('</span>, <span className="text-rose-500">') || 'seo agency'}</span>
           </p>
         </div>
       </div>
 
       {/* Content Sections */}
-      <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+      <div className="bg-card border rounded-lg overflow-hidden">
         <button
           type="button"
           onClick={() => toggleSection('content')}
-          className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition-colors"
+          className="w-full p-4 flex items-center justify-between hover:bg-muted transition-colors"
         >
           <div className="flex items-center gap-3">
-            <TypeIcon className="h-5 w-5 text-slate-600" />
+            <TypeIcon className="h-5 w-5 text-muted-foreground" />
             <div className="text-left">
-              <h3 className="text-lg font-semibold text-slate-800">Content Sections</h3>
-              <p className="text-xs text-slate-500">Why Choose Us, Who It's For, Environments</p>
+              <h3 className="text-lg font-semibold text-foreground">Content Sections</h3>
+              <p className="text-xs text-muted-foreground">Why Choose Us, Who It's For, Environments</p>
             </div>
           </div>
-          {expandedSections.content ? <ChevronUp className="h-5 w-5 text-slate-400" /> : <ChevronDown className="h-5 w-5 text-slate-400" />}
+          {expandedSections.content ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 w-5 text-muted-foreground" />}
         </button>
         
         {expandedSections.content && (
-          <div className="p-6 space-y-6 border-t border-slate-200">
+          <div className="p-6 space-y-6 border-t">
             <div className="space-y-2">
               <Label htmlFor="why_heading">"Why Choose Us" Heading</Label>
               <Input 
@@ -533,7 +549,7 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, knowledg
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="why_body">"Why Choose Us" Body <span className="text-slate-400 font-normal">(separate paragraphs with blank lines)</span></Label>
+              <Label htmlFor="why_body">"Why Choose Us" Body <span className="text-muted-foreground font-normal">(separate paragraphs with blank lines)</span></Label>
               <Textarea 
                 id="why_body" 
                 {...register('why_body')} 
@@ -544,7 +560,7 @@ Second paragraph here...
 
 Third paragraph here..."
               />
-              <p className="text-xs text-slate-400">Each blank line-separated block becomes a paragraph</p>
+              <p className="text-xs text-muted-foreground">Each blank line-separated block becomes a paragraph</p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="environments_scroll_text">"Where We Work" Scrolling Text</Label>
@@ -553,31 +569,31 @@ Third paragraph here..."
                 {...register('environments_scroll_text')} 
                 placeholder="Shopify, WordPress, Next.js, React, Webflow, eCommerce, B2B, B2C"
               />
-              <p className="text-xs text-slate-400">Comma-separated platforms/technologies (displayed with • separators)</p>
+              <p className="text-xs text-muted-foreground">Comma-separated platforms/technologies (displayed with • separators)</p>
             </div>
           </div>
         )}
       </div>
 
       {/* Deliverables Section */}
-      <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+      <div className="bg-card border rounded-lg overflow-hidden">
         <button
           type="button"
           onClick={() => toggleSection('deliverables')}
-          className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition-colors"
+          className="w-full p-4 flex items-center justify-between hover:bg-muted transition-colors"
         >
           <div className="flex items-center gap-3">
-            <ListChecks className="h-5 w-5 text-slate-600" />
+            <ListChecks className="h-5 w-5 text-muted-foreground" />
             <div className="text-left">
-              <h3 className="text-lg font-semibold text-slate-800">Deliverables</h3>
-              <p className="text-xs text-slate-500">"What You Get" section items with icons</p>
+              <h3 className="text-lg font-semibold text-foreground">Deliverables</h3>
+              <p className="text-xs text-muted-foreground">"What You Get" section items with icons</p>
             </div>
           </div>
-          {expandedSections.deliverables ? <ChevronUp className="h-5 w-5 text-slate-400" /> : <ChevronDown className="h-5 w-5 text-slate-400" />}
+          {expandedSections.deliverables ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 w-5 text-muted-foreground" />}
         </button>
         
         {expandedSections.deliverables && (
-          <div className="p-6 space-y-4 border-t border-slate-200">
+          <div className="p-6 space-y-4 border-t">
             <DeliverablesEditor
               value={deliverablesItems}
               onChange={setDeliverablesItems}
@@ -589,65 +605,53 @@ Third paragraph here..."
       </div>
 
       {/* Process Section */}
-      <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+      <div className="bg-card border rounded-lg overflow-hidden">
         <button
           type="button"
           onClick={() => toggleSection('process')}
-          className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition-colors"
+          className="w-full p-4 flex items-center justify-between hover:bg-muted transition-colors"
         >
           <div className="flex items-center gap-3">
-            <MessageSquare className="h-5 w-5 text-slate-600" />
+            <MessageSquare className="h-5 w-5 text-muted-foreground" />
             <div className="text-left">
-              <h3 className="text-lg font-semibold text-slate-800">Our Process</h3>
-              <p className="text-xs text-slate-500">Step-by-step process accordion</p>
+              <h3 className="text-lg font-semibold text-foreground">Our Process</h3>
+              <p className="text-xs text-muted-foreground">Step-by-step process accordion</p>
             </div>
           </div>
-          {expandedSections.process ? <ChevronUp className="h-5 w-5 text-slate-400" /> : <ChevronDown className="h-5 w-5 text-slate-400" />}
+          {expandedSections.process ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 w-5 text-muted-foreground" />}
         </button>
         
         {expandedSections.process && (
-          <div className="p-6 space-y-4 border-t border-slate-200">
-            <div className="space-y-2">
-              <Label htmlFor="process_heading">Process Section Heading</Label>
-              <Input 
-                id="process_heading" 
-                {...register('process_heading')} 
-                placeholder="Our Process"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="shared_content_blocks.process_content">Process Steps (Markdown)</Label>
-              <Textarea 
-                id="process_content" 
-                {...register('shared_content_blocks.process_content')} 
-                className="font-mono text-xs min-h-[200px]"
-                placeholder={"1. Discovery & Audit\nComprehensive audit of your site...\n\n2. Implementation\nWe implement the changes..."} 
-              />
-              <p className="text-xs text-slate-400">Each step should be numbered. Format: "Number. Title\nDescription"</p>
-            </div>
+          <div className="p-6 space-y-4 border-t">
+            <ProcessStepsEditor
+              value={processItems}
+              onChange={setProcessItems}
+              heading={watch('process_heading')}
+              onHeadingChange={(h) => setValue('process_heading', h)}
+            />
           </div>
         )}
       </div>
 
       {/* CTA Section */}
-      <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+      <div className="bg-card border rounded-lg overflow-hidden">
         <button
           type="button"
           onClick={() => toggleSection('cta')}
-          className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition-colors"
+          className="w-full p-4 flex items-center justify-between hover:bg-muted transition-colors"
         >
           <div className="flex items-center gap-3">
-            <Layout className="h-5 w-5 text-slate-600" />
+            <Layout className="h-5 w-5 text-muted-foreground" />
             <div className="text-left">
-              <h3 className="text-lg font-semibold text-slate-800">Call to Action</h3>
-              <p className="text-xs text-slate-500">"Work With Us" section heading and subheading</p>
+              <h3 className="text-lg font-semibold text-foreground">Call to Action</h3>
+              <p className="text-xs text-muted-foreground">"Work With Us" section heading and subheading</p>
             </div>
           </div>
-          {expandedSections.cta ? <ChevronUp className="h-5 w-5 text-slate-400" /> : <ChevronDown className="h-5 w-5 text-slate-400" />}
+          {expandedSections.cta ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 w-5 text-muted-foreground" />}
         </button>
         
         {expandedSections.cta && (
-          <div className="p-6 space-y-4 border-t border-slate-200">
+          <div className="p-6 space-y-4 border-t">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="cta_heading">CTA Heading</Label>
@@ -670,25 +674,52 @@ Third paragraph here..."
         )}
       </div>
 
+      {/* FAQ Section */}
+      <div className="bg-card border rounded-lg overflow-hidden">
+        <button
+          type="button"
+          onClick={() => toggleSection('faq')}
+          className="w-full p-4 flex items-center justify-between hover:bg-muted transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <HelpCircle className="h-5 w-5 text-muted-foreground" />
+            <div className="text-left">
+              <h3 className="text-lg font-semibold text-foreground">FAQs</h3>
+              <p className="text-xs text-muted-foreground">Frequently asked questions (adds JSON-LD FAQPage schema)</p>
+            </div>
+          </div>
+          {expandedSections.faq ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 w-5 text-muted-foreground" />}
+        </button>
+        {expandedSections.faq && (
+          <div className="p-6 border-t">
+            <FAQEditor
+              value={faqItems}
+              onChange={setFaqItems}
+              sourceText={`${watch('hero_body') || ''} ${watch('why_body') || ''}`}
+            />
+          </div>
+        )}
+      </div>
+
       {/* SEO & Entities */}
-      <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+      <div className="bg-card border rounded-lg overflow-hidden">
         <button
           type="button"
           onClick={() => toggleSection('seo')}
-          className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition-colors"
+          className="w-full p-4 flex items-center justify-between hover:bg-muted transition-colors"
         >
           <div className="flex items-center gap-3">
-            <Globe className="h-5 w-5 text-slate-600" />
+            <Globe className="h-5 w-5 text-muted-foreground" />
             <div className="text-left">
-              <h3 className="text-lg font-semibold text-slate-800">SEO & Metadata</h3>
-              <p className="text-xs text-slate-500">Title tags, descriptions, canonical URLs</p>
+              <h3 className="text-lg font-semibold text-foreground">SEO & Metadata</h3>
+              <p className="text-xs text-muted-foreground">Title tags, descriptions, canonical URLs</p>
             </div>
           </div>
-          {expandedSections.seo ? <ChevronUp className="h-5 w-5 text-slate-400" /> : <ChevronDown className="h-5 w-5 text-slate-400" />}
+          {expandedSections.seo ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 w-5 text-muted-foreground" />}
         </button>
         
         {expandedSections.seo && (
-          <div className="p-6 space-y-4 border-t border-slate-200">
+          <div className="p-6 space-y-4 border-t">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="seo_title">SEO Title</Label>
@@ -697,7 +728,7 @@ Third paragraph here..."
                   {...register('seo_title')} 
                   placeholder="SEO Services | pomegranate"
                 />
-                <p className="text-xs text-slate-400">{watch('seo_title')?.length || 0}/60 characters recommended</p>
+                <p className="text-xs text-muted-foreground">{watch('seo_title')?.length || 0}/60 characters recommended</p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="seo_meta_desc">Meta Description</Label>
@@ -707,7 +738,7 @@ Third paragraph here..."
                   placeholder="Comprehensive SEO services..."
                   className="h-[80px]"
                 />
-                <p className="text-xs text-slate-400">{watch('seo_meta_desc')?.length || 0}/160 characters recommended</p>
+                <p className="text-xs text-muted-foreground">{watch('seo_meta_desc')?.length || 0}/160 characters recommended</p>
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -734,24 +765,24 @@ Third paragraph here..."
 
       {/* Knowledge Entities */}
       {knowledgeEntities.length > 0 && (
-        <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+        <div className="bg-card border rounded-lg overflow-hidden">
           <button
             type="button"
             onClick={() => toggleSection('entities')}
-            className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition-colors"
+            className="w-full p-4 flex items-center justify-between hover:bg-muted transition-colors"
           >
             <div className="flex items-center gap-3">
-              <Info className="h-5 w-5 text-slate-600" />
+              <Info className="h-5 w-5 text-muted-foreground" />
               <div className="text-left">
-                <h3 className="text-lg font-semibold text-slate-800">Knowledge Entities</h3>
-                <p className="text-xs text-slate-500">Link to Wikidata for enhanced SEO schema</p>
+                <h3 className="text-lg font-semibold text-foreground">Knowledge Entities</h3>
+                <p className="text-xs text-muted-foreground">Link to Wikidata for enhanced SEO schema</p>
               </div>
             </div>
-            {expandedSections.entities ? <ChevronUp className="h-5 w-5 text-slate-400" /> : <ChevronDown className="h-5 w-5 text-slate-400" />}
+            {expandedSections.entities ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 w-5 text-muted-foreground" />}
           </button>
           
           {expandedSections.entities && (
-            <div className="p-6 space-y-4 border-t border-slate-200">
+            <div className="p-6 space-y-4 border-t">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <KnowledgeEntitySelector
                   label="About Entities"
@@ -773,7 +804,7 @@ Third paragraph here..."
         </div>
       )}
 
-      <div className="flex justify-end gap-3 pt-6 border-t bg-slate-50 -mx-6 -mb-6 px-6 py-4 rounded-b-lg">
+      <div className="flex justify-end gap-3 pt-6 border-t bg-muted -mx-6 -mb-6 px-6 py-4 rounded-b-lg">
         <Button type="button" variant="ghost" onClick={onCancel}>Cancel</Button>
         <Button type="submit" disabled={isLoading} className="w-40">
           {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}

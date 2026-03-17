@@ -216,9 +216,9 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
   };
 
   return (
-    <div className="bg-white rounded-lg border shadow-sm flex flex-col h-[600px]">
-      <div className="p-4 border-b flex justify-between items-center bg-slate-50">
-        <h3 className="font-bold text-slate-800 flex items-center gap-2">
+    <div className="bg-card rounded-lg border shadow-sm flex flex-col h-[600px]">
+      <div className="p-4 border-b flex justify-between items-center bg-muted">
+        <h3 className="font-bold text-foreground flex items-center gap-2">
           <ImageIcon className="h-5 w-5 text-purple-600" />
           Media Library
         </h3>
@@ -250,10 +250,10 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
         <div className="flex-1 overflow-y-auto p-4">
           {loading ? (
             <div className="flex justify-center py-20">
-              <Loader2 className="h-8 w-8 animate-spin text-slate-300" />
+              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground/50" />
             </div>
           ) : files.length === 0 ? (
-            <div className="text-center py-20 text-slate-400 border-2 border-dashed rounded-lg">
+            <div className="text-center py-20 text-muted-foreground border-2 border-dashed rounded-lg">
               <ImageIcon className="h-12 w-12 mx-auto mb-2 opacity-20" />
               <p>No images found in storage.</p>
             </div>
@@ -267,8 +267,8 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
                     key={file.id} 
                     onClick={() => handleImageClick(file)}
                     className={`
-                      group relative aspect-square bg-slate-100 rounded-md overflow-hidden cursor-pointer border hover:border-purple-500 transition-all
-                      ${selectedFile === url && mode === 'page' ? 'ring-2 ring-purple-600 ring-offset-2' : ''}
+                      group relative aspect-square bg-muted rounded-md overflow-hidden cursor-pointer border hover:border-purple-500 transition-all
+                      ${selectedFile === url && mode === 'page' ? 'ring-2 ring-purple-600 ring-offset-2 ring-offset-background' : ''}
                     `}
                   >
                     <img 
@@ -288,9 +288,9 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
         </div>
 
         {mode === 'page' && selectedFile && (
-          <div className="w-80 border-l bg-slate-50 p-4 flex flex-col overflow-y-auto">
+          <div className="w-80 border-l bg-muted p-4 flex flex-col overflow-y-auto">
             <h4 className="font-bold text-sm mb-4">Image Details</h4>
-            <div className="aspect-square bg-white rounded border mb-4 flex items-center justify-center p-2">
+            <div className="aspect-square bg-card rounded border mb-4 flex items-center justify-center p-2">
               <img src={selectedFile} className="max-w-full max-h-full object-contain" alt={selectedMetadata?.alt_text || ''} />
             </div>
             
@@ -298,8 +298,8 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
                   <Label className="text-xs">Public URL</Label>
-                   <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => navigator.clipboard.writeText(selectedFile)} aria-label="Copy URL to clipboard">
-                     <Copy className="h-3 w-3" aria-hidden="true" />
+<Button size="icon" variant="ghost" className="h-9 w-9" onClick={() => navigator.clipboard.writeText(selectedFile)} aria-label="Copy URL to clipboard">
+                      <Copy className="h-4 w-4" aria-hidden="true" />
                    </Button>
                 </div>
                 <Input value={selectedFile} readOnly className="text-xs font-mono h-8" />
@@ -308,8 +308,8 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
                   <Label className="text-xs">Custom Filename</Label>
-                   <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => setEditingFilename(!editingFilename)} aria-label={editingFilename ? "Save filename" : "Edit filename"}>
-                     <Edit2 className="h-3 w-3" aria-hidden="true" />
+<Button size="icon" variant="ghost" className="h-9 w-9" onClick={() => setEditingFilename(!editingFilename)} aria-label={editingFilename ? "Save filename" : "Edit filename"}>
+                      <Edit2 className="h-4 w-4" aria-hidden="true" />
                    </Button>
                 </div>
                 {editingFilename ? (
@@ -323,7 +323,7 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
                   <Input 
                     value={customFilename || selectedMetadata?.original_filename || selectedFile.split('/').pop() || ''} 
                     readOnly 
-                    className="text-xs h-8 text-slate-500"
+                    className="text-xs h-8 text-muted-foreground"
                   />
                 )}
               </div>
@@ -331,8 +331,8 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
                   <Label className="text-xs">Alt Text (Accessibility)</Label>
-                   <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => setEditingAlt(!editingAlt)} aria-label={editingAlt ? "Save alt text" : "Edit alt text"}>
-                     <Edit2 className="h-3 w-3" aria-hidden="true" />
+<Button size="icon" variant="ghost" className="h-9 w-9" onClick={() => setEditingAlt(!editingAlt)} aria-label={editingAlt ? "Save alt text" : "Edit alt text"}>
+                      <Edit2 className="h-4 w-4" aria-hidden="true" />
                    </Button>
                 </div>
                 {editingAlt ? (
@@ -343,14 +343,14 @@ export const MediaManager: React.FC<Props> = ({ mode = 'page', onSelect, onClose
                     className="text-xs min-h-[60px]"
                   />
                 ) : (
-                  <div className="text-xs text-slate-600 bg-white p-2 rounded border min-h-[40px]">
-                    {altText || <span className="text-slate-400 italic">No alt text provided</span>}
+                  <div className="text-xs text-foreground bg-card p-2 rounded border min-h-[40px]">
+                    {altText || <span className="text-muted-foreground italic">No alt text provided</span>}
                   </div>
                 )}
               </div>
               
               {selectedMetadata?.file_size && (
-                <div className="text-xs text-slate-500">
+                <div className="text-xs text-muted-foreground">
                   Size: {(selectedMetadata.file_size / 1024).toFixed(1)} KB
                 </div>
               )}

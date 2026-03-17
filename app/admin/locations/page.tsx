@@ -186,15 +186,15 @@ export default function LocationsPage() {
             Select sub-locations to add as new target locations.
           </p>
           
-          {isScanning ? (
-            <div className="flex flex-col items-center justify-center py-12 text-slate-500">
+{isScanning ? (
+            <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
               <Loader2 className="h-10 w-10 animate-spin text-purple-600 mb-4" aria-hidden="true" />
               <p>Scanning geography...</p>
             </div>
-          ) : (
+           ) : (
             <>
               {suggestedSubLocations.length === 0 ? (
-                <div className="text-center py-8 text-slate-500">
+                <div className="text-center py-8 text-muted-foreground">
                   No sub-locations found via AI.
                 </div>
               ) : (
@@ -217,10 +217,10 @@ export default function LocationsPage() {
                           toggleSuggestion(name);
                         }
                       }}
-                      className={`
-                        p-3 rounded border cursor-pointer flex items-center justify-between transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2
-                        ${selectedSuggestions.has(name) ? 'bg-purple-50 border-purple-300 text-purple-900' : 'hover:bg-slate-50'}
-                      `}
+className={`
+                         p-3 rounded border cursor-pointer flex items-center justify-between transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2
+                         ${selectedSuggestions.has(name) ? 'bg-purple-50 dark:bg-purple-950/30 border-purple-300 dark:border-purple-700 text-purple-900 dark:text-purple-300' : 'hover:bg-muted'}
+                       `}
                     >
                       <span className="font-medium text-sm">{name}</span>
                       {selectedSuggestions.has(name) && <CheckCircle2 className="h-4 w-4 text-purple-600" aria-hidden="true" />}
@@ -233,7 +233,7 @@ export default function LocationsPage() {
         </DialogBody>
         <DialogFooter>
           <div className="flex justify-between items-center w-full">
-            <div className="text-sm text-slate-500">
+            <div className="text-sm text-muted-foreground">
               {selectedSuggestions.size} selected
             </div>
             <div className="flex gap-3">
@@ -256,11 +256,11 @@ export default function LocationsPage() {
   if (isCreating || editingLocation) {
     if (!rootBusinessId) {
        return (
-         <div className="p-6 text-center">
-            <h2 className="text-xl font-bold text-red-600">No Business Found</h2>
-            <p className="mb-4">You must create a Root Business Entity before adding locations.</p>
-            <Button onClick={() => setIsCreating(false)}>Go Back</Button>
-         </div>
+<div className="p-6 text-center">
+              <h2 className="text-xl font-bold text-red-600">No Business Found</h2>
+              <p className="mb-4 text-muted-foreground">You must create a Root Business Entity before adding locations.</p>
+              <Button onClick={() => setIsCreating(false)}>Go Back</Button>
+           </div>
        );
     }
 
@@ -274,8 +274,8 @@ export default function LocationsPage() {
             {editingLocation ? 'Edit Target Location' : 'Add Target Location'}
           </h1>
         </div>
-<div className="bg-white p-6 rounded-lg border shadow-sm">
-            <LocationForm 
+<div className="bg-card p-6 rounded-lg border shadow-sm">
+             <LocationForm
                initialData={editingLocation || undefined}
                businessId={rootBusinessId} 
                knowledgeEntities={knowledgeEntities}
@@ -293,7 +293,7 @@ export default function LocationsPage() {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Target Locations</h1>
-          <p className="text-slate-500 mt-2">
+          <p className="text-muted-foreground mt-2">
             The "20%" of your pSEO content. Enter at least 3 landmarks per location for local service hero text, plus demographics and geo-coordinates.
           </p>
         </div>
@@ -312,18 +312,18 @@ export default function LocationsPage() {
       </div>
 
       {locations.length === 0 ? (
-        <div className="text-center py-12 border-2 border-dashed rounded-lg bg-slate-50">
-          <MapPin className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-slate-900">No locations yet</h3>
-          <p className="text-slate-500 mb-6">Create your first target location to begin.</p>
-          <Button onClick={() => setIsCreating(true)}>
-            Add Location
-          </Button>
+<div className="text-center py-12 border-2 border-dashed rounded-lg bg-muted">
+           <MapPin className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
+           <h3 className="text-lg font-medium text-foreground">No locations yet</h3>
+           <p className="text-muted-foreground mb-6">Create your first target location to begin.</p>
+           <Button onClick={() => setIsCreating(true)}>
+             Add Location
+           </Button>
         </div>
       ) : (
-        <div className="bg-white border rounded-lg shadow-sm overflow-hidden">
+<div className="bg-card border rounded-lg shadow-sm overflow-hidden">
           <table className="w-full text-sm text-left">
-            <thead className="bg-slate-50 border-b font-medium text-slate-500">
+            <thead className="bg-muted border-b font-medium text-muted-foreground">
               <tr>
                 <th className="px-6 py-4">Location Name</th>
                 <th className="px-6 py-4">Region</th>
@@ -333,16 +333,16 @@ export default function LocationsPage() {
             </thead>
             <tbody className="divide-y">
               {locations.map((loc) => (
-                <tr key={loc.id} className="hover:bg-slate-50 transition-colors">
-                  <td className="px-6 py-4 font-medium text-slate-900">
+                <tr key={loc.id} className="hover:bg-muted/50 transition-colors">
+                   <td className="px-6 py-4 font-medium text-foreground">
                     {loc.name}
                   </td>
-                  <td className="px-6 py-4 text-slate-500">{loc.address_region || '-'}</td>
-                   <td className="px-6 py-4 text-slate-500 text-xs">
+                  <td className="px-6 py-4 text-muted-foreground">{loc.address_region || '-'}</td>
+                   <td className="px-6 py-4 text-muted-foreground text-xs">
                      {loc.parent_city ? (
-                        <span className="text-slate-400">↳ Inside {loc.parent_city}</span>
+                        <span className="text-muted-foreground/70">↳ Inside {loc.parent_city}</span>
                      ) : (
-                        <span className="text-slate-800 font-medium">Top Level</span>
+                        <span className="text-foreground font-medium">Top Level</span>
                      )}
                    </td>
                   <td className="px-6 py-4 text-right flex justify-end gap-2">
@@ -352,16 +352,16 @@ export default function LocationsPage() {
                           size="icon" 
                           onClick={() => startExpansion(loc)} 
                           title="Find sub-locations (boroughs/districts)"
-                          className="text-purple-600 hover:bg-purple-50"
+                          className="text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-950"
                           aria-label={`Find sub-locations for ${loc.name}`}
                         >
                           <Network className="h-4 w-4" aria-hidden="true" />
                         </Button>
                     )}
-                     <Button variant="ghost" size="icon" onClick={() => handleEdit(loc)} className="text-slate-500 hover:text-primary hover:bg-slate-100" aria-label={`Edit ${loc.name}`}>
+                     <Button variant="ghost" size="icon" onClick={() => handleEdit(loc)} className="text-muted-foreground hover:text-primary hover:bg-muted" aria-label={`Edit ${loc.name}`}>
                        <Pencil className="h-4 w-4" aria-hidden="true" />
                      </Button>
-                     <Button variant="ghost" size="icon" onClick={() => handleDelete(loc.id, loc.name)} className="text-slate-400 hover:text-red-700 hover:bg-red-50" aria-label={`Delete ${loc.name}`}>
+                     <Button variant="ghost" size="icon" onClick={() => handleDelete(loc.id, loc.name)} className="text-muted-foreground/70 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950" aria-label={`Delete ${loc.name}`}>
                        <Trash2 className="h-4 w-4" aria-hidden="true" />
                      </Button>
                   </td>

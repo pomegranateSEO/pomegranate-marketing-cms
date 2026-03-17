@@ -68,7 +68,7 @@ export function useConfirm() {
             <DialogClose onClose={handleCancel} />
           </DialogHeader>
           <DialogBody>
-            <p className="text-slate-600" id="confirm-dialog-description">
+            <p className="text-muted-foreground" id="confirm-dialog-description">
               {state.message}
             </p>
           </DialogBody>

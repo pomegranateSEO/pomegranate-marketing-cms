@@ -92,32 +92,32 @@ if (activeCompartment === 'reviews') {
   };
 
   return (
-    <div className="border rounded-md bg-white shadow-sm overflow-hidden relative">
+    <div className="border rounded-md bg-card shadow-sm overflow-hidden relative">
       {/* Toolbar */}
-<div className="flex items-center gap-2 p-2 border-b bg-slate-50 overflow-x-auto whitespace-nowrap pr-12">
-         <span className="text-xs font-bold text-slate-400 uppercase tracking-wider px-2">Insert:</span>
+<div className="flex items-center gap-2 p-2 border-b bg-muted overflow-x-auto whitespace-nowrap pr-12">
+         <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider px-2">Insert:</span>
          
-         <Button type="button" variant="ghost" size="sm" onClick={() => setActiveCompartment('reviews')} className="text-slate-600 hover:text-amber-600 hover:bg-amber-50">
+         <Button type="button" variant="ghost" size="sm" onClick={() => setActiveCompartment('reviews')} className="text-muted-foreground hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20">
            <Star className="h-4 w-4 mr-2" /> Reviews
          </Button>
          
-         <Button type="button" variant="ghost" size="sm" onClick={() => setActiveCompartment('case_study')} className="text-slate-600 hover:text-indigo-600 hover:bg-indigo-50">
+         <Button type="button" variant="ghost" size="sm" onClick={() => setActiveCompartment('case_study')} className="text-muted-foreground hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20">
            <Award className="h-4 w-4 mr-2" /> Case Study
          </Button>
 
-         <Button type="button" variant="ghost" size="sm" onClick={() => setActiveCompartment('associates')} className="text-slate-600 hover:text-pink-600 hover:bg-pink-50">
+         <Button type="button" variant="ghost" size="sm" onClick={() => setActiveCompartment('associates')} className="text-muted-foreground hover:text-pink-600 hover:bg-pink-50 dark:hover:bg-pink-900/20">
            <Users className="h-4 w-4 mr-2" /> Partner Org
          </Button>
          
-         <Button type="button" variant="ghost" size="sm" onClick={() => setActiveCompartment('tool')} className="text-slate-600 hover:text-blue-600 hover:bg-blue-50">
+         <Button type="button" variant="ghost" size="sm" onClick={() => setActiveCompartment('tool')} className="text-muted-foreground hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20">
            <Wrench className="h-4 w-4 mr-2" /> Tool
          </Button>
          
-         <Button type="button" variant="ghost" size="sm" onClick={() => setActiveCompartment('download')} className="text-slate-600 hover:text-green-600 hover:bg-green-50">
+         <Button type="button" variant="ghost" size="sm" onClick={() => setActiveCompartment('download')} className="text-muted-foreground hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20">
            <Download className="h-4 w-4 mr-2" /> Download
          </Button>
 
-         <Button type="button" variant="ghost" size="sm" onClick={() => setActiveCompartment('blog_posts')} className="text-slate-600 hover:text-orange-600 hover:bg-orange-50">
+         <Button type="button" variant="ghost" size="sm" onClick={() => setActiveCompartment('blog_posts')} className="text-muted-foreground hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20">
            <PenTool className="h-4 w-4 mr-2" /> Latest Posts
          </Button>
       </div>
@@ -135,7 +135,7 @@ if (activeCompartment === 'reviews') {
 
       {/* Configuration Panel */}
       {activeCompartment && (
-        <div className="bg-slate-100 p-3 border-b flex items-center gap-3 animate-in slide-in-from-top-2">
+        <div className="bg-muted p-3 border-b flex items-center gap-3 animate-in slide-in-from-top-2">
 <div className="flex-1">
                {activeCompartment === 'reviews' && (
                   <select className="w-full text-sm rounded border p-1.5" onChange={(e) => setSelectedId(e.target.value)}>
@@ -170,10 +170,10 @@ if (activeCompartment === 'reviews') {
                     {associates.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
                   </select>
                )}
-               {activeCompartment === 'blog_posts' && (
-                   <div className="text-xs text-slate-500 font-medium">Inserts a grid of the 3 most recent blog posts.</div>
-               )}
-            </div>
+{activeCompartment === 'blog_posts' && (
+                    <div className="text-xs text-muted-foreground font-medium">Inserts a grid of the 3 most recent blog posts.</div>
+                )}
+             </div>
            
            <div className="flex gap-1">
              <Button 
@@ -199,7 +199,7 @@ if (activeCompartment === 'reviews') {
         placeholder={placeholder || "# Write your content here...\n\nUse the toolbar above to insert dynamic compartments."}
       />
       
-      <div className="bg-slate-50 p-2 text-xs text-slate-400 border-t flex justify-between">
+      <div className="bg-muted p-2 text-xs text-muted-foreground border-t flex justify-between">
          <span>Markdown Supported</span>
          <span>Shortcodes: [[COMPARTMENT:type|...]]</span>
       </div>

@@ -167,7 +167,7 @@ export default function ToolsPage() {
            <h2 className="text-2xl font-bold">{currentTool.id ? 'Edit Tool' : 'Add Free Tool'}</h2>
         </div>
 
-        <form onSubmit={handleSave} className="space-y-6 bg-white p-6 rounded-lg border shadow-sm">
+        <form onSubmit={handleSave} className="space-y-6 bg-card p-6 rounded-lg border shadow-sm">
            <div className="grid grid-cols-2 gap-4">
                <div className="space-y-2">
                  <Label>Tool Name</Label>
@@ -256,10 +256,10 @@ export default function ToolsPage() {
               />
               <div className="flex flex-wrap gap-2 mt-2">
                  {currentTool.tags?.map((tag, idx) => (
-                    <span key={idx} className="bg-slate-100 px-2 py-1 rounded text-xs flex items-center gap-1">
-                       {tag}
-                       <button type="button" onClick={() => removeTag(idx)} className="hover:text-red-500"><Trash2 className="h-3 w-3" /></button>
-                    </span>
+<span key={idx} className="bg-muted px-2 py-1 rounded text-xs flex items-center gap-1">
+                        {tag}
+                        <button type="button" onClick={() => removeTag(idx)} className="hover:text-red-500"><Trash2 className="h-3 w-3" /></button>
+                     </span>
                  ))}
               </div>
            </div>
@@ -299,7 +299,7 @@ export default function ToolsPage() {
        <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Free Tools</h1>
-          <p className="text-slate-500 mt-2">
+          <p className="text-muted-foreground mt-2">
             Manage interactive tools and calculators (Lead Magnets).
           </p>
         </div>
@@ -318,44 +318,44 @@ export default function ToolsPage() {
       </div>
 
       {tools.length === 0 ? (
-        <div className="text-center py-12 border-2 border-dashed rounded-lg bg-slate-50">
-          <Wrench className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-slate-900">No tools yet</h3>
-          <p className="text-slate-500 mb-6">Configure free tools to generate leads.</p>
-          <Button onClick={() => startEdit()}>
-             Add Tool
-          </Button>
+<div className="text-center py-12 border-2 border-dashed rounded-lg bg-muted">
+           <Wrench className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
+           <h3 className="text-lg font-medium text-foreground">No tools yet</h3>
+           <p className="text-muted-foreground mb-6">Configure free tools to generate leads.</p>
+           <Button onClick={() => startEdit()}>
+              Add Tool
+           </Button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {tools.map((tool) => (
-             <div key={tool.id} className="bg-white p-5 rounded-lg border shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
-                <div>
-                   <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-bold text-lg text-slate-900">{tool.name}</h3>
-                      <div className="flex gap-1">
-                          {tool.published && <span className="w-2 h-2 rounded-full bg-green-500" title="Published"></span>}
-                          {tool.featured && <span className="w-2 h-2 rounded-full bg-amber-500" title="Featured"></span>}
-                      </div>
-                   </div>
-                   <p className="text-sm text-slate-500 mb-4 line-clamp-3">{tool.short_description}</p>
-                   
-                   <div className="flex flex-wrap gap-2 mb-4">
-                      {tool.tags?.map(tag => (
-                         <span key={tag} className="text-xs bg-slate-100 px-2 py-0.5 rounded text-slate-500">{tag}</span>
-                      ))}
-                   </div>
-                </div>
-                
-                <div className="flex justify-end gap-2 pt-4 border-t">
-                   <Button variant="ghost" size="sm" onClick={() => startEdit(tool)}>
-                      <Edit2 className="h-4 w-4 mr-2" /> Edit
-                   </Button>
-                    <Button variant="ghost" size="icon" onClick={() => handleDelete(tool.id, tool.name)} className="text-red-500 hover:bg-red-50" aria-label={`Delete ${tool.name}`}>
-                       <Trash2 className="h-4 w-4" aria-hidden="true" />
+<div key={tool.id} className="bg-card p-5 rounded-lg border shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+                 <div>
+                    <div className="flex justify-between items-start mb-2">
+                       <h3 className="font-bold text-lg text-foreground">{tool.name}</h3>
+                       <div className="flex gap-1">
+                           {tool.published && <span className="w-2 h-2 rounded-full bg-green-500" title="Published"></span>}
+                           {tool.featured && <span className="w-2 h-2 rounded-full bg-amber-500" title="Featured"></span>}
+                       </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-4 line-clamp-3">{tool.short_description}</p>
+                    
+                    <div className="flex flex-wrap gap-2 mb-4">
+                       {tool.tags?.map(tag => (
+                          <span key={tag} className="text-xs bg-muted px-2 py-0.5 rounded text-muted-foreground">{tag}</span>
+                       ))}
+                    </div>
+                 </div>
+                 
+                 <div className="flex justify-end gap-2 pt-4 border-t">
+                    <Button variant="ghost" size="sm" onClick={() => startEdit(tool)}>
+                       <Edit2 className="h-4 w-4 mr-2" /> Edit
                     </Button>
-                </div>
-             </div>
+                     <Button variant="ghost" size="icon" onClick={() => handleDelete(tool.id, tool.name)} className="text-red-500 hover:bg-red-50 dark:hover:bg-red-950" aria-label={`Delete ${tool.name}`}>
+                        <Trash2 className="h-4 w-4" aria-hidden="true" />
+                     </Button>
+                 </div>
+              </div>
           ))}
         </div>
       )}

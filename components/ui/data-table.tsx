@@ -158,14 +158,14 @@ export function TableSearch({
         {value && (
           <button
             onClick={() => onChange('')}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
             aria-label="Clear search"
           >
             ×
           </button>
         )}
       </div>
-      <div className="text-sm text-slate-500">
+      <div className="text-sm text-muted-foreground">
         {isFiltered ? (
           <span>
             Showing <strong>{filteredCount}</strong> of <strong>{totalItems}</strong> items
@@ -203,13 +203,13 @@ export function TablePagination({
   const endItem = Math.min(currentPage * pageSize, totalItems);
 
   return (
-    <div className="flex items-center justify-between px-6 py-4 border-t bg-slate-50">
+    <div className="flex items-center justify-between px-6 py-4 border-t bg-muted/50">
       <div className="flex items-center gap-4">
-        <span className="text-sm text-slate-500">
+        <span className="text-sm text-muted-foreground">
           Showing {startItem}-{endItem} of {totalItems}
         </span>
         <div className="flex items-center gap-2">
-          <label htmlFor="page-size" className="text-sm text-slate-500">
+          <label htmlFor="page-size" className="text-sm text-muted-foreground">
             Items per page:
           </label>
           <select
@@ -232,7 +232,7 @@ export function TablePagination({
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage <= 1}
-          className="px-3 py-1.5 text-sm font-medium rounded border border-input bg-background hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-3 py-1.5 text-sm font-medium rounded border border-input bg-background hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label="Previous page"
         >
           Previous
@@ -240,7 +240,6 @@ export function TablePagination({
         
         <div className="flex items-center gap-1">
           {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-            // Show pages around current page
             let pageNum: number;
             if (totalPages <= 5) {
               pageNum = i + 1;
@@ -261,7 +260,7 @@ export function TablePagination({
                 className={`min-w-[32px] px-2 py-1.5 text-sm font-medium rounded ${
                   isActive
                     ? 'bg-primary text-primary-foreground'
-                    : 'border border-input bg-background hover:bg-slate-50'
+                    : 'border border-input bg-background hover:bg-muted'
                 }`}
                 aria-label={`Page ${pageNum}`}
                 aria-current={isActive ? 'page' : undefined}
@@ -275,7 +274,7 @@ export function TablePagination({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage >= totalPages}
-          className="px-3 py-1.5 text-sm font-medium rounded border border-input bg-background hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-3 py-1.5 text-sm font-medium rounded border border-input bg-background hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label="Next page"
         >
           Next
@@ -293,13 +292,13 @@ export interface EmptySearchStateProps {
 export function EmptySearchState({ searchQuery, onClear }: EmptySearchStateProps) {
   return (
     <div className="text-center py-12">
-      <div className="text-slate-400 mb-2">
+      <div className="text-muted-foreground mb-2">
         <svg className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
       </div>
-      <h3 className="text-lg font-medium text-slate-900 mb-1">No results found</h3>
-      <p className="text-slate-500 mb-4">
+      <h3 className="text-lg font-medium text-foreground mb-1">No results found</h3>
+      <p className="text-muted-foreground mb-4">
         No items match "<strong>{searchQuery}</strong>"
       </p>
       <button

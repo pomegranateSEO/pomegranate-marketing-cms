@@ -153,14 +153,14 @@ export default function BusinessPage() {
 
         <div className="space-y-4">
           {businesses.map(b => (
-            <div key={b.id} className="bg-white border p-4 rounded-lg flex justify-between items-center shadow-sm">
-              <div>
-                <h3 className="font-bold text-lg">{b.name}</h3>
-                <p className="text-sm text-slate-500 font-mono">{b.id}</p>
-                <div className="text-xs text-slate-400 mt-1">
-                  Created: {new Date(b.created_at || '').toLocaleDateString()}
-                </div>
-              </div>
+<div key={b.id} className="bg-card border p-4 rounded-lg flex justify-between items-center shadow-sm">
+               <div>
+                 <h3 className="font-bold text-lg">{b.name}</h3>
+                 <p className="text-sm text-muted-foreground font-mono">{b.id}</p>
+                 <div className="text-xs text-muted-foreground mt-1">
+                   Created: {new Date(b.created_at || '').toLocaleDateString()}
+                 </div>
+               </div>
               <Button 
                 variant="destructive" 
                 onClick={() => handleDelete(b.id)}
@@ -194,7 +194,7 @@ export default function BusinessPage() {
                </span>
              )}
            </div>
-           <p className="text-slate-500 mt-2">
+           <p className="text-muted-foreground mt-2">
              {rootBusiness 
                ? "Manage the primary knowledge graph entity properties." 
                : "Initialize the root entity for this Pomegranate instance."}
