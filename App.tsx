@@ -29,6 +29,11 @@ import PeoplePage from './app/admin/people/page';
 import RedirectsPage from './app/admin/redirects/page';
 import ErrorLogsPage from './app/admin/error-logs/page';
 import PricingPage from './app/admin/pricing/page';
+import LegalPagesPage from './app/admin/legal-pages/page';
+import EmailTemplatesPage from './app/admin/email-templates/page';
+import ClientLogosPage from './app/admin/client-logos/page';
+import NavigationPage from './app/admin/navigation/page';
+import SiteSettingsPage from './app/admin/site-settings/page';
 import { Loader2 } from 'lucide-react';
 
 const Placeholder = ({ title }: { title: string }) => (
@@ -98,6 +103,11 @@ function AuthenticatedApp() {
             <Route path="/admin/redirects" element={<RedirectsPage />} />
             <Route path="/admin/error-logs" element={<ErrorLogsPage />} />
             <Route path="/admin/pricing" element={<PricingPage />} />
+            <Route path="/admin/legal-pages" element={<LegalPagesPage />} />
+            <Route path="/admin/email-templates" element={<EmailTemplatesPage />} />
+            <Route path="/admin/client-logos" element={<ClientLogosPage />} />
+            <Route path="/admin/navigation" element={<NavigationPage />} />
+            <Route path="/admin/site-settings" element={<SiteSettingsPage />} />
           </Routes>
         </main>
       </div>

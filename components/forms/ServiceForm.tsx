@@ -72,6 +72,11 @@ const serviceFormSchema = z.object({
   cta_subheading: z.string().optional(),
   // Environments
   environments_scroll_text: z.string().optional(),
+  // Hub CMS
+  is_featured_on_hub: z.boolean().optional(),
+  hub_order: z.number().optional(),
+  // Icon for hub display
+  icon: z.string().optional(),
 });
 
 type ServiceFormValues = z.infer<typeof serviceFormSchema>;
@@ -159,6 +164,9 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, knowledg
       cta_heading: ctaData.heading || '',
       cta_subheading: ctaData.subheading || '',
       environments_scroll_text: (contentSections.environments_scroll_text || '').split(' • ').join(', '),
+      is_featured_on_hub: (initialData as any)?.is_featured_on_hub || false,
+      hub_order: (initialData as any)?.hub_order || 999,
+      icon: (initialData as any)?.icon || '',
     },
   });
 
@@ -238,7 +246,7 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, knowledg
       items: deliverablesItems,
     };
 
-    const { keyword_prefix_text, keyword_terms, hero_title, hero_subtitle, hero_body, hero_cta_primary_text, hero_cta_primary_link, why_heading, why_body, deliverables_heading, process_heading, cta_heading, cta_subheading, environments_scroll_text, ...dbValues } = values;
+    const { keyword_prefix_text, keyword_terms, hero_title, hero_subtitle, hero_body, hero_cta_primary_text, hero_cta_primary_link, why_heading, why_body, deliverables_heading, process_heading, cta_heading, cta_subheading, environments_scroll_text, is_featured_on_hub, hub_order, icon, ...dbValues } = values;
 
     const processPayload = {
       heading: values.process_heading || 'Our Process',
@@ -258,6 +266,9 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, knowledg
       business_id: businessId,
       about_entities: aboutEntities,
       mentions_entities: mentionsEntities,
+      is_featured_on_hub: is_featured_on_hub ?? false,
+      hub_order: hub_order ?? 999,
+      icon: icon || null,
     });
   };
 
@@ -410,6 +421,47 @@ export const ServiceForm: React.FC<Props> = ({ initialData, businessId, knowledg
               className="h-[100px]"
             />
             <p className="text-xs text-muted-foreground">{watch('short_description')?.length || 0}/500 characters</p>
+          </div>
+
+          {/* Hub CMS Fields */}
+          <div className="bg-amber-50 dark:bg-amber-950/20 p-4 rounded-lg border border-amber-200 dark:border-amber-800">
+            <h4 className="text-xs font-bold uppercase text-amber-700 dark:text-amber-400 mb-3">Services Hub Settings</h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="is_featured_on_hub"
+                    {...register('is_featured_on_hub')}
+                    className="rounded"
+                  />
+                  <Label htmlFor="is_featured_on_hub" className="font-normal">Show on Services Hub</Label>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="hub_order">Hub Order</Label>
+                <Input 
+                  id="hub_order" 
+                  type="number"
+                  {...register('hub_order', { valueAsNumber: true })} 
+                  placeholder="999"
+                />
+                <p className="text-xs text-muted-foreground">Lower = first</p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="icon">Hub Icon</Label>
+                <select
+                  id="icon"
+                  {...register('icon')}
+                  className="flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm"
+                >
+                  <option value="">Select Icon</option>
+                  {ICON_OPTIONS.map(icon => (
+                    <option key={icon} value={icon}>{icon}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
         </div>
       </div>

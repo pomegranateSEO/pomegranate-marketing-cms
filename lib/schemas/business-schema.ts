@@ -75,6 +75,14 @@ export const businessFormSchema = z.object({
   // V2 Additions
   robots_txt_rules: z.string().optional(),
   llms_txt_rules: z.string().optional(),
+  
+  // Footer CMS fields
+  footer_tagline: z.string().optional(),
+  footer_copyright_text: z.string().optional(),
+  social_twitter: z.string().optional(),
+  social_linkedin: z.string().optional(),
+  social_facebook: z.string().optional(),
+  social_instagram: z.string().optional(),
 });
 
 export type BusinessFormValues = z.infer<typeof businessFormSchema>;

@@ -9,6 +9,19 @@ export type Json =
 
 // --- NEW V2: Page Design Studio Types ---
 
+export interface StatsItem {
+  label: string;
+  value: string;
+  suffix?: string;
+}
+
+export interface FeaturedTool {
+  title: string;
+  description: string;
+  href: string;
+  icon: string;
+}
+
 export interface RenderedBlock {
   id: string;
   name: string;
@@ -135,6 +148,14 @@ export interface Business {
   // Phase 2A additions
   website_schema_config?: Json | null;
   sameas_urls?: string[] | null;
+
+  // Footer CMS fields
+  footer_tagline?: string | null;
+  footer_copyright_text?: string | null;
+  social_twitter?: string | null;
+  social_linkedin?: string | null;
+  social_facebook?: string | null;
+  social_instagram?: string | null;
 }
 
 export interface Service {
@@ -446,6 +467,17 @@ export interface StaticPage {
   };
   og_image_url?: string;
 
+  // Homepage CMS fields
+  stats?: StatsItem[];
+  featured_tools?: FeaturedTool[];
+  blog_section_title?: string;
+
+  // 404 page fields
+  heading?: string;
+  subheading?: string;
+  cta_text?: string;
+  cta_url?: string;
+
   // Design Studio
   design_template_id?: string;
   rendered_blocks?: RenderedBlock[];
@@ -519,6 +551,11 @@ export interface FreeTool {
   featured: boolean;
   created_at?: string;
   last_updated?: string;
+  
+  // Tool page CMS fields
+  instructions?: string;
+  output_description?: string;
+  meta_description?: string;
 }
 
 export interface Industry {
@@ -668,4 +705,59 @@ export interface Download {
   seo_meta_desc?: string;
   created_at?: string;
   last_updated?: string;
+}
+
+export interface LegalPage {
+  id: string;
+  slug: string;
+  title: string;
+  content: string;
+  updated_at?: string;
+}
+
+export interface EmailTemplate {
+  id: string;
+  template_key: string;
+  subject: string;
+  body: string;
+  updated_at?: string;
+}
+
+export interface NotFoundPage {
+  id?: string;
+  slug: string;
+  title?: string;
+  heading?: string;
+  subheading?: string;
+  cta_text?: string;
+  cta_url?: string;
+}
+
+export interface ClientLogo {
+  id: string;
+  name: string;
+  logo_url?: string | null;
+  website_url?: string | null;
+  display_order?: number;
+  published?: boolean;
+  created_at?: string;
+}
+
+export interface NavigationItem {
+  id: string;
+  section: 'header' | 'footer';
+  label: string;
+  url: string;
+  icon?: string | null;
+  order?: number;
+  parent_id?: string | null;
+  published?: boolean;
+  created_at?: string;
+}
+
+export interface SiteSetting {
+  id?: string;
+  key: string;
+  value: string;
+  updated_at?: string;
 }

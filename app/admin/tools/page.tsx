@@ -31,7 +31,10 @@ export default function ToolsPage() {
     download_url: '',
     tags: [],
     published: false,
-    featured: false
+    featured: false,
+    instructions: '',
+    output_description: '',
+    meta_description: '',
   });
   const { confirm, ConfirmDialog } = useConfirm();
 
@@ -86,7 +89,8 @@ export default function ToolsPage() {
   const resetForm = () => {
     setCurrentTool({
        name: '', slug: '', short_description: '', long_description: '', 
-       embed_url: '', download_url: '', tags: [], published: false, featured: false 
+       embed_url: '', download_url: '', tags: [], published: false, featured: false,
+       instructions: '', output_description: '', meta_description: '',
     });
     setTagInput('');
   };
@@ -113,7 +117,8 @@ export default function ToolsPage() {
   const startEdit = (tool?: FreeTool) => {
     setCurrentTool(tool || { 
         name: '', slug: '', short_description: '', long_description: '', 
-        embed_url: '', download_url: '', tags: [], published: false, featured: false 
+        embed_url: '', download_url: '', tags: [], published: false, featured: false,
+        instructions: '', output_description: '', meta_description: '',
     });
     setIsEditing(true);
   };
@@ -209,23 +214,58 @@ export default function ToolsPage() {
            </div>
 
            <div className="space-y-2">
-             <div className="flex justify-between">
-                <Label>Full Description / Instructions</Label>
-                <AITextGenerator 
-                  onGenerate={t => setCurrentTool({...currentTool, long_description: t})}
-                  fieldName="Tool Instructions"
-                  keyword={currentTool.name}
-                  currentValue={currentTool.long_description}
-                  brandTheme={brandTheme}
+              <div className="flex justify-between">
+                 <Label>Full Description / Instructions</Label>
+                 <AITextGenerator 
+                   onGenerate={t => setCurrentTool({...currentTool, long_description: t})}
+                   fieldName="Tool Instructions"
+                   keyword={currentTool.name}
+                   currentValue={currentTool.long_description}
+                   brandTheme={brandTheme}
+                 />
+              </div>
+              <Textarea 
+                value={currentTool.long_description || ''} 
+                onChange={e => setCurrentTool({...currentTool, long_description: e.target.value})} 
+                placeholder="Detailed instructions on how to use the tool..."
+                className="h-32"
+              />
+            </div>
+
+            {/* Tool Page CMS Fields */}
+            <div className="bg-muted/50 p-4 rounded-lg border space-y-4">
+              <h4 className="text-sm font-semibold text-foreground">Tool Page Content</h4>
+              
+              <div className="space-y-2">
+                <Label>Instructions (Tool Page)</Label>
+                <Textarea 
+                  value={currentTool.instructions || ''} 
+                  onChange={e => setCurrentTool({...currentTool, instructions: e.target.value})} 
+                  placeholder="Step-by-step instructions shown on the tool page..."
+                  className="h-24"
                 />
-             </div>
-             <Textarea 
-               value={currentTool.long_description || ''} 
-               onChange={e => setCurrentTool({...currentTool, long_description: e.target.value})} 
-               placeholder="Detailed instructions on how to use the tool..."
-               className="h-32"
-             />
-           </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Output Description (Tool Page)</Label>
+                <Textarea 
+                  value={currentTool.output_description || ''} 
+                  onChange={e => setCurrentTool({...currentTool, output_description: e.target.value})} 
+                  placeholder="Description of what the tool outputs/results..."
+                  className="h-24"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Meta Description (SEO)</Label>
+                <Textarea 
+                  value={currentTool.meta_description || ''} 
+                  onChange={e => setCurrentTool({...currentTool, meta_description: e.target.value})} 
+                  placeholder="SEO meta description for the tool page..."
+                  className="h-20"
+                />
+              </div>
+            </div>
 
            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                <div className="space-y-2">

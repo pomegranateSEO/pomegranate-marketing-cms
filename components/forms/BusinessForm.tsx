@@ -14,6 +14,7 @@ import { BrandSection } from './business/BrandSection';
 import { LocationSection } from './business/LocationSection';
 import { OpeningHoursSection } from './business/OpeningHoursSection';
 import { ContactSection } from './business/ContactSection';
+import { FooterSection } from './business/FooterSection';
 
 interface BusinessFormProps {
   initialData?: Partial<Business>;
@@ -54,6 +55,7 @@ export const BusinessForm: React.FC<BusinessFormProps> = ({ initialData, onSubmi
         <LocationSection />
         <OpeningHoursSection />
         <ContactSection />
+        <FooterSection />
 
         <div className="flex justify-end pt-6">
           <Button type="submit" disabled={isLoading} className="w-full md:w-auto h-12 text-lg">

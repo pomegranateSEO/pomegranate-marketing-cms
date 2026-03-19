@@ -38,6 +38,12 @@ export const mapBusinessToFormValues = (data: Partial<Business>): BusinessFormVa
     opening_hours: (data.opening_hours as any[]) || DEFAULT_HOURS,
     rating_value: data.rating_value || undefined,
     review_count: data.review_count || undefined,
+    footer_tagline: data.footer_tagline || '',
+    footer_copyright_text: data.footer_copyright_text || '',
+    social_twitter: data.social_twitter || '',
+    social_linkedin: data.social_linkedin || '',
+    social_facebook: data.social_facebook || '',
+    social_instagram: data.social_instagram || '',
   };
 };
 

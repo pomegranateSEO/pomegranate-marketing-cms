@@ -67,6 +67,9 @@ export const IndustryForm: React.FC<IndustryFormProps> = ({
     og_image_url: initialData?.og_image_url || '',
     about_entities: initialData?.about_entities || [] as string[],
     mentions_entities: initialData?.mentions_entities || [] as string[],
+    is_featured_on_hub: (initialData as any)?.is_featured_on_hub || false,
+    hub_order: (initialData as any)?.hub_order || 999,
+    icon: (initialData as any)?.icon || '',
   });
 
   const [faqs, setFaqs] = useState<FAQItem[]>(faqList);
@@ -151,6 +154,9 @@ export const IndustryForm: React.FC<IndustryFormProps> = ({
       about_entities: formState.about_entities,
       mentions_entities: formState.mentions_entities,
       business_id: businessId,
+      is_featured_on_hub: formState.is_featured_on_hub,
+      hub_order: formState.hub_order,
+      icon: formState.icon || null,
     });
   };
 
@@ -197,6 +203,44 @@ export const IndustryForm: React.FC<IndustryFormProps> = ({
             placeholder="Brief summary displayed in industry cards..."
             className="h-[80px]"
           />
+        </div>
+
+        {/* Hub CMS Fields */}
+        <div className="bg-amber-50 dark:bg-amber-950/20 p-4 rounded-lg border border-amber-200 dark:border-amber-800">
+          <h4 className="text-xs font-bold uppercase text-amber-700 dark:text-amber-400 mb-3">Industries Hub Settings</h4>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="is_featured_on_hub"
+                  checked={formState.is_featured_on_hub}
+                  onChange={e => set('is_featured_on_hub', e.target.checked)}
+                  className="rounded"
+                />
+                <Label htmlFor="is_featured_on_hub" className="font-normal">Show on Industries Hub</Label>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Hub Order</Label>
+              <Input
+                type="number"
+                value={formState.hub_order}
+                onChange={e => set('hub_order', parseInt(e.target.value) || 999)}
+                placeholder="999"
+              />
+              <p className="text-xs text-muted-foreground">Lower = first</p>
+            </div>
+            <div className="space-y-2">
+              <Label>Hub Icon</Label>
+              <Input
+                value={formState.icon || ''}
+                onChange={e => set('icon', e.target.value)}
+                placeholder="Building2"
+              />
+              <p className="text-xs text-muted-foreground">Lucide icon name</p>
+            </div>
+          </div>
         </div>
       </div>
 

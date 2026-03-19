@@ -42,7 +42,7 @@ export default function PagesPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [generatingCore, setGeneratingCore] = useState(false);
-  const [activeTab, setActiveTab] = useState<'content' | 'semantic' | 'settings'>('content');
+  const [activeTab, setActiveTab] = useState<'content' | 'homepage' | 'semantic' | 'settings'>('content');
   const { confirm, ConfirmDialog } = useConfirm();
   
   // Form State
@@ -75,6 +75,15 @@ export default function PagesPage() {
     // SEO fields
     canonical_url: '',
     og_image_url: '',
+    // Homepage CMS fields
+    stats_json: '',
+    featured_tools_json: '',
+    blog_section_title: '',
+    // 404 page fields
+    not_found_heading: '',
+    not_found_subheading: '',
+    not_found_cta_text: '',
+    not_found_cta_url: '',
   });
 
   const loadData = async () => {
@@ -155,6 +164,30 @@ export default function PagesPage() {
         }
       }
 
+      // Parse stats JSON
+      let parsedStats: any[] | undefined;
+      if (formState.stats_json) {
+        try {
+          parsedStats = JSON.parse(formState.stats_json);
+        } catch {
+          toast.error('Stats JSON is invalid. Fix the JSON and try again.');
+          setSaving(false);
+          return;
+        }
+      }
+
+      // Parse featured_tools JSON
+      let parsedFeaturedTools: any[] | undefined;
+      if (formState.featured_tools_json) {
+        try {
+          parsedFeaturedTools = JSON.parse(formState.featured_tools_json);
+        } catch {
+          toast.error('Featured Tools JSON is invalid. Fix the JSON and try again.');
+          setSaving(false);
+          return;
+        }
+      }
+
       const payload: Partial<StaticPage> = {
         business_id: rootBusiness.id,
         title: formState.title,
@@ -171,6 +204,13 @@ export default function PagesPage() {
         ...(parsedContentSections && { content_sections: parsedContentSections }),
         canonical_url: formState.canonical_url || undefined,
         og_image_url: formState.og_image_url || undefined,
+        ...(parsedStats && { stats: parsedStats }),
+        ...(parsedFeaturedTools && { featured_tools: parsedFeaturedTools }),
+        blog_section_title: formState.blog_section_title || undefined,
+        heading: formState.not_found_heading || undefined,
+        subheading: formState.not_found_subheading || undefined,
+        cta_text: formState.not_found_cta_text || undefined,
+        cta_url: formState.not_found_cta_url || undefined,
       };
 
       if (formState.id) {
@@ -304,6 +344,13 @@ export default function PagesPage() {
         content_sections_json: page.content_sections ? JSON.stringify(page.content_sections, null, 2) : '',
         canonical_url: page.canonical_url || '',
         og_image_url: page.og_image_url || '',
+        stats_json: page.stats ? JSON.stringify(page.stats, null, 2) : '',
+        featured_tools_json: page.featured_tools ? JSON.stringify(page.featured_tools, null, 2) : '',
+        blog_section_title: page.blog_section_title || '',
+        not_found_heading: page.heading || '',
+        not_found_subheading: page.subheading || '',
+        not_found_cta_text: page.cta_text || '',
+        not_found_cta_url: page.cta_url || '',
       });
     } else {
       resetForm();
@@ -327,6 +374,13 @@ export default function PagesPage() {
       content_sections_json: '',
       canonical_url: '',
       og_image_url: '',
+      stats_json: '',
+      featured_tools_json: '',
+      blog_section_title: '',
+      not_found_heading: '',
+      not_found_subheading: '',
+      not_found_cta_text: '',
+      not_found_cta_url: '',
     });
   };
 
@@ -361,37 +415,47 @@ export default function PagesPage() {
         </div>
 
          <div className="flex border-b bg-muted mb-4 rounded-t-lg" role="tablist" aria-label="Page settings tabs">
-            <button
-              id="tab-content"
-              role="tab"
-              aria-selected={activeTab === 'content'}
-              aria-controls="panel-content"
-              onClick={() => setActiveTab('content')}
-              className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'content' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground'}`}
-            >
-              Content
-            </button>
-            <button
-              id="tab-semantic"
-              role="tab"
-              aria-selected={activeTab === 'semantic'}
-              aria-controls="panel-semantic"
-              onClick={() => setActiveTab('semantic')}
-              className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'semantic' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground'}`}
-            >
-              Semantic Markup
-            </button>
-            <button
-              id="tab-settings"
-              role="tab"
-              aria-selected={activeTab === 'settings'}
-              aria-controls="panel-settings"
-              onClick={() => setActiveTab('settings')}
-              className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'settings' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground'}`}
-            >
-              Settings & Head
-            </button>
-         </div>
+             <button
+               id="tab-content"
+               role="tab"
+               aria-selected={activeTab === 'content'}
+               aria-controls="panel-content"
+               onClick={() => setActiveTab('content')}
+               className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'content' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground'}`}
+             >
+               Content
+             </button>
+             <button
+               id="tab-homepage"
+               role="tab"
+               aria-selected={activeTab === 'homepage'}
+               aria-controls="panel-homepage"
+               onClick={() => setActiveTab('homepage')}
+               className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'homepage' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground'}`}
+             >
+               Homepage CMS
+             </button>
+             <button
+               id="tab-semantic"
+               role="tab"
+               aria-selected={activeTab === 'semantic'}
+               aria-controls="panel-semantic"
+               onClick={() => setActiveTab('semantic')}
+               className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'semantic' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground'}`}
+             >
+               Semantic Markup
+             </button>
+             <button
+               id="tab-settings"
+               role="tab"
+               aria-selected={activeTab === 'settings'}
+               aria-controls="panel-settings"
+               onClick={() => setActiveTab('settings')}
+               className={`px-6 py-3 text-sm font-medium border-b-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${activeTab === 'settings' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground'}`}
+             >
+               Settings & Head
+             </button>
+          </div>
 
          <form onSubmit={handleSave} className="space-y-6 bg-card p-6 rounded-lg border shadow-sm rounded-tr-none">
 
@@ -598,8 +662,124 @@ export default function PagesPage() {
                         keyword={formState.target_keyword}
                      />
                    </div>
-               </div>
-           </div>
+                </div>
+            </div>
+
+            {/* HOMEPAGE CMS TAB */}
+            <div
+              id="panel-homepage"
+              role="tabpanel"
+              aria-labelledby="tab-homepage"
+              className={activeTab === 'homepage' ? 'block' : 'hidden'}
+            >
+                <div className="space-y-6">
+                    {/* Stats Section */}
+                    <div className="bg-green-50/50 p-4 rounded-lg border border-green-200">
+                      <h4 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
+                        <span className="w-6 h-6 bg-green-500 text-white rounded flex items-center justify-center text-xs font-bold">S</span>
+                        Stats Bar (Homepage)
+                      </h4>
+                      <p className="text-xs text-muted-foreground mb-3">
+                        JSON array of stats to display on the homepage. Format: {"[{\"label\": \"Years in Business\", \"value\": \"7\", \"suffix\": \"+\"}]"}.
+                      </p>
+                      <textarea
+                        value={formState.stats_json}
+                        onChange={e => setFormState({ ...formState, stats_json: e.target.value })}
+                        className="w-full h-32 font-mono text-xs bg-background border border-border rounded p-3 resize-y focus:outline-none focus:ring-2 focus:ring-green-400"
+                        placeholder='[{"label": "Years in Business", "value": "7", "suffix": "+"}, {"label": "Happy Clients", "value": "150", "suffix": "+"}]'
+                        spellCheck={false}
+                      />
+                    </div>
+
+                    {/* Featured Tools Section */}
+                    <div className="bg-purple-50/50 p-4 rounded-lg border border-purple-200">
+                      <h4 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
+                        <span className="w-6 h-6 bg-purple-500 text-white rounded flex items-center justify-center text-xs font-bold">T</span>
+                        Featured Tools (Homepage)
+                      </h4>
+                      <p className="text-xs text-muted-foreground mb-3">
+                        JSON array of featured tools to display on the homepage Growth Toolbox section.
+                      </p>
+                      <textarea
+                        value={formState.featured_tools_json}
+                        onChange={e => setFormState({ ...formState, featured_tools_json: e.target.value })}
+                        className="w-full h-40 font-mono text-xs bg-background border border-border rounded p-3 resize-y focus:outline-none focus:ring-2 focus:ring-purple-400"
+                        placeholder='[{"title": "Site Speed Audit", "description": "Deep-dive into Core Web Vitals...", "href": "/free-tools/free-site-speed-test", "icon": "Activity"}]'
+                        spellCheck={false}
+                      />
+                    </div>
+
+                    {/* Blog Section Title */}
+                    <div className="bg-amber-50/50 p-4 rounded-lg border border-amber-200">
+                      <h4 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
+                        <span className="w-6 h-6 bg-amber-500 text-white rounded flex items-center justify-center text-xs font-bold">B</span>
+                        Blog Section Title (Homepage)
+                      </h4>
+                      <p className="text-xs text-muted-foreground mb-3">
+                        The heading text for the "Recent from the Blog" section on the homepage.
+                      </p>
+                      <Input
+                        value={formState.blog_section_title}
+                        onChange={e => setFormState({ ...formState, blog_section_title: e.target.value })}
+                        placeholder="e.g. Recent from the Blog"
+                        className="bg-background"
+                      />
+                    </div>
+
+                    {/* 404 Page Content */}
+                    <div className="bg-red-50/50 p-4 rounded-lg border border-red-200">
+                      <h4 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
+                        <span className="w-6 h-6 bg-red-500 text-white rounded flex items-center justify-center text-xs font-bold">4</span>
+                        404 Page Content
+                      </h4>
+                      <p className="text-xs text-muted-foreground mb-3">
+                        Customize the 404 (Page Not Found) error page content. Edit the '404' slug page to see changes.
+                      </p>
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-1">
+                            <Label className="text-xs">Heading</Label>
+                            <Input
+                              value={formState.not_found_heading}
+                              onChange={e => setFormState({ ...formState, not_found_heading: e.target.value })}
+                              placeholder="e.g. Looks like you've wandered off..."
+                              className="bg-background"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <Label className="text-xs">Subheading</Label>
+                            <Input
+                              value={formState.not_found_subheading}
+                              onChange={e => setFormState({ ...formState, not_found_subheading: e.target.value })}
+                              placeholder="e.g. Even the best seeds need redirection..."
+                              className="bg-background"
+                            />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-1">
+                            <Label className="text-xs">CTA Button Text</Label>
+                            <Input
+                              value={formState.not_found_cta_text}
+                              onChange={e => setFormState({ ...formState, not_found_cta_text: e.target.value })}
+                              placeholder="e.g. Return To The Path"
+                              className="bg-background"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <Label className="text-xs">CTA Button URL</Label>
+                            <Input
+                              value={formState.not_found_cta_url}
+                              onChange={e => setFormState({ ...formState, not_found_cta_url: e.target.value })}
+                              placeholder="e.g. /"
+                              className="bg-background"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
 
             {/* SEMANTIC TAB */}
             <div

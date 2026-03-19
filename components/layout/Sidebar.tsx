@@ -52,6 +52,9 @@ export const Sidebar = () => {
   const systemNavItems = [
     { href: "/admin/redirects", label: "Redirects", icon: ArrowRight },
     { href: "/admin/error-logs", label: "404 Logs", icon: AlertTriangle },
+    { href: "/admin/client-logos", label: "Client Logos", icon: ImageIcon },
+    { href: "/admin/navigation", label: "Navigation", icon: Layers },
+    { href: "/admin/site-settings", label: "Site Settings", icon: Settings },
   ];
 
   const generationNavItems = [
